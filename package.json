@@ -1,0 +1,35 @@
+{
+  "name": "marcos.birthday.party",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run build:server && npm run build:client",
+    "build:server": "tsc -p tsconfig.server.json",
+    "build:client": "tsc -p tsconfig.client.json",
+    "build:server:watch": "tsc -p tsconfig.server.json --watch",
+    "build:client:watch": "tsc -p tsconfig.client.json --watch",
+    "start": "node dist/server/server.js",
+    "start:watch": "nodemon --watch dist/server --ext js --exec node dist/server/server.js",
+    "browser": "browser-sync start --proxy http://localhost:3000 --files \"public/**/*\" --port 3001 --open",
+    "dev": "concurrently \"npm run build:server:watch\" \"npm run build:client:watch\" \"npm run start:watch\" \"npm run browser\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bootstrap-icons": "^1.13.1",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^22.20.2",
+    "browser-sync": "^3.0.4",
+    "concurrently": "^10.0.5",
+    "nodemon": "^3.1.14",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^7.0.2"
+  }
+}

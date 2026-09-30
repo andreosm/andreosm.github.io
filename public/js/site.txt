@@ -1,0 +1,194 @@
+document.addEventListener("DOMContentLoaded", () => {
+  /* =====================================================
+       LANGUAGE SELECTION
+       ===================================================== */
+
+  const languageButtons = document.querySelectorAll(".language-button");
+
+  languageButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const language = button.getAttribute("data-language");
+
+      if (!language) {
+        return;
+      }
+
+      // Remember the user's selection
+      localStorage.setItem("preferredLanguage", language);
+
+      console.log(`Selected language: ${language}`);
+
+      // Temporary behavior.
+      // Full multilingual implementation will come later.
+    });
+  });
+
+  /* =====================================================
+       RESPONSIVE MENU
+       ===================================================== */
+
+  const menuToggle = document.querySelector(".menu-toggle");
+
+  const partyNavbar = document.querySelector(".party-navbar");
+
+  if (menuToggle && partyNavbar) {
+    menuToggle.addEventListener("click", () => {
+      const isOpen = partyNavbar.classList.toggle("menu-open");
+
+      menuToggle.setAttribute("aria-expanded", isOpen.toString());
+    });
+  }
+
+  /* =====================================================
+       FLOATING DATE IMAGE
+       ===================================================== */
+
+  const floatingImage = document.querySelector(".floating-date-image");
+
+  /*
+   * Layout constants.
+   *
+   * These values represent the rules we established.
+   */
+
+    const NAVBAR_WIDTH = 170;
+    const IMAGE_WIDTH = 150;
+
+    const MAX_GAP = 200;
+    const MIN_GAP = 10;
+
+    const MIN_IMAGE_LEFT = 680;
+
+    const DESKTOP_MIN_WIDTH = 980;
+
+
+    function positionFloatingImage() {
+
+        if (!floatingImage || !partyNavbar) {
+            return;
+        }
+
+    const windowWidth = window.innerWidth;
+
+
+        /* =================================================
+           MOBILE / TABLET
+           =================================================
+
+           Below 980px the desktop navbar is replaced
+           by the hamburger.
+
+           The floating image is hidden.
+           ================================================= */
+
+    if (windowWidth < DESKTOP_MIN_WIDTH) {
+      floatingImage.classList.add("floating-date-image-hidden");
+
+            return;
+        }
+
+
+        /* =================================================
+           DESKTOP
+           ================================================= */
+
+        /*
+         * The navbar is always docked to the right
+         * and is always 170px wide.
+         */
+
+    const navbarLeft = windowWidth - NAVBAR_WIDTH;
+
+
+        /*
+         * -------------------------------------------------
+         * PHASE 1
+         *
+         * Image remains stationary.
+         *
+         * Navbar moves toward it as the window narrows.
+         *
+         * Desired image right edge:
+         *
+         * navbarLeft - MAX_GAP
+         * -------------------------------------------------
+         */
+
+    const imageRight = MIN_IMAGE_LEFT + IMAGE_WIDTH;
+
+    const currentGap = navbarLeft - imageRight;
+
+
+        if (currentGap >= MIN_GAP) {
+
+            /*
+             * The image stays at its 680px position.
+             */
+
+      floatingImage.style.left = `${MIN_IMAGE_LEFT}px`;
+
+      floatingImage.classList.remove("floating-date-image-hidden");
+
+            return;
+        }
+
+
+        /*
+         * -------------------------------------------------
+         * PHASE 2
+         *
+         * Navbar and image move together.
+         *
+         * Maintain exactly the minimum 10px gap.
+         * -------------------------------------------------
+         */
+
+    const lockedImageLeft = navbarLeft - MIN_GAP - IMAGE_WIDTH;
+
+
+        /*
+         * -------------------------------------------------
+         * PHASE 3
+         *
+         * The image cannot move farther left than
+         * 680px.
+         * -------------------------------------------------
+         */
+
+    if (lockedImageLeft >= MIN_IMAGE_LEFT) {
+      floatingImage.style.left = `${lockedImageLeft}px`;
+
+      floatingImage.classList.remove("floating-date-image-hidden");
+
+            return;
+        }
+
+
+        /*
+         * -------------------------------------------------
+         * PHASE 4
+         *
+         * The image has reached its 680px limit.
+         *
+         * Hide it.
+         * -------------------------------------------------
+         */
+
+    floatingImage.classList.add("floating-date-image-hidden");
+  }
+
+
+    /* =====================================================
+       WINDOW RESIZE
+       ===================================================== */
+
+  window.addEventListener("resize", positionFloatingImage);
+
+
+    /* =====================================================
+       INITIAL POSITION
+       ===================================================== */
+
+    positionFloatingImage();
+
+});
