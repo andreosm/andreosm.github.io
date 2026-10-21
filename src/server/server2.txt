@@ -1,0 +1,1367 @@
+import express from "express";
+import path from "path";
+import session from "express-session";
+
+import { Request, Response, NextFunction } from "express";
+
+import { Guest } from "./models/guest.js";
+import { NavButtons } from "./models/navButtons.js";
+
+import { StepperState, STEPS, StepId } from "./models/stepper";
+import { completeStep, getStepper, setCurrentStep } from "./services/stepperService";
+
+import {
+  findGuest,
+  // findGuestByGuid,
+  // findGuestByName,
+  updateGuest,
+  // updateGuestPreferredLanguage,
+} from "./services/guestCsvService.js";
+
+type Language = "en" | "pt" | "it";
+
+declare module "express-session" {
+  interface SessionData {
+    guest?: Guest;
+    pendingGuest?: Guest;
+    returnTo?: string;
+    navButtons?: NavButtons;
+    preferredLanguage: Language;
+  }
+}
+
+const app = express();
+
+function requireGuest(req: Request, res: Response, next: NextFunction): void {
+  if (!req.session.guest) {
+    req.session.returnTo = req.originalUrl;
+
+    res.redirect("/search?reason=search");
+    return;
+  }
+
+  next();
+}
+
+app.use(
+  express.urlencoded({
+    extended: true,
+  }),
+);
+
+app.use(express.json());
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET ?? "development-only-secret",
+    // TODO: For production, set SESSION_SECRET as an environment variable rather than putting it in source control.
+
+    resave: false,
+
+    saveUninitialized: false,
+
+    cookie: {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+
+      maxAge: 1000 * 60 * 60 * 24 * 30,
+    },
+  }),
+);
+
+app.use((req, res, next) => {
+  res.locals.guest = req.session.guest ?? null;
+  res.locals.navButtons = req.session.navButtons ?? null;
+  // res.locals.language = req.session.guest?.language ?? "en";
+  res.locals.preferredLanguage =
+    req.session.guest?.preferredLanguage ?? req.session.guest?.language ?? "";
+
+  next();
+});
+
+const PORT = process.env.PORT || 3000;
+
+// ============================================================
+// PATHS
+// ============================================================
+
+// Public directory is located at the project root.
+const publicPath = path.join(process.cwd(), "public");
+
+// EJS views are located under src/views.
+const viewsPath = path.join(process.cwd(), "src", "views");
+
+// ============================================================
+// VIEW ENGINE
+// ============================================================
+
+app.set("view engine", "ejs");
+
+app.set("views", viewsPath);
+
+// ============================================================
+// STATIC FILES
+// ============================================================
+
+// Serve everything under /public.
+app.use(express.static(publicPath));
+
+// Serve Bootstrap Icons.
+app.use(
+  "/bootstrap-icons",
+  express.static(path.join(process.cwd(), "node_modules", "bootstrap-icons")),
+);
+
+//Create an object with default values 
+// const temp: NavButtons = {
+//   activePage: "index",
+//   showNext: false,
+//   showNextLink: false,
+//   showBack: false,
+//   showRsvp: false,
+//   showStar: false,
+//   showLogout: false,
+//   nextUrl: null,
+//   backUrl: null,
+//   stepperId: null,
+// };
+
+// OR
+//Create a reusable factory function
+export function createNavButtons(): NavButtons {
+  return {
+    activePage: "index",
+    showNext: false,
+    showNextLink: false,
+    showBack: false,
+    showButtons: false,
+    showLogout: false,
+    nextUrl: null,
+    backUrl: null,
+  };
+}
+
+  const StepperState = {
+    currentStep: "index" as StepId,
+    completedSteps: [] as StepId[],
+  };
+
+// ============================================================
+// ROUTES GET
+// ============================================================
+
+// Home page
+app.get("/index", (req: Request, res: Response) => {
+  // const source = typeof req.query.s === "string" ? req.query.s : "b";
+  // const guest = req.session.guest ?? null;
+
+  // console.debug(guest);
+
+  // if (guest == null) {
+  //   navButtons.showRsvp = false;
+  //   navButtons.showStar = false;
+  //   navButtons.showLogout = false;
+  // }
+
+  // const finished =
+  //   typeof guest?.finished === "string"
+  //     ? guest?.finished
+  //     : "false";
+
+  // const isFinished = finished === "true";
+
+  // console.debug("the value of finished" + finished);
+  // console.debug("the value of isFinished" + isFinished);
+
+  // navButtons.source = source;
+
+  // if (guest?.guid.length == 36) navButtons.showLogout = true;
+
+  // if (guest && isFinished) {
+  //   navButtons.showRsvp = true;
+  //   navButtons.showStar = true;
+  // }
+
+  // if (source === "m" && isFinished) {
+  //   navButtons.showBack = false;
+  //   navButtons.showNext = false;
+  //   navButtons.showNextLink = false;
+  //   navButtons.backUrl = "";
+  //   navButtons.nextUrl = "";
+  // }
+
+  // if (source === "b" || (source === "m" && !isFinished)) {
+  //   navButtons.showBack = false;
+  //   navButtons.showNext = true;
+  //   navButtons.showNextLink = false;
+  //   navButtons.backUrl = "";
+  //   navButtons.nextUrl = "party";
+  // }
+
+  // req.session.navButtons = navButtons;
+
+
+  // getNewStep(req);
+ 
+  const navButtons = getNavButtons(req);
+  // req.session.navButtons = navButtons;
+  
+  // delete req.session.stepper;
+
+  completeStep(req, "");
+  
+  // setCurrentStep(req, tracker);
+
+  // for (const step of completedSteps) {
+  //   completeStep(req, step);
+  // }
+
+  // console.debug(navButtons);
+
+  // console.debug(StepperState);
+
+  // console.debug(req.path.substring(1));
+ 
+
+  res.render("index", {
+    navButtons,
+    stepper: getStepper(req),
+    steps: STEPS,
+  });
+});
+
+// The Party
+app.get("/party", (req: Request, res: Response) => {
+  // const source = typeof req.query.s === "string" ? req.query.s : "b";
+  // const guest = req.session.guest ?? null;
+  // const finished = typeof guest?.finished === "string" ? guest?.finished : "false";
+
+  // const isFinished = finished === "true";
+
+  // navButtons.source = source;
+
+  // if (guest?.guid.length == 36) navButtons.showLogout = true;
+
+  // if (isFinished) {
+  //   navButtons.showRsvp = true;
+  //   navButtons.showStar = true;
+  // }
+
+  // if (source === "m" && isFinished) {
+  //   navButtons.showBack = false;
+  //   navButtons.showNext = false;
+  //   navButtons.showNextLink = false;
+  //   navButtons.backUrl = "";
+  //   navButtons.nextUrl = "";
+  // }
+
+  // if (source === "b" || (source === "m" && !isFinished)) {
+  //   navButtons.showBack = true;
+  //   navButtons.showNext = true;
+  //   navButtons.showNextLink = false;
+  //   navButtons.backUrl = "index";
+  //   navButtons.nextUrl = "star?goto=1";
+  // }
+
+  // req.session.navButtons = navButtons;
+  const navButtons = getNavButtons(req);
+  // req.session.navButtons = navButtons;
+  
+  // getNewStep(req);
+
+  console.debug(req.path.substring(1));
+  console.debug(StepperState);
+  
+  setCurrentStep(req, "party");
+  completeStep(req, "welcome");
+
+  res.render("party", {
+    navButtons,
+    stepper: getStepper(req),
+    steps: STEPS,
+  });
+});
+
+// Be a Star
+// app.get("/star", (_req: Request, res: Response) => {
+//   res.render("star", {
+//     starOptions,
+//     activePage: "star",
+//   });
+// });
+
+app.get("/star", requireGuest, (req: Request, res: Response) => {
+  // const source = typeof req.query.s === "string" ? req.query.s : "b";
+  const goto = typeof req.query.goto === "string" ? req.query.goto : "1";
+  // const guest = req.session.guest ?? null;
+  // const finished =
+  //   typeof guest?.finished === "string" ? guest?.finished : "false";
+
+  // const isFinished = finished === "true";
+
+  // navButtons.source = source;
+
+  // if (guest?.guid.length == 36) navButtons.showLogout = true;
+
+  // if (isFinished) {
+  //   navButtons.showRsvp = true;
+  //   navButtons.showStar = true;
+  // }
+
+  // if (source === "m" && isFinished) {
+  //   navButtons.showBack = false;
+  //   navButtons.showNext = true;
+  //   navButtons.showNextLink = false;
+  //   navButtons.backUrl = "";
+  //   navButtons.nextUrl = "star?goto=2";
+  // }
+
+  // if (source === "b" && isFinished) {
+  //   navButtons.showBack = true;
+  //   navButtons.showNext = true;
+  //   navButtons.showNextLink = false;
+  //   navButtons.backUrl = "party";
+  //   navButtons.nextUrl = "star?goto=2";
+  // }
+
+  // if (!isFinished) {
+  //   navButtons.showBack = true;
+  //   navButtons.showNext = true;
+  //   navButtons.showNextLink = false;
+  //   navButtons.backUrl = "party";
+  //   navButtons.nextUrl = "rsvp";
+  // }
+
+  // req.session.navButtons = navButtons; 
+  const navButtons = getNavButtons(req);
+  // req.session.navButtons = navButtons;
+  //const StepperState = getNewStep(req);
+
+  // delete req.session.stepper;
+
+  // const { currentStep, completedSteps } = updateCurrentStep(req, "");
+
+  // setCurrentStep(req, currentStep);
+
+  // for (const step of completedSteps) {
+  //   completeStep(req, step);
+  // }
+
+        
+  res.render("star", {
+    guest: req.session.guest,
+    starOptions,
+    navButtons,
+    goto,
+    stepper: getStepper(req),
+    steps: STEPS,
+  });
+});
+
+// The Venue
+app.get("/venue", (req: Request, res: Response) => {
+  const source = req.query.s;
+
+  res.render("venue", {
+    activePage: "venue",
+  });
+});
+
+// RSVP
+// app.get("/rsvp", (_req: Request, res: Response) => {
+//   res.render("rsvp", {
+//     activePage: "rsvp",
+//     showDisclaimer: true,
+//   });
+// });
+app.get("/rsvp", requireGuest, (req: Request, res: Response) => {
+  // const source = typeof req.query.s === "string" ? req.query.s : "b";
+  // const guest = req.session.guest ?? null;
+  // const finished =
+  //   typeof guest?.finished === "string" ? guest?.finished : "false";
+
+  // const isFinished = finished === "true";
+
+  // navButtons.source = source;
+
+  // if (guest?.guid.length == 36) navButtons.showLogout = true;
+
+  // if (isFinished) {
+  //   navButtons.showRsvp = true;
+  //   navButtons.showStar = true;
+  // }
+
+  // if (source === "m" && isFinished) {
+  //   navButtons.showBack = false;
+  //   navButtons.showNext = true;
+  //   navButtons.showNextLink = true;
+  //   navButtons.backUrl = "";
+  //   navButtons.nextUrl = "";
+  // }
+
+  // if (source === "b" || (source === "m" && !isFinished)) {
+  //   navButtons.showBack = true;
+  //   navButtons.showNext = true;
+  //   navButtons.showNextLink = true;
+  //   navButtons.backUrl = "star?goto=1";
+  //   navButtons.nextUrl = "";
+  // }
+
+  // req.session.navButtons = navButtons; 
+  const navButtons = getNavButtons(req);
+  //const StepperState = getNewStep(req);
+  // req.session.navButtons = navButtons;
+
+  // delete req.session.stepper;
+
+  // const { currentStep, completedSteps } = updateCurrentStep(req, "");
+
+  // setCurrentStep(req, currentStep);
+
+  // for (const step of completedSteps) {
+  //   completeStep(req, step);
+  // }
+
+  res.render("rsvp", {
+    guest: req.session.guest,
+    showDisclaimer: req.session.guest?.showDisclaimer ?? false,
+    navButtons,
+    stepper: getStepper(req),
+    steps: STEPS,
+  });
+});
+
+// Search
+/* app.get("/search", (req: Request, res: Response) => {
+  const source = req.query.s;
+
+  const reason =
+    typeof req.query.reason === "string" ? req.query.reason : "false";
+  
+  const navButtons = getNavButtons(req);
+  navButtons.showRsvp = false;
+  navButtons.showStar = false;
+  navButtons.showLogout = false;
+
+  res.render("search", {
+    activePage: "",
+    reason,
+    navButtons,
+  });
+  
+}); */
+
+// Invite - Deep link
+// app.get(
+//   "/invite/:guid",
+//   async (req: Request<{ guid: string }>, res: Response) => {
+//     try {
+
+//       const guest = await getGuest(req, res, "guid");
+
+//       if (!guest) {
+//         res.redirect("/search?reason=notfound");
+//         return;
+//       }
+
+//       res.redirect("/index");
+//     } catch (error) {
+//       console.error(error);
+
+//       return res.status(500).send("Unable to load invitation.");
+//     }
+//   },
+// );
+
+// Language Preference
+// app.post("/api/guest/language", async (req, res) => {
+//   const guest = req.session.guest;
+//   const language = req.body.language;
+
+//   if (!guest) {
+//     return res.status(401).json({
+//       error: "Guest not identified",
+//     });
+//   }
+
+//   if (!["en", "pt", "it"].includes(language)) {
+//     return res.status(400).json({
+//       error: "Invalid language",
+//     });
+//   }
+
+//   try {
+//     // await updateGuestPreferredLanguage(guest.guid, language);
+//     await updateGuest("language", { ...guest, preferredLanguage: language });
+
+//     await findGuest(guest.guid, null, null); // Refresh the guest data after update
+//     // Keep the current session synchronized.
+//     // guest.preferredLanguage = language;
+//     // req.session.effectiveLanguage = language;
+
+//     return res.json({
+//       success: true,
+//       language,
+//     });
+//   } catch (error) {
+//     console.error(error);
+
+//     return res.status(500).json({
+//       error: "Unable to save language preference",
+//     });
+//   }
+// });
+
+// Logout
+
+
+
+// ============================================================
+// ROUTES POST
+// ============================================================
+
+
+// RSVP POST
+/* app.post("/rsvp", requireGuest, async (req: Request, res: Response) => {
+  try {
+    const guest = req.session.guest!;
+    const attending = req.body.attending;
+
+    let partySize: number;
+
+    // -------------------------
+    // NO
+    // -------------------------
+
+    if (attending === "no") {
+      partySize = 0;
+    }
+
+    // -------------------------
+    // YES
+    // -------------------------
+    else if (attending === "yes") {
+      const submittedSize = Number(req.body.partySize);
+
+      if (!Number.isInteger(submittedSize) || submittedSize <= 0) {
+        return res.status(400).json({
+          success: false,
+          feedbackType: "danger",
+          feedbackKey: "rsvpInvalidPartySize",
+        });
+      }
+
+      partySize = submittedSize;
+    }
+
+    // -------------------------
+    // INVALID
+    // -------------------------
+    else {
+      return res.status(400).json({
+        success: false,
+        feedbackType: "warning",
+        feedbackKey: "rsvpAttendanceRequired",
+      });
+    }
+
+    // -------------------------
+    // UPDATE CSV
+    // -------------------------
+    guest.partySizeEst = partySize;
+    await updateGuest("rsvp", guest);    
+
+    // const StepperState = getNewStep(req);
+
+    // -------------------------
+    // UPDATE SESSION
+    // -------------------------
+    // const guid = guest.guid;
+    // const updatedGuest = await getGuest(req, "guid"); 
+
+    // if (updatedGuest) {
+    //   const finished = updatedGuest.finished;
+
+    //   delete req.session.guest;
+    //   req.session.guest = updatedGuest;
+    // }      
+
+    // -------------------------
+    // SUCCESS FEEDBACK
+    // -------------------------
+
+    if (attending === "no") {
+      return res.json({
+        success: true,
+        feedbackType: "info",
+        feedbackKey: "rsvpDeclined",
+        partySize,
+      });
+    }
+
+    return res.json({
+      success: true,
+      feedbackType: "success",
+      feedbackKey: "rsvpAccepted",
+      partySize,
+      stepper: getStepper(req),
+      steps: STEPS,
+    });
+  } catch (error) {
+    console.error("RSVP update failed:", error);
+
+    return res.status(500).json({
+      success: false,
+      feedbackType: "danger",
+      feedbackKey: "rsvpSaveError",
+    });
+  }
+}); */
+
+// BE A STAR
+/* app.post("/star", requireGuest, async (req: Request, res: Response) => {
+  const guest = req.session.guest;
+
+    if (!guest) {
+      return res.status(401).json({
+        success: false,
+        key: "guestNotIdentified",
+      });
+    }
+
+  const { star, presenting, songs } = req.body;
+  const whichForm = req.body.whichForm;
+
+    // --------------------------------------------------------
+    // Validate
+    // --------------------------------------------------------
+
+  if (whichForm === "1") {
+    if (typeof star !== "string" || !star.trim()) {
+      return res.status(400).json({
+        success: false,
+        key: "starSelectionRequired",
+      });
+    }
+
+    guest.star = star.trim();
+    guest.presenting = typeof presenting === "string" ? presenting.trim() : "";
+    await updateGuest("star", guest);
+  }
+
+  if (whichForm === "2") {
+    if (!Array.isArray(songs) || songs.length !== 7) {
+      return res.status(400).json({
+        success: false,
+        key: "starSaveError",
+      });
+    }
+
+    guest.song1 = String(songs[0] ?? "").trim();
+    guest.song2 = String(songs[1] ?? "").trim();
+    guest.song3 = String(songs[2] ?? "").trim();
+    guest.song4 = String(songs[3] ?? "").trim();
+    guest.song5 = String(songs[4] ?? "").trim();
+    guest.song6 = String(songs[5] ?? "").trim();
+    guest.song7 = String(songs[6] ?? "").trim();
+
+    await updateGuest("songs", guest);
+  }
+
+    // --------------------------------------------------------
+    // Update Guest/Session
+  // --------------------------------------------------------
+  
+ 
+    try {
+      // Save the modified guest back to your CSV.
+      //
+      // Use your existing CSV update function here:
+      // await updateGuest(guest);
+
+      // // -------------------------
+      // // UPDATE SESSION
+      // // -------------------------
+      // const guid = guest.guid;
+      // const updatedGuest = await getGuest(req, "guid");
+
+      // if (updatedGuest) {
+      //   guest.finished = updatedGuest.finished;
+      // }
+
+      // req.session.guest = guest;
+
+      // const { currentStep, completedSteps } = updateCurrentStep(req, whichForm);
+
+      // setCurrentStep(req, currentStep);
+
+      // for (const step of completedSteps) {
+      //   completeStep(req, step);
+      // }
+      const navButtons = getNavButtons(req);
+      // const StepperState = getNewStep(req);
+
+      return res.json({
+        success: true,
+        key: "starSaved",
+        stepper: getStepper(req),
+        navButtons,
+        steps: STEPS,
+      });
+    } catch (error) {
+      console.error("Error saving Star information:", error);
+
+      return res.status(500).json({
+        success: false,
+        key: "starSaveError",
+      });
+    }
+  },
+); */
+
+// Search
+app.post("/search", async (req: Request, res: Response) => {
+  try {
+    
+    const firstName = String(req.body.firstName ?? "");
+    const lastName = String(req.body.lastName ?? "");
+
+    if (!firstName.trim() || !lastName.trim()) {
+      return res.status(400).json({
+        success: false,
+        key: "nullFirstOrLastName",
+      });
+    }
+
+    const guest = await getGuest(req, res, "name");
+
+    if (!guest) {
+      return res.status(404).json({
+        success: false,
+        key: "searchByNameNotFound",
+      });
+    }
+
+    /*
+     Guest successfully identified.
+    */
+
+    delete req.session.pendingGuest;
+    req.session.pendingGuest = guest;
+
+      const navButtons = getNavButtons(req);
+      //const StepperState = getNewStep(req);
+
+    return res.json({
+      success: true,
+      firstName: guest.firstName,
+      navButtons,
+      //stepper: getStepper(req),
+      //steps: STEPS,
+    });
+  } catch (error) {
+    console.error("Guest identification failed:", error);
+
+    return res.status(500).render("search", {
+      error: "We were unable to search for your invitation.",
+    });
+  }
+});
+
+app.post("/search/access-code", (req: Request, res: Response) => {
+  try {
+    const accessCode = String(req.body.accessCode ?? "");
+
+    if (!accessCode.trim) {
+      return res.status(400).json({
+        success: false,
+        key: "nullAccessCode",
+      });
+    }
+
+    const guest = req.session.pendingGuest!;
+
+    if (!guest || guest.accessCode! !== accessCode) {
+      return res.status(400).json({
+        success: false,
+        key: "unmatchedAccessCode",
+      });
+    }
+
+
+    if (guest && guest.accessCode === accessCode) {
+      req.session.guest = guest;
+      delete req.session.pendingGuest;
+
+      const redirectUrl = req.session.returnTo || "/";
+
+      console.debug("redirectUrl: " + redirectUrl);
+
+      delete req.session.returnTo;
+
+        //const navButtons = getNavButtons(req);
+        //const StepperState = getNewStep(req);
+
+      return res.status(200).json({
+        success: true,
+        redirectUrl,
+       // navButtons,
+        //stepper: getStepper(req),
+        //steps: STEPS,
+      });
+    }
+  }
+  catch (error) {
+    console.error("Access code verification failed:", error);
+
+    return res.status(500).render("search", {
+      error: "We were unable to verify your information.",
+    });
+  }
+});
+
+app.post("/api/stepper", requireGuest, (req, res) => {
+  const { currentStep, completedSteps } = req.body;
+
+  const validSteps: StepId[] = [
+    "welcome",
+    "party",
+    "star",
+    "rsvp",
+    "thats60s",
+    "thats7s",
+    "end",
+  ];
+
+  if (
+    !validSteps.includes(currentStep) ||
+    !Array.isArray(completedSteps) ||
+    !completedSteps.every((step) => validSteps.includes(step))
+  ) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid stepper data",
+    });
+  }
+
+  setCurrentStep(req, currentStep);
+
+  for (const step of completedSteps) {
+    completeStep(req, step);
+  }
+
+  return res.json({
+    success: true,
+    stepper: getStepper(req),
+  });
+});
+
+// const starOptions = [
+//   { value: "absolutely", key: "starAbsolutely" },
+//   { value: "yes", key: "starYes" },
+//   { value: "maybe", key: "starMaybe" },
+//   { value: "probably", key: "starProbably" },
+//   { value: "considering", key: "starConsidering" },
+//   { value: "think", key: "starThink" },
+//   { value: "encouragement", key: "starEncouragement" },
+//   { value: "convince", key: "starConvince" },
+//   { value: "ideas", key: "starIdeas" },
+//   { value: "secretIdea", key: "starSecretIdea" },
+//   { value: "shyInterested", key: "starShyInterested" },
+//   { value: "reallyShy", key: "starReallyShy" },
+//   { value: "oneDrink", key: "starOneDrink" },
+//   { value: "fewDrinks", key: "starFewDrinks" },
+//   { value: "severalDrinks", key: "starSeveralDrinks" },
+//   { value: "friends", key: "starFriends" },
+//   { value: "backupSingers", key: "starBackupSingers" },
+//   { value: "backupDancers", key: "starBackupDancers" },
+//   { value: "howbigStage", key: "starHowBigStage" },
+//   { value: "discuss", key: "starDiscuss" },
+//   { value: "negotiate", key: "starNegotiate" },
+//   { value: "sixtySeconds", key: "starSixtySeconds" },
+//   { value: "lipSync", key: "starLipSync" },
+//   { value: "noTalent", key: "starNoTalent" },
+//   { value: "zeroTalent", key: "starZeroTalent" },
+//   { value: "defineStar", key: "starDefineStar" },
+//   { value: "audience", key: "starAudience" },
+//   { value: "photos", key: "starPhotos" },
+//   { value: "video", key: "starVideo" },
+//   { value: "confiscatePhones", key: "starConfiscatePhones" },
+//   { value: "disguise", key: "starDisguise" },
+//   { value: "leaveCountry", key: "starLeaveCountry" },
+//   { value: "excuses", key: "starExcuses" },
+//   { value: "noNo", key: "starNoNo" },
+//   { value: "whereIsNo", key: "starWhereIsNo" },
+//   { value: "stillNo", key: "starStillNo" },
+//   { value: "talkAtParty", key: "starTalkAtParty" },
+//   { value: "notSure", key: "starNotSure" },
+//   { value: "no", key: "starNo" },
+// ];
+
+// function getNavButtons(req: Request): NavButtons {
+//   delete req.session.navButtons;
+
+//   const temp = createNavButtons();
+//   temp.activePage = req.path.substring(1) || "index";
+
+//   const source = typeof req.query.s === "string" ? req.query.s : "b";
+
+//   if (guestIsIdentified(req)) { 
+//     temp.showLogout = false;
+
+//     if (guestIsFinished(req)) {
+//       temp.showButtons = true;
+//     }
+
+//     if (source === "b") {
+
+//       if (temp.activePage === "/" || temp.activePage === "" || temp.activePage === "index") {
+//          temp.showNext = true;
+//          temp.nextUrl = "party";
+//       }
+
+//         if (temp.activePage === "party") {
+//           temp.showBack = true;
+//           temp.showNext = true;
+//           temp.backUrl = "index";
+//           temp.nextUrl = "star?goto=1";
+//         }
+
+//         if (temp.activePage === "star") {
+//           temp.showBack = true;
+//           temp.showNext = true;
+//           temp.backUrl = "party";
+//           temp.nextUrl = "rsvp";
+//         }
+      
+//       if(temp.activePage === "rsvp") {
+//         temp.showBack = true;
+//         temp.showNext = true;
+//         temp.showNextLink = true;
+//         temp.backUrl = "star?goto=1";
+//         temp.nextUrl = "";
+//     }
+      
+        
+      
+
+//   }
+  
+
+
+//   const guest = req.session.guest ?? null;
+  
+
+  
+  
+
+
+//   if (guest != null) 
+  
+//   console.debug("source: " + source);
+  
+//   // switch (temp.activePage) {
+//   //   case "/":
+//   //   case "":
+//   //   case "index":
+//   //     // if (source === "m" && isFinished) {
+
+//   //     //   temp.showBack = false;
+//   //     //   temp.showNext = false;
+//   //     //   temp.showNextLink = false;
+//   //     //   temp.backUrl = "";
+//   //     //   temp.nextUrl = "";
+//   //     //   temp.stepperId= "";
+//   //     // }
+
+//   //     // if (source == "b" || (source === "m" && !isFinished)) {
+//   //     //   temp.showBack = false;
+//   //     //   temp.showNext = true;
+//   //     //   temp.showNextLink = false;
+//   //     //   temp.backUrl = "";
+//   //     //   temp.nextUrl = "party";
+//   //     //   temp.stepperId = "";
+//   //     // }
+//   //     // break;
+
+//   //   case "party":
+//   //     // if (source === "m" && isFinished) {
+//   //     //   temp.showBack = false;
+//   //     //   temp.showNext = false;
+//   //     //   temp.showNextLink = false;
+//   //     //   temp.backUrl = "";
+//   //     //   temp.nextUrl = "";
+//   //     //   temp.stepperId = "";
+//   //     // }
+
+//   //     // if (source == "b" || (source === "m" && !isFinished)) {
+//   //     //   temp.showBack = true;
+//   //     //   temp.showNext = true;
+//   //     //   temp.showNextLink = false;
+//   //     //   temp.backUrl = "index";
+//   //     //   temp.nextUrl = "star?goto=1";
+//   //     //   temp.stepperId = "";
+//   //     // }
+//   //     break;
+
+//   //   case "star":
+//   //     temp.activePage = isFinished ? "star" : "party";
+//   //     if (source === "m" && isFinished) {
+//   //       temp.showBack = false;
+//   //       temp.showNext = true;
+//   //       temp.showNextLink = false;
+//   //       temp.backUrl = "";
+//   //       temp.nextUrl = "star?goto=2";
+//   //       temp.stepperId = "";
+//   //     }
+
+//   //     if (source === "b" && isFinished) {
+//   //       temp.showBack = true;
+//   //       temp.showNext = true;
+//   //       temp.showNextLink = false;
+//   //       temp.backUrl = "party";
+//   //       temp.nextUrl = "star?goto=2";
+//   //       temp.stepperId = "";
+//   //     }
+
+//   //     // if (!isFinished) {
+//   //     //   temp.showBack = true;
+//   //     //   temp.showNext = true;
+//   //     //   temp.showNextLink = false;
+//   //     //   temp.backUrl = "party";
+//   //     //   temp.nextUrl = "rsvp";
+//   //     //   temp.stepperId = "";
+//   //     // }
+
+//   //     break;
+
+//   //   case "rsvp":
+//   //     temp.activePage = isFinished ? "rsvp" : "party";
+
+//   //     if (source === "m" && isFinished) {
+//   //       temp.showBack = false;
+//   //       temp.showNext = true;
+//   //       temp.showNextLink = true;
+//   //       temp.backUrl = "";
+//   //       temp.nextUrl = "";
+//   //       temp.stepperId = "";
+//   //     }
+
+//   //     // if (source === "b" || (source === "m" && !isFinished)) {
+//   //     //   temp.showBack = true;
+//   //     //   temp.showNext = true;
+//   //     //   temp.showNextLink = true;
+//   //     //   temp.backUrl = "star?goto=1";
+//   //     //   temp.nextUrl = "";
+//   //     //   temp.stepperId = "";
+//   //     // }
+//   //     break;
+//   // }
+  
+//   console.debug(temp);
+
+//   return {
+//       activePage: temp.activePage,
+//       showLogout: temp.showLogout,
+//       showNextLink: temp.showNextLink,
+//       showBack: temp.showBack,
+//       showNext: temp.showNext,
+//       backUrl: temp.backUrl,
+//       nextUrl: temp.nextUrl,
+//       showButtons: temp.showButtons,
+//   };
+// }
+
+// function getLanguage(req: Request) {
+//   const preferredLanguage: Language =
+//     req.session.guest?.preferredLanguage ?? req.session.guest?.language ?? "en";
+// }
+
+// function updateCurrentStep(req: Request, whichForm : string): {
+//   currentStep: StepId;
+//   completedSteps: StepId[];
+// } {
+//   const guest = req.session.guest ?? null;
+//   const source = typeof req.query.s === "string" ? req.query.s : "b";
+//   const activePage = req.session.navButtons?.activePage ?? null;
+//   const isFinished = guestIsFinished(req);
+//   const page = req.path.substring(1) || "index";
+//   const goTo = req.query.goto || "1";
+
+//   console.debug("isFinished: " + isFinished);
+
+//   let currentStep: StepId = "welcome";
+//   let completedSteps: StepId[] = [];
+//   console.debug("page: " + page);
+//   console.debug("whichForm: " + whichForm);
+
+//   switch (page) {
+//     case "index":
+//       currentStep = "welcome";
+//       break;
+//     case "party":
+//       currentStep = "party";
+//       completedSteps = ["welcome"];
+//       break;
+//     case "star":
+//       if (goTo == "1") {
+//         currentStep = "star";
+//         completedSteps = ["welcome", "party"];
+//       }
+//       if (goTo === "2") {
+//         currentStep = "thats60s";
+//         completedSteps = ["welcome", "party", "star", "rsvp"];
+//       }
+//       if (goTo === "3") {
+//         if(guest?.star != undefined && guest?.star != null && guest?.star != "") {
+//           currentStep = "thats7s";
+//           completedSteps = ["welcome", "party", "star", "rsvp", "thats60s"];
+//         }
+//         if (
+//           guest?.star != undefined &&
+//           guest?.star != null &&
+//           guest?.star != "" &&
+//           ((guest?.song1 != undefined && guest?.song1 != "") ||
+//             (guest?.song2 != undefined && guest?.song2 != "") ||
+//             (guest?.song3 != undefined && guest?.song3 != "") ||
+//             (guest?.song4 != undefined && guest?.song4 != "") ||
+//             (guest?.song5 != undefined && guest?.song5 != "") ||
+//             (guest?.song6 != undefined && guest?.song6 != "") ||
+//             (guest?.song7 != undefined && guest?.song7 != "")) &&
+//           guest?.finished === "true"
+//         ) {
+//           currentStep = "end";
+//           completedSteps = ["welcome", "party", "star", "rsvp", "thats60s", "thats7s", "end"];
+//         }
+//         // currentStep = "thats7s";
+//         // completedSteps = ["welcome", "party", "star", "rsvp"];
+//       }
+//       // if (goTo === "3" && whichForm == "2") {
+//       //   currentStep = "end";
+//       //   completedSteps = ["welcome", "party", "star", "rsvp"];
+//       // }
+//       break;
+//     case "rsvp":
+//       currentStep = "rsvp";
+//       completedSteps = ["welcome", "party", "star"];
+//       break;
+//   }
+
+//   // if (isFinished) {
+//   //   completedSteps = [
+//   //     "welcome",
+//   //     "party",
+//   //     "star",
+//   //     "rsvp",
+//   //     "thats60s",
+//   //     "thats7s",
+//   //     "end",
+//   //   ];
+//   // }
+
+//   // if (!isFinished) {
+//   //   console.debug("guest?.partySizeEst: " + guest?.partySizeEst);
+
+//   //   if 
+//   //     (guest?.partySizeEst != undefined
+//   //       && guest?.partySizeEst != null
+//   //     && Number(guest.partySizeEst) >= 0) {
+//   //     console.debug("here");
+//   //     completedSteps.push("rsvp");
+//   //   } else {
+//   //     console.debug("there");
+//   //       }
+    
+//   //     if (
+//   //       guest?.partySizeEst != undefined &&
+//   //       guest?.partySizeEst != null &&
+//   //       Number(guest.partySizeEst) >= 0 &&
+//   //       guest?.star != ""
+//   //     ) {
+//   //       console.debug("here");
+//   //       completedSteps.push("thats60s");
+//   //     } else {
+//   //       console.debug("there");
+//   //     }
+      
+//   //   if (
+//   //     guest?.partySizeEst != undefined &&
+//   //     guest?.partySizeEst != null &&
+//   //     Number(guest.partySizeEst) >= 0 &&
+//   //     guest?.star != "" &&
+//   //     (
+//   //       (guest?.song1 != undefined && guest?.song1 != "") ||
+//   //       (guest?.song2 != undefined && guest?.song2 != "") ||
+//   //       (guest?.song3 != undefined && guest?.song3 != "") ||
+//   //       (guest?.song4 != undefined && guest?.song4 != "") ||
+//   //       (guest?.song5 != undefined && guest?.song5 != "") ||
+//   //       (guest?.song6 != undefined && guest?.song6 != "") ||
+//   //       (guest?.song7 != undefined && guest?.song7 != "")
+//   //     )
+//   //   ) {
+//   //     console.debug("here");
+//   //     completedSteps.push("thats7s");
+//   //   } else {
+//   //     console.debug("there");
+//   //   }
+
+
+
+//   //     // if ((guest?.partySizeEst ?? 0) >= 0 && guest?.star != "") {
+//   //     //   completedSteps.push("thats60s");
+//   //     // }
+
+//   //     // if (guest?.star != undefined) {
+//   //     //   if ((guest?.partySizeEst ?? 0) >= 0 && guest?.star != "") {
+//   //     //     let anyMusic = false;
+//   //     //     if (
+
+//   //     //     )
+//   //     //       completedSteps.push("thats7s");
+//   //     //   }
+//   //     // }      
+        
+//   // }
+
+//   return { currentStep, completedSteps };
+// }
+
+// async function setNewStep(stepId: StepId, stepIds: StepId[], req: Request): Promise<void> { 
+//     setCurrentStep(req, stepId);
+
+//   for (const step of stepIds) {
+//     completeStep(req, step);
+//   }
+// } 
+  
+
+// async function getNewStep(req: Request): Promise<void> { 
+//   const page = req.path.substring(1) || "index";
+//   const guest = await getGuest(req, null as any, "guid");
+//   const isFinished = guestIsFinished(req);
+
+//   let currentStep: StepId = "welcome";
+//   let completedSteps: StepId[] = [];
+
+//   console.debug(page);
+
+//   switch (page) {
+//     case "index":
+//       currentStep = "welcome";
+//       break;
+
+//     case "party":
+//       currentStep = "party";
+//       completedSteps = ["welcome"];
+//       break;
+
+//     case "star":
+//       currentStep = "star";
+//       completedSteps = ["welcome", "party"];
+      
+//       if (guest?.partySizeEst != undefined && guest?.partySizeEst != null && Number(guest.partySizeEst) >= 0) {
+//         currentStep = "thats60s";
+//         completedSteps.push("rsvp");
+//       }
+    
+//       if(guest?.star != undefined && guest?.star != null && guest?.star != "") {
+//         currentStep = "thats7s";
+//         completedSteps.push("rsvp");
+//         completedSteps.push("star");
+//         completedSteps.push("thats60s");
+//       }
+
+//       if(isFinished) {
+//         currentStep = "end";
+//         completedSteps.push("rsvp");
+//         completedSteps.push("star");
+//         completedSteps.push("thats60s");
+//         completedSteps.push("thats7s");
+//         completedSteps.push("end");
+//       }
+    
+//     case "rsvp":
+//       currentStep = "rsvp";
+//       completedSteps = ["welcome", "party", "star"];
+//       break;
+
+//   }
+
+//   // getStepper(req);
+//   setCurrentStep(req, currentStep);
+
+//   for (const step of completedSteps) {
+//     completeStep(req, step);
+//   }
+
+//   console.debug(StepperState);
+// }
+
+
+  
+
+
+function guestHasRsvp(req: Request): boolean {
+  const guest = req.session.guest ?? null;
+
+  if (guest == null) {
+    return false;
+  }
+
+  const partySizeEst = Number(guest?.partySizeEst ?? -1);
+
+  return partySizeEst >= 0;
+}
+
+function guestHasStar(req: Request): boolean {
+  const guest = req.session.guest ?? null;
+
+  if (guest == null) {
+    return false;
+  }
+
+  const star = typeof guest?.star === "string" ? guest?.star : "";
+
+  return star.trim() !== "";
+}
+
+function guestHasSongs(req: Request): boolean {
+  const guest = req.session.guest ?? null;
+
+  if (guest == null) {
+    return false;
+  }
+
+  const hasSongs =
+    (typeof guest?.song1 === "string" && guest?.song1.trim() !== "") ||
+    (typeof guest?.song2 === "string" && guest?.song2.trim() !== "") ||
+    (typeof guest?.song3 === "string" && guest?.song3.trim() !== "") ||
+    (typeof guest?.song4 === "string" && guest?.song4.trim() !== "") ||
+    (typeof guest?.song5 === "string" && guest?.song5.trim() !== "") ||
+    (typeof guest?.song6 === "string" && guest?.song6.trim() !== "") ||
+    (typeof guest?.song7 === "string" && guest?.song7.trim() !== "");
+
+  return hasSongs;
+}
+  
+function guestIsFinished(req: Request): boolean {
+  const guest = req.session.guest ?? null;
+
+  if (guest == null) {
+    return false;
+  }
+
+  const finished =
+    typeof guest?.finished === "string" ? guest?.finished : "false";
+
+  return finished === "true";
+}
+
+// ============================================================
+// START SERVER
+// ============================================================
+
+app.listen(PORT, () => {
+  console.log(`Party website running at http://localhost:${PORT}`);
+});

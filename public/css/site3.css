@@ -120,6 +120,9 @@ a:hover {
     pointer-events: none;
 }
 
+#home-timezone {
+    text-align: right !important;
+}
 
 /* ---------------------------------
    LEFT SIDE
@@ -141,7 +144,7 @@ a:hover {
     bottom: 70px;
 }
 
-#fadedPostcard {
+#fadedPostcard1 {
     /* position: absolute; */
     left: 550px;
     top: calc(50% - 181px);
@@ -150,6 +153,48 @@ a:hover {
     height: 254px;
 
     transform: translate(-50%, -50%) rotate(-15deg);
+    /* top: calc(50% - 181px);
+    
+    
+     */
+}
+
+#fadedPostcard.home-art {
+    /* position: absolute; */
+    left: -50px;
+    bottom: -50px;
+
+    width: 398px;
+    height: 254px;
+
+    transform: rotate(-15deg);
+
+    /* top: calc(50% - 181px);
+
+    
+
+    transform: translate(-50%, -50%) rotate(-15deg); */
+    /* top: calc(50% - 181px);
+    
+    
+     */
+}
+
+#fadedPostcard.party-art {
+    /* position: absolute; */
+    right: -400px;
+    bottom: -50px;
+
+    width: 398px;
+    height: 254px;
+
+    transform: rotate(-15deg);
+
+    /* top: calc(50% - 181px);
+
+    
+
+    transform: translate(-50%, -50%) rotate(-15deg); */
     /* top: calc(50% - 181px);
     
     
@@ -209,52 +254,23 @@ a:hover {
 }
 
  /* =========================================================
-   NAVIGATION — DESKTOP
+   NAVIGATION — SHARED
    ========================================================= */
 
-.desktop-nav {
-    position: fixed;
-    top: 30px;
-    bottom: 30px;
-    right: 0;
-
-    width: 170px;
-    height: calc(100vh - 60px);
-
-    z-index: 1000;
-
-    background: transparent;
-
-    border-left:
-        1px solid rgba(92, 68, 35, 0.30);
-
-    box-shadow:
-        -4px 0 10px rgba(60, 40, 20, 0.12);
-
+.site-nav {
     box-sizing: border-box;
 
-    padding-top: 2px;
-    padding-left: 0;
-    padding-right: 0;
-}
-
-.desktop-nav-hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-}
-
-.desktop-nav {
-    transition:
-        opacity 0.20s ease,
-        visibility 0.20s ease;
+    font-family:
+        Arial,
+        "Times New Roman",
+        serif;
 }
 
 /* =========================================================
-   MENU ITEMS
+   MENU ITEMS — SHARED
    ========================================================= */
 
-.desktop-nav .navbar-nav {
+.site-nav .navbar-nav {
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -267,25 +283,19 @@ a:hover {
     list-style: none;
 }
 
-.desktop-nav .nav-item {
+.site-nav .nav-item {
     display: block;
     width: 100%;
 }
 
-.desktop-nav .nav-link {
+.site-nav .nav-link {
     display: block;
 
     width: 100%;
 
     box-sizing: border-box;
 
-    /* color: #8b6639; */
     color: #034611;
-
-    font-family:
-        Arial,
-        "Times New Roman",
-        serif;
 
     font-weight: 400;
 
@@ -306,45 +316,30 @@ a:hover {
         background-color 0.2s ease;
 }
 
-
-/* Hover */
-
-.desktop-nav .nav-link:hover {
-    /* color: #7b4f20; */
-    /* color: #fcaf02; */
-
-    /* background-color:
-        rgba(177, 167, 133, 0.35);  */
-
+.site-nav .nav-link:hover {
     font-weight: 900;
 
     background-color:
-        rgba(247, 223, 186, 0.8); 
+        rgba(247, 223, 186, 0.8);
 
     border-radius: 0;
-
-    font-weight: 900;
 }
 
-
-/* Active page */
-
-.desktop-nav .nav-link.active {
-    /* color: #503415; */
-
+.site-nav .nav-link.active {
     font-size: 1.1rem;
 
-    font-weight:bolder;
+    font-weight: bolder;
 
     background-color:
-        rgba(243, 228, 205, 0.8); 
+        rgba(243, 228, 205, 0.8);
 }
 
+
 /* =========================================================
-   LANGUAGE SELECTOR
+   LANGUAGE SELECTOR — SHARED
    ========================================================= */
 
-.language-selector {
+.site-nav .language-selector {
     display: flex;
 
     flex-direction: column;
@@ -363,7 +358,7 @@ a:hover {
         1px solid rgba(63, 46, 23, 0.25);
 }
 
-.language-button {
+.site-nav .language-button {
     border: none;
 
     background: transparent;
@@ -383,21 +378,21 @@ a:hover {
         background-color 0.15s ease;
 }
 
-.language-button:hover {
+.site-nav .language-button:hover {
     transform: scale(1.15);
 
     background-color:
         rgba(255, 248, 225, 0.55);
 }
 
-.language-button.active {
+.site-nav .language-button.active {
     transform: scale(1.10);
 
     background-color:
         rgba(255, 248, 225, 0.65);
 }
 
-.language-button img {
+.site-nav .language-button img {
     width: 33px;
     height: 22px;
 
@@ -406,9 +401,50 @@ a:hover {
     display: block;
 }
 
-/* ---------------------------------
-   HAMBURGER
-   --------------------------------- */
+
+/* =========================================================
+   DESKTOP NAVIGATION
+   ========================================================= */
+
+.desktop-nav {
+    position: fixed;
+
+    top: 30px;
+    bottom: 30px;
+    right: 0;
+
+    width: 170px;
+    height: calc(100vh - 60px);
+
+    z-index: 1000;
+
+    background: transparent;
+
+    border-left:
+        1px solid rgba(92, 68, 35, 0.30);
+
+    box-shadow:
+        -4px 0 10px rgba(60, 40, 20, 0.12);
+
+    padding-top: 2px;
+    padding-left: 0;
+    padding-right: 0;
+
+    transition:
+        opacity 0.20s ease,
+        visibility 0.20s ease;
+}
+
+.desktop-nav-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   HAMBURGER BUTTON
+   ========================================================= */
 
 .hamburger-button {
     position: fixed;
@@ -416,65 +452,378 @@ a:hover {
     right: 20px;
     top: 45px;
 
-    z-index: 1001;
+    z-index: 1900;
 
     display: none;
 
     border: 0;
+
     background: transparent;
 
     font-size: 32px;
+
+    line-height: 1;
+
     cursor: pointer;
+
+    color: #034611;
 }
 
 
-/* ---------------------------------
+/* =========================================================
    MOBILE NAVIGATION
-   --------------------------------- */
+   ========================================================= */
 
 .mobile-nav {
     position: fixed;
 
-    top: 0;
+    top: 30px;
     right: 0;
+    bottom: 30px;
 
-    width: 280px;
-    height: 100vh;
+    width: min(280px, calc(100vw - 30px));
+
+    height: calc(100vh - 60px);
 
     z-index: 2000;
 
-    padding: 70px 30px 30px;
+    padding:
+        60px
+        0
+        30px;
 
-    background: rgba(249, 223, 180, 0.97);
+    box-sizing: border-box;
+
+    overflow-y: auto;
+
+    background:
+        rgba(249, 223, 180, 0.97);
+
+    border-left:
+        1px solid rgba(92, 68, 35, 0.30);
+
+    box-shadow:
+        -4px 0 10px rgba(60, 40, 20, 0.12);
 
     transform: translateX(100%);
 
-    transition: transform 0.25s ease;
+    visibility: hidden;
+
+    transition:
+        transform 0.25s ease,
+        visibility 0.25s ease;
 }
 
 .mobile-nav.open {
     transform: translateX(0);
+
+    visibility: visible;
 }
+
+
+/* =========================================================
+   MOBILE CLOSE BUTTON
+   ========================================================= */
 
 .mobile-nav-close {
     position: absolute;
 
-    top: 18px;
+    top: 12px;
     right: 20px;
 
     border: 0;
+
     background: transparent;
 
     font-size: 40px;
+
     line-height: 1;
 
     cursor: pointer;
 }
 
-.mobile-nav a {
+
+/* =========================================================
+   RESPONSIVE BREAKPOINT
+   ========================================================= */
+
+@media (max-width: 979px) {
+
+    .desktop-nav {
+        display: none;
+    }
+
+    .hamburger-button {
+        display: block;
+    }
+
+}
+
+
+@media (min-width: 980px) {
+
+    .mobile-nav {
+        display: none;
+    }
+
+    .hamburger-button {
+        display: none;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE SCREENS
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .mobile-nav {
+        width: calc(100vw - 30px);
+    }
+
+    .site-nav .nav-link {
+        padding:
+            0.65rem
+            25px
+            0.65rem
+            15px;
+    }
+
+    .site-nav .language-selector {
+        padding-right: 25px;
+    }
+
+}
+
+.mobile-art {
+    display: none !important;
+}
+
+@media screen and (max-width: 700px) {
+
+    :root {
+        --mobile-postcard-strip: 15px;
+        --mobile-content-horizontal-padding: 40px;
+    }
+
+    .postcard-strips-top {
+        height: var(--mobile-postcard-strip);
+        background-size: auto var(--mobile-postcard-strip);
+    }
+
+    .postcard-strips-left {
+        top: var(--mobile-postcard-strip);
+        width: var(--mobile-postcard-strip);
+        height: calc(100vh - var(--mobile-postcard-strip));
+        height: 100vh;
+        background-size: var(--mobile-postcard-strip) auto;
+
+        background-repeat: repeat-y;
+        background-position: left top;
+    }
+
+    .postcard-strips-bottom {
+        display: none;
+    }
+
+    .page-content {
+        position: relative;
+
+        left: var(--mobile-postcard-strip);
+        top: auto;
+
+        width: calc(100vw - var(--mobile-postcard-strip));
+        height: auto;
+
+        margin: 0;
+        padding: 45px 20px 40px 20px;
+
+        transform: none;
+        box-sizing: border-box;
+        border: solid 1px red;
+
+        z-index: 10;
+    }
+
+    .countdown-container {
+       
+        width: calc(100vw - var(--mobile-postcard-strip) - var(--mobile-content-horizontal-padding));
+        box-sizing: border-box;
+        border: solid 1px red;
+    }
+
+    .mobile-art {
+        display: block;
+    }
+
+    #home-timezone {
+        text-align: left !important;
+    }
+}
+
+/* @media (max-width: 700px) { */
+
+    /* .desktop-art {
+        display: none !important;
+    } */
+
+
+
+    /* .page-content { */
+        /* position: relative;
+
+        left: 15px;
+        top: auto; */
+
+        /* transform: none;
+
+        /* width: calc(100vw - 15px);
+        height: auto; */
+
+        /* margin: 0;
+        padding: 45px 20px 40px 20px;
+
+        box-sizing: border-box;
+        border: 1px solid #000;  */
+    /* } */
+
+    /* .countdown-container { */
+        
+  /* position: relative; */
+        /* width: calc(100vw - 15px); */
+
+        /* left: 50%;
+        transform: translateX(-50%);
+
+        margin-left: 0;
+        margin-right: 0;
+
+        padding-left: 10px;
+        padding-right: 10px; */
+
+        /* box-sizing: border-box; */
+        /* border: 1px solid #000; */
+    /* } */
+
+    /* .postcard-strips-top {
+        height: 15px;
+    } */
+
+    /* .postcard-strips-left {
+        top: 15px;
+        width: 15px;
+        height: calc(100vh - 15px);
+    } */
+
+    /* .postcard-strips-bottom {
+        display: none;
+    } */
+/* } */
+
+
+
+/* =========================================================
+   FORCE MOBILE MENU VERTICAL
+   ========================================================= */
+
+.mobile-nav .navbar-nav {
+    display: flex;
+    flex-direction: column !important;
+    align-items: stretch;
+
+    width: 100%;
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+.mobile-nav .nav-item {
     display: block;
 
-    margin-bottom: 18px;
+    width: 100%;
+}
 
-    text-decoration: none;
+.mobile-nav .nav-link {
+    display: block;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    text-align: right;
+
+    padding:
+        0.65rem
+        15px
+        0.65rem
+        15px;
+}
+
+/* .mobile-art {
+    display: none;
+} */
+
+.mobile-art img {
+    display: block;
+    /* max-width: 140px;
+    width: 100%;
+    height: auto; */
+}
+
+.mobile-art-center img {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.mobile-art-left img {    
+    margin-right: auto;
+}
+
+.mobile-art-right img {
+    margin-left: auto;
+}
+
+.mobile-shadow-leaf img {
+    /* individual adjustments for this artwork */
+    position: relative;
+    left: 0;
+    bottom: 400px;
+    z-index: 9;
+}
+
+.mobile-date img {
+    position: relative;
+    width: 110px;
+    height: 108px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.mobile-skyline img {
+    position: relative;
+    left: 0;
+    width: 100%;
+    /* width: 110px;
+    height: 108px; */
+    /* left: 50%;
+    transform: translateX(-50%); */
+}
+
+/* ============================================================
+   MOBILE TEST
+   ============================================================ */
+
+@media screen and (max-width: 700px) {
+
+    .desktop-art {
+        display: none !important;
+    }
+
+    .mobile-art {
+        display: block !important;
+    }
 }

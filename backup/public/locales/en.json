@@ -1,0 +1,56 @@
+{
+
+    "menu-home": "Home",
+    "menu-party": "The Party",
+    "menu-venue": "The Venue",
+    "menu-food": "Food",
+    "menu-beverage": "Beverages",
+    "menu-rsvp": "RSVP",
+    "menu-star": "Be a 67 Star",
+    "menu-photos": "Photos",
+    "event-title": "On my 60th, you get 67.",
+    "buttonBack": "Back",
+    "buttonNext": "Next",
+
+    "indexPageTitle": "Marcos's Birthday Party",
+    "beveragesPageTitle": "Beverages | Marcos's Birthday Party",
+    "foodPageTitle": "Food | Marcos's Birthday Party",
+    "photosPageTitle": "Photos | Marcos's Birthday Party",
+    "rsvpPageTitle": "RSVP | Marcos's Birthday Party",
+    "the-partyPageTitle": "The Party | Marcos's Birthday Party",
+    "the-venuePageTitle": "The Venue | Marcos's Birthday Party",
+    "be-a-starPageTitle": "Be a Star | Marcos's Birthday Party",
+    
+    "home-title": "Welcome to Marcos's Birthday Party!",
+    "home-content1": "Start preparing yourself, the countdown has begun...",
+    "home-days": "Days",
+    "home-hours": "Hours <sup>1</sup>",
+    "home-minutes": "Minutes",
+    "home-seconds": "Seconds",
+    "home-content2": "<p>This website was created to bring a little preview of what is being prepared for the celebration. Here, you’ll be able to discover the <strong>venue</strong>, get a taste of the <strong>food</strong> and <strong>drinks</strong> that will be served, learn a little more about <strong>how</strong> the celebration will unfold, receive updates as the date approaches and above all, <strong>confirm your presence</strong>.</p><p>Are you curious about the teasers and the catchphrases in the postcards you received?<p>Click or tap on \"Next\" below to find out.",  
+    "home-timezone": "<sup>1</sup> Hours calculated based on São Paulo time.",
+
+    "star-title": "Be a Star",
+    "star-content1": "<p>I wanted this party to be a little different. No DJ. No professional band. No hired singers. And definitely no 20-minute retrospective video of my life while everyone politely watches me grow older in chronological order. Instead, I had a thought:</p><p class=\"strong\">Why can’t we be the entertainment?</p><p>That's how the idea works. Because it is my 60th and I was born in 67, your 67 is broken down into <span class=\"strong\">60 seconds + 7 songs</span>.</p><p><span class=\"strong\">The 60 seconds: </span>I would love some of my family and friends to choose something from the last 60 years — a song, a singer, a band, a movie, a play, a musical, a television moment, or anything else that brings back an era — and take the stage for just 60 seconds.<p>That's it. One minute.</p><p>Sing karaoke. Lip-sync Madonna. Play something on an instrument. Sing a cappella. Recreate a movie scene. Do a silly dance from the ’70s. Grab two or three friends and do something together. Be elegant. Be daring. Be dramatic. Be funny. Be completely outrageous.</p><p>There are no rules about talent — because this is not a talent show.</p><p>There will be no judges. No prizes. No scores. And absolutely no expectation that anything should look or sound professional. In fact, perfection would probably ruin it.</p><p>Could it be tacky? Of course. Some people would argue that entire decades of the last 60 years were tacky. Could it be cheesy? Absolutely.</p><p>Who decided cheesy was a bad thing?</p><p>The only thing it should never be is intimidating. Nobody is being asked to prove anything. Nobody needs to know how to sing, dance or act. You don't even have to do it alone. Find a partner, recruit a group, hide behind sunglasses, wear a wig, hold a microphone that isn't turned on — whatever gets you onto that stage. Because the point isn't the performance.</p><p>The point is that we did it together.</p><p>Years from now, I doubt anyone will remember whether somebody sang perfectly. But we will remember the uncle who thought he was Elvis, the friend who became Madonna for exactly one minute, the cousins who recreated a movie scene, and the person nobody expected to get on stage who suddenly stole the evening. That's the kind of retrospective I want.</p><p>I want us to create the next memory together, instead of dwell in the last 6 decades.</p><p>So, I’m asking for 60 seconds of courage, silliness, nostalgia, music, laughter — or whatever you want to bring.</p><p class=\"strong\">That is the best present you could give me.</p><p>Choose your moment. Choose your decade. Choose your accomplices. Bring the fun.</p><p>I’ll provide the stage, the music and the lights.</p>",
+
+    "beverages-title": "Beverages",
+    "food-title": "Food",
+    "photos-title" : "Photos",
+    "rsvp-title": "RSVP",
+    
+    "party-title1": "The Party... Explained.",
+    "party-title2": "\"On my 60th, you get 67.\"...",
+    "party-schedule": "<p><span class=\"strong\">When: </span>Sunday, July 18th, 2027<br/><span class=\"strong\">Time: </span>12:00 to 7:00 PM.<br/><span class=\"strong\">Where: </span>São Paulo, Brazil.</p>",
+    "party-content1": "<p>First, one clarification: there will be <span class=\"strong\">no</span> event on July 17th. You might remember the first \"Save the Date\" postcard you received had two dates: July 17-18. At the time, either date was being considered while a venue had not been contracted. The preferred day was always Sunday because some guests work or study on Saturdays. Plus, starting at noon means guests will have plenty of time to rest and cure their hangover, especially if they need to get up early on the next day.</p><p>There is also enough time for church in the morning, for those who need to repent their sins &#128512; &#128591;. The party will last 7 hours but don’t worry, you won’t starve since there will be lots of food and drinks served thoughout the day.</p><p>Most importantly, you won't get bored either because there will be lots of fun. In fact, guess who will providing the entertainment?</p><p><span class=\"strong\" style=\"font-size: 1.2rem\">You are!</span> Because...</p>",
+    "party-content2": "<p>The usage of the numbers 67 or 6-7 is obviously in reference to the meme that is a viral Internet joke that is going around and very popular among Gen Alpha kids. The funniest thing is it has no real logical meaning. While the trend is nonsensical, 67 is coincidently the year I was born. That part is explained. Now, let's discuss what 67 means to you.</p><p>Click or tap on \"Next\" below to find out.</p>",
+
+
+    
+    
+    "venue-title": "The Venue",
+    
+    
+    "party-textx": "That's where the catchphrases \"On my 60th, you get 67\". In reality, we all get 67 because I am hoping that \"you will be the star\" of the party, among others."
+
+    
+}

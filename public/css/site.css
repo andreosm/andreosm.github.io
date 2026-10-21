@@ -1,193 +1,503 @@
-/* =========================================================
-   GLOBAL
-   ========================================================= */
+:root {
+    --postcard-strip-size: 30px;
+    --collision-gap: 10px;
 
-html,
-body {
-    min-height: 100%;
+    --left-strip-height: 500px;
+
+    /* --desktop-center-width: 800px; */
+    --desktop-content-height: 600px;
+
+    
+    --content-min-dist: 40px;
+    --right-art-max-nav-gap: 70px;
+
+    --desktop-nav-width: 170px;
+
+    /* --content-base-width: 800px;
+    --content-max-width: 1100px; */
+
+    --shadow-leaf-height: 513px;
+    --green-leaf-height: 390px;
+
+    --composition-width: 800px;
+    --composition-min-width: 650px;
+    --composition-max-width: 1172px;
+
+    --skyline-height: 250px;
+
+    --shadow-leaf-bottom: calc(
+    var(--postcard-strip-size) +
+    (var(--left-strip-height) / 2) +
+    var(--shadow-leaf-height)
+    );
 }
 
 body {
     margin: 0;
-    min-height: 100vh;
 
-    background: #f4e4bd;
+    background-image: url("/images/css/postcard-bg.png");
+    background-repeat: repeat;
+}
+
+.party-stepper {
+    width: 100%;
+    /* margin-bottom: 30px; */
+}
+
+.party-stepper-steps {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+}
+
+.party-step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    color: #888;
+}
+
+.party-step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 19px;
+    left: calc(50% + 22px);
+    width: calc(100% - 44px);
+    height: 2px;
+    background: #ccc;
+}
+
+.party-step.completed:not(:last-child)::after {
+    background: #52816a;
+}
+
+.party-step-indicator {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 8px;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+}
+
+.party-step.active .party-step-indicator {
+    background: #8b2f3f;
+    border-color: #8b2f3f;
+    color: white;
+}
+
+.party-step.completed .party-step-indicator {
+    background: #52816a;
+    border-color: #52816a;
+    color: white;
+}
+
+.party-step-label {
+    font-size: 0.85rem;
+}
+
+.party-step.active .party-step-label {
+    color: #8b2f3f;
+    font-weight: 700;
+}
+
+@media (max-width: 576px) {
+    .party-step-label {
+        font-size: 0.65rem;
+    }
+
+    .party-step-indicator {
+        width: 30px;
+        height: 30px;
+    }
+
+    .party-step:not(:last-child)::after {
+        top: 14px;
+        left: calc(50% + 17px);
+        width: calc(100% - 34px);
+    }
+}
+
+a {
+  color: #3f5504;
+  /* background-color: yellow; */
+}
+
+/* unvisited link */
+a:link {
+  color: #3f5504;
+}
+
+/* visited link */
+a:visited {
+  color: #133758;
+}
+
+/* mouse over link */
+a:hover {
+  font-weight: bold;
+}
+
+.strong {
+    font-weight: bold;
+}
+
+/* selected link */
+/* a:active {
+  color: blue;
+} */
+
+@font-face {
+    font-family: "Kaushan Script";
+    src: url("/fonts/KaushanScript-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+.kaushan-script {
+    font-family: "Kaushan Script", cursive;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.demo-box-green {
+    /* background-color: #d1e7dd; */
+    /* border: 2px solid #198754; */
+            /* padding: 1rem; */
+}
+
+.countdown-seconds-blink {
+    /* animation: countdown-blink 1s ease-in-out; */
+    animation: countdown-blink 1s;
+}
+
+.font-add1 {
+    font-size: 1.1rem;;
+}
+
+.my-image {
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
+
+.my-image:hover {
+    opacity: 1;
+}
+
+@keyframes countdown-blink {
+    0% {
+        opacity: 0;
+    }
+
+    /* 50% {
+        opacity: 0.5;
+    } */
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.button-pair {
+    gap: 10px;
+}
+
+.superscript {
+    font-size: 0.8rem
+}
+
+#languageToast {
+    width: 500px;
+    max-width: calc(100vw - 2rem);
+}
+
+#languageToast .toast-header {
+    white-space: nowrap;
+}
+
+.postcard-strips-top {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--postcard-strip-size);
+
+    background-image: url("/images/css/postcard-strips-h-bg.png");
+    background-repeat: repeat-x;
+    background-position: left bottom;
+
+    z-index: 20;
+}
+
+.postcard-strips-bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: var(--postcard-strip-size);
+
+    background-image: url("/images/css/postcard-strips-h-bg.png");
+    background-repeat: repeat-x;
+    background-position: left bottom;
+
+    z-index: 19;
+}
+
+.postcard-strips-left {
+    position: fixed;
+    top: var(--postcard-strip-size);
+    left: 0;
+    width: var(--postcard-strip-size);
+    height: var(--left-strip-height);
+
+    background-image: url("/images/css/postcard-strips-v-bg.png");
+    background-repeat: no-repeat;
+    background-position: left top;
+
+    z-index: 17;
+}
+
+.postcard-art {
+    position: fixed;
+    transition:
+        opacity 0.20s ease,
+        visibility 0.20s ease;
+}
+
+.art-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+#home-timezone {
+    text-align: right !important;
+    font-size: .8em
+}
+
+.pageTitle {
+    font-size: 1.2em;
+    font-weight:bold;
+}
+
+.cardTitle {
+    font-weight:bold;
+}
+
+.btn-outline-dark {
+  /* --bs-btn-font-weight: 600;
+  --bs-btn-color: var(--bs-white); */
+  --bs-btn-bg: rgba(225, 227, 229, 0.25);
+  --bs-btn-active-bg: rgba(225, 227, 229, 0.25);
+  /* --bs-btn-border-color: var(--bd-violet-bg);
+  --bs-btn-hover-color: var(--bs-white);
+  --bs-btn-hover-bg: #{shade-color($bd-violet, 10%)};
+  --bs-btn-hover-border-color: #{shade-color($bd-violet, 10%)};
+  --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+  --bs-btn-active-color: var(--bs-btn-hover-color);
+  
+  --bs-btn-active-border-color: #{shade-color($bd-violet, 20%)}; */
+}
+
+/* ---------------------------------
+   LEFT SIDE
+   --------------------------------- */
+
+#dateStamp {
+    top: calc(
+        var(--content-min-dist) + 
+        var(--postcard-strip-size)
+    );
+}
+
+#shadowLeaf {
+    left: var(--postcard-strip-size);
+    top: calc(
+        var(--postcard-strip-size) +
+        (var(--left-strip-height) / 2)
+    );
+    z-index: 18;
+    width: 200px;
+}
+
+#greenLeaf {
+    left: 0;
+    /* bottom: calc(
+        var(--postcard-strip-size) +
+        var(--content-min-dist)
+    ); */
+
+    top: calc(
+        var(--shadow-leaf-bottom) +
+        (
+            (
+                100vh -
+                var(--postcard-strip-size) -
+                var(--shadow-leaf-bottom)
+            ) -
+            var(--green-leaf-height)
+        ) / 2
+    );
+
+    width: 200px;
+}
+
+#fadedPostcard1.home-page, #fadedPostcard2.home-page {
+    /* position: absolute; */
+    /* left: 50%; */
+    /* top: calc(50% + 50px); */
+    /* left: 600px; */
+
+    /* transform: translate(-50%, -50%) scale(0.3) rotate(-15deg); */
+    /* position: relative;
+    transform: scale(0.3) rotate(-15deg); */
+    /* original dimension is 1492x1054 */
+    /* width: 447px;
+    height: 316px; */
+
+    width: 335px;
+    height: 259px;
+    /* transform: scale(0.3) */
+
+    /* position: absolute; */
+    /* left: 550px;
+    top: calc(50% - 181px); */
+
+    /* transform: scale(0.3) translate(-50%, -50%) rotate(-15deg); */
+    /* width: 50%;
+    height: auto;
+    left: 50%;
+
+    transform: translate(-50%, -50%) rotate(-15deg); */
+
+    /* transform: translate(-50%, -50%) rotate(-15deg); */
+    /* top: calc(50% - 181px);
+    
+    
+     */
+}
+
+#fadedPostcard.party-page {
+    width: 335px;
+    height: 259px;
+}
+
+#fadedPostcard1.party-art {
+    /* position: absolute; */
+    right: -400px;
+    bottom: -50px;
+
+    width: 398px;
+    height: 254px;
+
+    transform: rotate(-15deg);
+
+    /* top: calc(50% - 181px);
+
+    
+
+    transform: translate(-50%, -50%) rotate(-15deg); */
+    /* top: calc(50% - 181px);
+    
+    
+     */
 }
 
 
-/* =========================================================
-   BACKGROUND IMAGE
-   ========================================================= */
+/* ---------------------------------
+   RIGHT SIDE
+   --------------------------------- */
 
-body::before {
-    content: "";
+#alegriaStamp {
+    top: 60px;
+}
 
+/* #boaMusica {
+    bottom: 60px;
+} */
+
+
+/* ---------------------------------
+   SKYLINE
+   --------------------------------- */
+
+/* #skyline {
+    left: 50%;
+
+    bottom: calc(
+        var(--postcard-strip-size) 
+    );
+
+    transform: translateX(-50%); 
+    width: var(--composition-width);
+    height: auto;
+}
+ */
+
+.skyline-picture {
     position: fixed;
-    inset: 0;
+    left: 50%;
+    bottom: 30px;
 
-    background-image:
-        url("/images/postcard-background4.png");
+    transform: translateX(-50%);
 
-    background-position: left top;
-    background-repeat: no-repeat;
-
-    background-size:
-        var(--background-width)
-        var(--background-height);
-
-    z-index: -1;
+    /* height: 362px; */
 
     pointer-events: none;
 }
 
-    /* =========================================================
-   FLOATING DATE IMAGE
+.skyline {
+    display: block;
+
+    /* height: 362px; */
+    width: auto;
+}
+
+/* ---------------------------------
+   RSVP FORM
+   --------------------------------- */
+#rsvpContainer {
+    max-width: 700px;
+}
+
+#partySize {
+    max-width: 120px;
+}
+
+#submitRsvp:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+
+ /* =========================================================
+   NAVIGATION — SHARED
    ========================================================= */
 
-    .floating-date-image {
+.site-nav {
+    box-sizing: border-box;
 
-        position: fixed;
-
-        bottom: 60px;
-
-        /*
-        * JavaScript controls the horizontal position.
-        */
-        left: 680px;
-
-        width: 150px;
-        height: 150px;
-
-        z-index: 500;
-
-        box-sizing: border-box;
-
-        transition:
-            left 0.15s ease,
-            opacity 0.20s ease;
-    }
-
-    .floating-date-image img {
-
-        display: block;
-
-        width: 150px;
-        height: 150px;
-
-        object-fit: contain;
-    }
-
-    .floating-date-image-hidden {
-
-        opacity: 0;
-
-        pointer-events: none;
-    }
-
-    /*
-    * Used when there is no longer enough
-    * horizontal space for the image.
-    */
-    .floating-date-image-hidden {
-
-        opacity: 0;
-
-        pointer-events: none;
-    }
-
+    font-family:
+        Arial,
+        "Times New Roman",
+        serif;
+}
 
 /* =========================================================
-   DESKTOP NAVIGATION
+   MENU ITEMS — SHARED
    ========================================================= */
 
-    /*
-    * The navigation is a fixed vertical rail on the
-    * right side of the screen.
-    */
-
-    .party-navbar {
-        position: fixed;
-
-        top: 30px;
-        bottom: 30px;
-
-        right: 0;
-
-        width: 170px;
-        /* height: 100vh; */
-
-        z-index: 1000;
-
-        background: transparent;
-
-        /* ONLY the left edge */
-        border-left: 1px solid rgba(92, 68, 35, 0.30);
-
-        /* Subtle shadow extending toward the page */
-        box-shadow:
-            -4px 0 10px rgba(60, 40, 20, 0.12);
-
-        box-sizing: border-box;
-
-        padding-top: 20px;
-        padding-right: 0;
-        padding-left: 0;
-    }
-
-
-/* =========================================================
-   HAMBURGER
-   ========================================================= */
-
-    /*
-    * Hidden on desktop.
-    * Displayed when the screen becomes too narrow
-    * for the vertical navigation rail.
-    */
-
-    .menu-toggle {
-        display: none;
-
-        position: fixed;
-
-        top: 30px;
-        right: 20px;
-
-        z-index: 1100;
-
-        border: 1px solid rgba(92, 68, 35, 0.35);
-
-        background: rgba(255, 248, 225, 0.65);
-
-        color: #503415;
-
-        font-size: 1.6rem;
-        line-height: 1;
-
-        padding: 0.35rem 0.55rem;
-
-        border-radius: 5px;
-
-        cursor: pointer;
-
-        box-shadow:
-            0 2px 8px rgba(60, 40, 20, 0.15);
-    }
-
-    .menu-toggle:hover {
-        background: rgba(255, 248, 225, 0.85);
-    }
-
-
-/* =========================================================
-   MENU
-   ========================================================= */
-
-.party-navbar .navbar-nav {
+.site-nav .navbar-nav {
     display: flex;
-
     flex-direction: column;
-
     align-items: stretch;
 
     width: 100%;
@@ -198,34 +508,29 @@ body::before {
     list-style: none;
 }
 
-.party-navbar .nav-item {
+.site-nav .nav-item {
     display: block;
-
     width: 100%;
 }
 
-.party-navbar .nav-link {
+.site-nav .nav-link {
     display: block;
 
     width: 100%;
 
     box-sizing: border-box;
 
-    color: #8b6639;
+    color: #034611;
 
-    font-family:
-        Arial,
-        "Times New Roman",
-        serif;
-
-    font-weight: 600;
+    font-weight: 400;
 
     text-align: right;
 
-    /*
-     * 30px from the right edge.
-     */
-    padding: 0.55rem 30px 0.55rem 15px;
+    padding:
+        0.55rem
+        30px
+        0.55rem
+        15px;
 
     white-space: nowrap;
 
@@ -236,31 +541,30 @@ body::before {
         background-color 0.2s ease;
 }
 
-.party-navbar .nav-link:hover {
-    color: #7b4f20;
-
-    background-color:
-        rgba(177, 167, 133, 0.35);
-
-    border-radius: 0;
-
+.site-nav .nav-link:hover {
     font-weight: 900;
 
-    font-size: 1.1rem;
+    background-color:
+        rgba(247, 223, 186, 0.8);
+
+    border-radius: 0;
 }
 
-.party-navbar .nav-link.active {
-    color: #503415;
-
+.site-nav .nav-link.active {
     font-size: 1.1rem;
+
+    font-weight: bolder;
+
+    background-color:
+        rgba(243, 228, 205, 0.8);
 }
 
 
 /* =========================================================
-   LANGUAGE SELECTOR
+   LANGUAGE SELECTOR — SHARED
    ========================================================= */
 
-.language-selector {
+.site-nav .language-selector {
     display: flex;
 
     flex-direction: column;
@@ -272,12 +576,14 @@ body::before {
     margin-top: 0.75rem;
 
     padding-top: 0.75rem;
+
     padding-right: 30px;
 
-    border-top: 1px solid rgba(63, 46, 23, 0.25);
+    border-top:
+        1px solid rgba(63, 46, 23, 0.25);
 }
 
-.language-button {
+.site-nav .language-button {
     border: none;
 
     background: transparent;
@@ -297,21 +603,21 @@ body::before {
         background-color 0.15s ease;
 }
 
-.language-button:hover {
+.site-nav .language-button:hover {
     transform: scale(1.15);
 
     background-color:
         rgba(255, 248, 225, 0.55);
 }
 
-.language-button.active {
+.site-nav .language-button.active {
     transform: scale(1.10);
 
     background-color:
         rgba(255, 248, 225, 0.65);
 }
 
-.language-button img {
+.site-nav .language-button img {
     width: 33px;
     height: 22px;
 
@@ -322,188 +628,1131 @@ body::before {
 
 
 /* =========================================================
-   MAIN PAGE CONTENT
+   DESKTOP NAVIGATION
    ========================================================= */
 
-.page-content {
-    position: relative;
+.desktop-nav {
+    position: fixed;
 
-    z-index: 1;
+    top: var(--postcard-strip-size);
+    bottom: var(--postcard-strip-size);
+    right: 0;
 
-    padding-top: 6.5rem;
-    padding-bottom: 3rem;
+    width: var(--desktop-nav-width);
+    height: calc(
+        100vh -
+        (2 * var(--postcard-strip-size))
+    );
 
-    /*
-     * Left-side breathing room.
-     */
-    padding-left: 50px;
+    z-index: 1000;
 
-    /*
-     * 170px navigation +
-     * approximately 50px breathing room.
-     */
-    padding-right: 220px;
+    background: transparent;
+
+    border-left:
+        1px solid rgba(92, 68, 35, 0.30);
+
+    box-shadow:
+        -4px 0 10px rgba(60, 40, 20, 0.12);
+
+    padding-top: 2px;
+    padding-left: 0;
+    padding-right: 0;
+
+    transition:
+        opacity 0.20s ease,
+        visibility 0.20s ease;
 }
 
-.hero-section {
-    min-height: 50vh;
-
-    padding: 3rem;
-
-    background: rgba(255, 248, 225, 0.35);
-
-    border-radius: 12px;
-}
-
-.hero-section h1 {
-    color: #4b3a20;
+.desktop-nav-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
 }
 
 
 /* =========================================================
-   RESPONSIVE / MOBILE
+   HAMBURGER BUTTON
+   ========================================================= */
+
+.hamburger-button {
+    position: fixed;
+
+    right: 20px;
+    top: 45px;
+
+    z-index: 1900;
+
+    display: none;
+
+    border: 0;
+
+    background: transparent;
+
+    font-size: 32px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    color: #034611;
+}
+
+
+/* =========================================================
+   MOBILE NAVIGATION
+   ========================================================= */
+
+.mobile-nav {
+    position: fixed;
+
+    top: 30px;
+    right: 0;
+    bottom: 30px;
+
+    width: min(280px, calc(100vw - 30px));
+
+    height: calc(100vh - 60px);
+
+    z-index: 2000;
+
+    padding:
+        60px
+        0
+        30px;
+
+    box-sizing: border-box;
+
+    overflow-y: auto;
+
+    background:
+        rgba(249, 223, 180, 0.97);
+
+    border-left:
+        1px solid rgba(92, 68, 35, 0.30);
+
+    box-shadow:
+        -4px 0 10px rgba(60, 40, 20, 0.12);
+
+    transform: translateX(100%);
+
+    visibility: hidden;
+
+    transition:
+        transform 0.25s ease,
+        visibility 0.25s ease;
+}
+
+.mobile-nav.open {
+    transform: translateX(0);
+
+    visibility: visible;
+}
+
+
+/* =========================================================
+   MOBILE CLOSE BUTTON
+   ========================================================= */
+
+.mobile-nav-close {
+    position: absolute;
+
+    top: 12px;
+    right: 20px;
+
+    border: 0;
+
+    background: transparent;
+
+    font-size: 40px;
+
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   NAVIGATION BREAKPOINT
    ========================================================= */
 
 /*
- * At 980px and below:
- *
- *  - The vertical navigation rail disappears.
- *  - The hamburger appears.
- *  - The page gets its full usable width back.
- */
+   Desktop navigation vs hamburger is controlled by resize.ts
+   according to actual collision with the centered content.
+   The 700px media query below remains the hard phone-layout
+   breakpoint.
+*/
 
-@media (max-width: 980px) {
+/* =========================================================
+   SMALL MOBILE SCREENS
+   ========================================================= */
 
-    /* ---------------------------------------------
-       Navigation rail
-       --------------------------------------------- */
+@media (max-width: 480px) {
 
-    .party-navbar {
-        position: fixed;
-
-        top: 0;
-        right: 0;
-
-        width: 100%;
-        height: auto;
-
-        border-left: none;
-
-        box-shadow: none;
-
-        padding: 0;
-
-        background: transparent;
+    .mobile-nav {
+        width: calc(100vw - 30px);
     }
 
-
-    /* ---------------------------------------------
-       Hamburger
-       --------------------------------------------- */
-
-    .menu-toggle {
-        display: block;
-    }
-
-
-    /* ---------------------------------------------
-       Menu
-       --------------------------------------------- */
-
-    .party-navbar .navbar-nav {
-        display: none;
-    }
-
-    .party-navbar.menu-open .navbar-nav {
-        display: flex;
-    }
-
-
-    /* ---------------------------------------------
-       Language selector
-       --------------------------------------------- */
-
-    .language-selector {
-        display: none;
-    }
-
-    .party-navbar.menu-open .language-selector {
-        display: flex;
-    }
-
-
-    /* ---------------------------------------------
-       Mobile menu appearance
-       --------------------------------------------- */
-
-    .party-navbar.menu-open {
-        width: 100%;
-
-        min-height: 100vh;
-
-        padding-top: 80px;
-
-        background:
-            rgba(244, 228, 189, 0.96);
-    }
-
-    .party-navbar.menu-open .navbar-nav {
-        width: 100%;
-    }
-
-    .party-navbar.menu-open .nav-link {
-        text-align: right;
-
+    .site-nav .nav-link {
         padding:
-            0.75rem
-            30px
-            0.75rem
-            20px;
+            0.65rem
+            25px
+            0.65rem
+            15px;
     }
 
-    .party-navbar.menu-open .language-selector {
-        align-items: flex-end;
-
-        padding-right: 30px;
-    }
-
-
-    /* ---------------------------------------------
-       Main content
-       --------------------------------------------- */
-
-    .page-content {
-        padding-top: 1.5rem;
-
-        padding-left: 25px;
+    .site-nav .language-selector {
         padding-right: 25px;
     }
 
-    .hero-section {
-        padding: 1.5rem;
+}
+
+.mobile-art {
+    display: none !important;
+}
+
+@media screen and (max-width: 700px) {
+
+    :root {
+        --mobile-postcard-strip: 15px;
+        --mobile-content-horizontal-padding: 40px;
+    }
+
+    .postcard-strips-top {
+        height: var(--mobile-postcard-strip);
+        background-size: auto var(--mobile-postcard-strip);
+    }
+
+    .postcard-strips-left {
+        top: var(--mobile-postcard-strip);
+        width: var(--mobile-postcard-strip);
+        height: calc(100vh - var(--mobile-postcard-strip));
+        height: 100vh;
+        background-size: var(--mobile-postcard-strip) auto;
+
+        background-repeat: repeat-y;
+        background-position: left top;
+    }
+
+    .postcard-strips-bottom {
+        display: none;
+    }
+
+
+
+    .countdown-container {
+       
+        width: calc(100vw - var(--mobile-postcard-strip) - var(--mobile-content-horizontal-padding));
+        box-sizing: border-box;
+        border: solid 1px red;
+    }
+
+    .mobile-art {
+        display: block;
+    }
+
+    #home-timezone {
+        text-align: left !important;
+    }
+}
+
+/* @media (max-width: 700px) { */
+
+    /* .desktop-art {
+        display: none !important;
+    } */
+
+
+
+    /* #pageContent { */
+        /* position: relative;
+
+        left: 15px;
+        top: auto; */
+
+        /* transform: none;
+
+        /* width: calc(100vw - 15px);
+        height: auto; */
+
+        /* margin: 0;
+        padding: 45px 20px 40px 20px;
+
+        box-sizing: border-box;
+        border: 1px solid #000;  */
+    /* } */
+
+    /* .countdown-container { */
+        
+  /* position: relative; */
+        /* width: calc(100vw - 15px); */
+
+        /* left: 50%;
+        transform: translateX(-50%);
+
+        margin-left: 0;
+        margin-right: 0;
+
+        padding-left: 10px;
+        padding-right: 10px; */
+
+        /* box-sizing: border-box; */
+        /* border: 1px solid #000; */
+    /* } */
+
+    /* .postcard-strips-top {
+        height: 15px;
+    } */
+
+    /* .postcard-strips-left {
+        top: 15px;
+        width: 15px;
+        height: calc(100vh - 15px);
+    } */
+
+    /* .postcard-strips-bottom {
+        display: none;
+    } */
+/* } */
+
+
+
+/* =========================================================
+   FORCE MOBILE MENU VERTICAL
+   ========================================================= */
+
+.mobile-nav .navbar-nav {
+    display: flex;
+    flex-direction: column !important;
+    align-items: stretch;
+
+    width: 100%;
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+.mobile-nav .nav-item {
+    display: block;
+
+    width: 100%;
+}
+
+.mobile-nav .nav-link {
+    display: block;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    text-align: right;
+
+    padding:
+        0.65rem
+        15px
+        0.65rem
+        15px;
+}
+
+/* .mobile-art {
+    display: none;
+} */
+
+.mobile-art img {
+    display: block;
+    /* max-width: 140px;
+    width: 100%;
+    height: auto; */
+}
+
+.mobile-art-center img {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.mobile-art-left img {    
+    margin-right: auto;
+}
+
+.mobile-art-right img {
+    margin-left: auto;
+}
+
+.mobile-shadow-leaf img {
+    /* individual adjustments for this artwork */
+    position: relative;
+    left: 0;
+    bottom: 400px;
+    z-index: 9;
+}
+
+.mobile-date img {
+    position: relative;
+    width: 110px;
+    height: 108px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.mobile-skyline img {
+    position: relative;
+    left: 0;
+    width: 100%;
+    /* width: 110px;
+    height: 108px; */
+    /* left: 50%;
+    transform: translateX(-50%); */
+}
+
+@media (max-width: 980px) {
+    .left-art {
+        transform: scale(.25);
+    }
+}
+
+@media (max-width: 1280px) {
+    .left-art, .right-art {
+        transform: scale(.4);
+    }
+}
+
+/* ============================================================
+   MOBILE TEST
+   ============================================================ */
+
+@media screen and (max-width: 700px) {
+
+    .desktop-art {
+        display: none !important;
+    }
+
+    .mobile-art {
+        display: block !important;
+    }
+}
+
+/* ============================================================
+   BIRTHDAY WEBSITE
+   NEW DESKTOP SCALE-1 GEOMETRY
+   ============================================================
+
+   Reference viewport: 2560 x 1440
+
+   Preferred object gap: 30px
+   Collision gap:        10px
+   Navbar width:         200px
+   Left artwork width:   200px
+   Skyline inset:        230px
+
+   IMPORTANT:
+
+   Keep this entire section at the VERY END of the CSS file.
+
+   It deliberately overrides the older desktop geometry while
+   preserving the existing <= 700px mobile design.
+   ============================================================ */
+
+
+/* ============================================================
+   1. DESIGN VARIABLES
+   ============================================================ */
+
+:root {
+
+    /* Postcard borders */
+    --postcard-strip-size: 30px;
+    --left-strip-height: 500px;
+
+    /*
+       Normal/preferred spacing between objects.
+
+       This is the initial layout distance at Scale 1.
+    */
+    --content-min-dist: 30px;
+
+    /*
+       Objects may approach each other from 30px down to 10px
+       during responsive compression.
+
+       At 10px we consider the objects to be colliding.
+    */
+    --collision-gap: 10px;
+
+    /* New navigation width */
+    --desktop-nav-width: 200px;
+
+    /*
+       Scale-1 left/right skyline inset.
+
+       30px left strip
+       +
+       200px artwork/nav width
+
+       = 230px
+    */
+    --skyline-inset: 230px;
+
+    /* Scale-1 artwork widths */
+    --left-art-width: 200px;
+    --alegria-width: 200px;
+}
+
+
+/* ============================================================
+   2. POSTCARD ARTWORK
+   ============================================================ */
+
+.postcard-art {
+
+    position: fixed;
+
+    /*
+       Do NOT animate left/right/transform here.
+
+       The layout engine will eventually recalculate these
+       continuously during resizing. Animating geometry would
+       make artwork appear to "run" across the page.
+
+       Fade only when artwork is hidden.
+    */
+
+    transition:
+        opacity 0.20s ease,
+        visibility 0.20s ease;
+}
+
+
+.art-hidden {
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+}
+
+
+/* ============================================================
+   3. DATE STAMP
+   ============================================================
+
+   Horizontal position is calculated by JavaScript.
+
+   Scale 1:
+
+       right edge = 430px
+
+   Its actual left edge depends upon its natural image width.
+
+   Vertical preferred position:
+
+       top strip 30
+       +
+       preferred gap 30
+
+       = 60px
+   ============================================================ */
+
+#dateStamp {
+
+    top: calc(
+        var(--postcard-strip-size) +
+        var(--content-min-dist)
+    );
+
+    right: auto;
+}
+
+
+/* ============================================================
+   4. SHADOW LEAF
+   ============================================================
+
+   Scale 1:
+
+       left  = 30px
+       width = 200px
+       right = 230px
+
+   Therefore its right edge aligns exactly with the
+   left edge of the skyline.
+   ============================================================ */
+
+#shadowLeaf {
+
+    left: var(--postcard-strip-size);
+
+    width: var(--left-art-width);
+
+    height: auto;
+
+    top: calc(
+        var(--postcard-strip-size) +
+        (var(--left-strip-height) / 2)
+    );
+
+    z-index: 18;
+}
+
+
+/* ============================================================
+   5. GREEN LEAF
+   ============================================================
+
+   Scale 1:
+
+       left  = 0
+       width = 200px
+       right = 200px
+
+   Skyline begins at 230px.
+
+   Therefore:
+
+       230 - 200 = 30px preferred gap
+   ============================================================ */
+
+#greenLeaf {
+
+    left: 0;
+
+    width: var(--left-art-width);
+
+    height: auto;
+
+    bottom: calc(
+        var(--postcard-strip-size) +
+        var(--content-min-dist)
+    );
+}
+
+
+/* ============================================================
+   6. ALEGRIA
+   ============================================================
+
+   Scale 1:
+
+       navbar left  = 2360px
+       preferred gap = 30px
+
+       alegria right = 2330px
+
+       width = 200px
+
+       alegria left = 2130px
+
+   Horizontal positioning is ultimately calculated by JS.
+   ============================================================ */
+
+#alegriaStamp {
+
+    top: calc(
+        var(--postcard-strip-size) +
+        var(--content-min-dist)
+    );
+
+    width: var(--alegria-width);
+
+    height: auto;
+
+    right: auto;
+}
+
+
+/* ============================================================
+   7. BOA MUSICA
+   ============================================================
+
+   We have not yet assigned Boa Música a new Scale-1 size.
+
+   Therefore preserve its natural/CSS image dimensions.
+
+   JavaScript determines its horizontal position.
+
+   Its vertical relationship mirrors the lower-left artwork.
+   ============================================================ */
+
+#boaMusica {
+
+    bottom: calc(
+        var(--postcard-strip-size) +
+        var(--content-min-dist) + 
+        var(--skyline-height)
+    );
+
+    /* right: 200px; */
+
+    /* right: auto; */
+}
+
+
+/* ============================================================
+   8. SKYLINE PICTURE CONTAINER
+   ============================================================
+
+   JavaScript now owns:
+
+       left
+       width
+       horizontal positioning
+
+   At Scale 1:
+
+       left  = 230px
+       right = 2330px
+       width = 2100px
+
+   The picture remains immediately above the 30px
+   bottom postcard strip.
+   ============================================================ */
+
+.skyline-picture {
+
+    position: fixed;
+
+    bottom: var(--postcard-strip-size);
+
+    /*
+       Do NOT leave the old:
+
+           left: 50%;
+           transform: translateX(-50%);
+
+       active.
+
+       JavaScript supplies the exact Scale-1 geometry.
+    */
+
+    left: auto;
+
+    right: auto;
+
+    transform: none;
+
+    pointer-events: none;
+}
+
+
+/* ============================================================
+   9. SKYLINE IMAGE
+   ============================================================
+
+   The image fills the width calculated for the picture
+   container while retaining its natural aspect ratio.
+   ============================================================ */
+
+.skyline {
+
+    display: block;
+
+    width: 100%;
+
+    height: auto;
+}
+
+
+/* ============================================================
+   10. PAGE CONTENT
+   ============================================================
+
+   JavaScript now owns the desktop content rectangle.
+
+   At Scale 1:
+
+       left  = 460px
+       right = 2100px
+       width = 1640px
+
+       top = 60px
+
+       bottom =
+           skyline.top - 30px
+
+   Consequently the old 800px composition width and the old
+   translate(-50%, -50%) centering are no longer used on
+   desktop.
+   ============================================================ */
+    #pageContent {
+        position: relative;
+
+        left: var(--mobile-postcard-strip);
+        top: auto;
+
+        width: calc(100vw - var(--mobile-postcard-strip));
+        height: auto;
+
+        margin: 0;
+        padding: 45px 20px 40px 20px;
+
+        transform: none;
+        box-sizing: border-box;
+        border: solid 1px red;
+
+        z-index: 10;
+    }
+
+    #pageContent {
+    position: absolute;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-top: 40px; 
+
+    height: calc(
+        (100vh - (362px + 60px + 40px)) 
+    );
+
+    /* width: var(--composition-width); */
+
+    /* top: 370px;
+    left: 50%; */
+
+    /* transform: translate(-50%, -50%); */
+
+    /* left: calc(50% - 59.5px); */
+    /* left: 50%; */
+    /* top: calc(50% - 181px); */
+    /* top: 70px; */
+    /* top: calc(
+        var(--content-min-dist) + 
+        var(--postcard-strip-size)
+    ); */
+
+    transform: translate(-50%, -50%);
+
+    /*
+       Whatever dimensions you are
+       already using for the body.
+    */
+
+
+    /* 
+    height: var(--desktop-content-height); */
+
+
+}
+
+#pageContent {
+
+    position: fixed;
+
+    box-sizing: border-box;
+
+    /*
+       Geometry is supplied by JavaScript:
+
+           left
+           top
+           width
+           height
+    */
+
+    right: auto;
+
+    bottom: auto;
+
+    transform: none;
+
+    /*
+       IMPORTANT:
+
+       The 30px gap belongs OUTSIDE pageContent.
+
+       Therefore we don't need the old 40px padding-top to
+       manufacture spacing between content and the top strip.
+    */
+
+    padding-top: 0;
+
+    /*
+       Keep this while developing if you want to see the
+       calculated content rectangle.
+
+       Remove it later for production.
+    */
+
+    border: 1px solid #000;
+}
+
+.card {
+    --bs-card-bg: transparent;
+}
+
+legend, form-label {
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+#partySize {
+    width: 70px;
+    flex-shrink: 0;
+}
+
+.required {
+    color: red;
+}
+
+.text-emoji-small {
+  font-size: 1.5em; /* Makes the emoji 20% larger than the surrounding text */
+  vertical-align: middle; /* Keeps it aligned nicely with text */
+}
+
+.text-emoji-medium {
+    font-size: 1.75em; /* Makes the emoji 20% larger than the surrounding text */
+    vertical-align: middle; /* Keeps it aligned nicely with text */
+}
+
+img.text-emoji-small {
+    height: 1.5em;
+    width: auto;
+    vertical-align: middle;
+}
+
+img.text-emoji-medium {
+    height: 1.75em;
+    width: auto;
+    vertical-align: middle;
+}
+
+.catchphrase {
+    font-style: oblique;
+    font-weight: bold;
+}
+
+
+.signature1 {
+    position: relative;
+    font-family: "p22-allyson-pro", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 3.5rem;
+}
+
+.signature2 {
+    position: relative;
+    font-family: "adorn-garland", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 3.5rem;
+}
+
+.star-no-option {
+    transition: margin-top 0.25s ease;
+}
+
+.instructions {
+    font-size: .8em
+}
+
+/* .star-no-option.star-no-escaping {
+    transform: translateY(50px);
+    margin-top: 50px;
+} */
+
+
+
+/* ============================================================
+   11. DESKTOP NAVIGATION
+   ============================================================
+
+   Scale 1:
+
+       viewport width = 2560
+       navbar width   = 200
+
+       navbar left = 2360
+
+   JavaScript also sets these values, but defining them here
+   gives the page the correct geometry before JS executes.
+   ============================================================ */
+
+.desktop-nav {
+
+    position: fixed;
+
+    top: var(--postcard-strip-size);
+
+    bottom: var(--postcard-strip-size);
+
+    right: 0;
+
+    left: auto;
+
+    width: var(--desktop-nav-width);
+
+    height: var(--left-strip-height);
+
+    /* height: calc(
+        100vh -
+        (2 * var(--postcard-strip-size))
+    ); */
+
+    z-index: 1000;
+
+    background: transparent;
+
+    border-left:
+        1px solid rgba(92, 68, 35, 0.30);
+
+    box-shadow:
+        -4px 5px 10px rgba(60, 40, 20, 0.24);
+
+    padding-top: 2px;
+
+    padding-left: 0;
+
+    padding-right: 0;
+
+    transition:
+        opacity 0.20s ease,
+        visibility 0.20s ease;
+}
+
+
+/* ============================================================
+   12. DESKTOP NAVIGATION HIDDEN STATE
+   ============================================================ */
+
+.desktop-nav-hidden {
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+}
+
+
+/* ============================================================
+   13. IMPORTANT:
+       DISABLE OLD DESKTOP ARTWORK SCALING
+   ============================================================
+
+   Your existing CSS contains:
+
+       @media (max-width: 980px) {
+           .left-art {
+               transform: scale(.25);
+           }
+       }
+
+   and:
+
+       @media (max-width: 1280px) {
+           .left-art,
+           .right-art {
+               transform: scale(.4);
+           }
+       }
+
+   Those rules belong to the OLD resizing system.
+
+   The new layout engine will calculate scale itself.
+
+   These overrides prevent the old media queries from
+   independently scaling the artwork.
+   ============================================================ */
+
+@media screen and (min-width: 701px) {
+
+    .left-art,
+    .right-art {
+
+        transform: none;
     }
 }
 
 
-/* =========================================================
-   SMALL PHONES
-   ========================================================= */
+/* ============================================================
+   14. MOBILE
+   ============================================================
 
-@media (max-width: 576px) {
+   DO NOT apply the Scale-1 desktop geometry below 700px.
 
-    .menu-toggle {
-        top: 30px;
-        right: 15px;
+   Your existing mobile design remains authoritative.
 
-        font-size: 1.4rem;
+   This section is intentionally placed after all the desktop
+   overrides so mobile wins in the cascade.
+   ============================================================ */
+
+@media screen and (max-width: 700px) {
+
+    /*
+       Restore the mobile page-content design.
+    */
+
+    #pageContent {
+
+        position: relative;
+
+        left: var(--mobile-postcard-strip);
+
+        top: auto;
+
+        right: auto;
+
+        bottom: auto;
+
+        width:
+            calc(
+                100vw -
+                var(--mobile-postcard-strip)
+            );
+
+        height: auto;
+
+        margin: 0;
+
+        padding:
+            45px
+            20px
+            40px
+            20px;
+
+        transform: none;
+
+        box-sizing: border-box;
+
+        z-index: 10;
     }
 
-    .page-content {
-        padding-left: 15px;
-        padding-right: 15px;
+
+    /*
+       Desktop artwork remains hidden.
+    */
+
+    .desktop-art {
+
+        display: none !important;
     }
 
-    .hero-section {
-        padding: 1rem;
+
+    /*
+       Mobile artwork remains visible.
+    */
+
+    .mobile-art {
+
+        display: block !important;
+    }
+
+
+    /*
+       Restore mobile skyline behavior.
+    */
+
+    .mobile-skyline img {
+
+        position: relative;
+
+        left: 0;
+
+        width: 100%;
+
+        height: auto;
+
+        transform: none;
     }
 }

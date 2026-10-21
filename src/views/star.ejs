@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en" data-page-title="pageTitle">
+    <%- include("partials/head") %>
+    <body>
+
+        <%- include("partials/postcard-frame") %>
+        <%- include("partials/desktop-artwork") %>
+        <%- include("partials/navigation") %>
+        <%- include("partials/mobile-navigation") %>
+
+        <main id="pageContent">
+            <div class="container col-lg-6 pt-2 pt-md-3 pt-lg-4">
+                <h2 id="event-title" class="kaushan-script text-center"></h2>
+                <!-- <h5 id="star-title1" class="text-center"></h5> -->
+            <div class="pt-4"><!-- stepper was here --></div>
+                <div class="card mt-4">                    
+
+                    <% if (navigation.tracker.panelNumber == "1") { %>
+                        <div class="card-header">
+                            <div class="row align-items-center">
+                                <div id="star-header-left" class="col text-start text-emoji-medium"></div>
+                                <div id="star-header-center" class="col text-center cardTitle text-nowrap"></div>
+                                <div id="star-header-right" class="col text-end text-emoji-medium"></div>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+
+                            <div class="row g-3 mb-4">
+
+                                <!-- Left: Image -->
+                                <div class="col-12 col-lg-6 text-center">
+                                    <img
+                                        src="/images/photos/MA-5yo.png"
+                                        class="my-image"
+                                        alt="Me at 5 years old"
+                                        style="width:294px; height: 333px;"
+                                        >
+                                </div>
+
+                                <!-- Right: Text and heading -->
+                                <div class="col-12 col-lg-6 d-flex flex-column justify-content-between">
+
+                                    <div id="star-content1">
+                                    Your text content goes here.
+                                    </div>
+
+                                    <h5 id="star-title2" class="kaushan-script mb-0 text-center">
+                                    Your heading goes here.
+                                    </h5>
+
+                                </div>
+
+                            </div>
+
+                            <div class="row g-3">
+
+                                <!-- left: Text and heading -->
+                                <div class="col-12 col-lg-6 d-flex flex-column justify-content-between">
+
+                                    <div id="star-content2">
+                                    Your text content goes here.
+                                    </div>
+
+                                    <h5 id="star-title3" class="kaushan-script mb-0 text-center">
+                                    Your heading goes here.
+                                    </h5>
+
+                                </div>
+
+                                <!-- right: Image -->
+                                <div class="col-12 col-lg-6 text-center">
+                                    <img
+                                        src="/images/photos/MA-9yo.png"
+                                        class="my-image"
+                                        alt="Me at 9 years old"
+                                        style="width:269px; height: 365px; "
+                                        >
+                                </div>
+
+                                
+
+                            </div>
+
+                            <div id="star-content3" class="pt-4"></div> 
+                            <!-- <div id="star-content1" class="pt-2"></div> 
+                            <h5 id="star-title2" class="kaushan-script"></h5>
+                            <div id="star-content2" class="pt-2"></div> 
+                            <h5 id="star-title3" class="kaushan-script"></h5> -->
+                            
+                        </div>
+                        <%- include("partials/buttons") %>
+                    <% } %>
+
+                    <% if (navigation.tracker.panelNumber == "2") { %>
+                        <div class="card-header">
+                            <div class="row align-items-center">
+                                <div id="star-header-left" class="col-sm text-start text-emoji-medium"></div>
+                                <div class="col-8 text-center cardTitle"><%= navigation?.displayGuest?.firstName ?? "" %>, <span id="<%= navigation?.displayGuest?.finished == 'true' ? 'starDataUpdateTitle' : 'starDataInputTitle' %>"></span></div>
+                                <div id="star-header-right" class="col-sm text-end text-emoji-medium"></div>
+                            </div>
+                        </div>
+
+                        <form id="starForm" novalidate>
+                            <div class="card-body">
+                            
+                                <!-- =========================================================
+                                QUESTION 1
+                                ========================================================== -->
+
+                                <fieldset class="mb-5">
+                                    <legend id="starQ1" class="mb-3"></legend>
+                                    <div class="d-flex flex-column gap-2">
+                                        <% starOptions.forEach((option, index) => { %>
+
+                                            <div
+                                                class="form-check <%= option.value === 'no' ? 'star-no-option' : '' %>"
+                                                <%= option.value === "no" ? 'id="starNoOption"' : "" %>
+                                                >
+                                                <% if (option.value === "no") { %>
+                                                    <div id="divNo" class="col">
+                                                        <input
+                                                            class="form-check-input"
+                                                            type="radio"
+                                                            name="star"
+                                                            id="starOption<%= index %>"
+                                                            value="<%= option.value %>"
+                                                            <%= guest?.star === option.value ? "checked" : "" %>
+                                                        >
+
+                                                        <label
+                                                            class="form-check-label"
+                                                            for="starOption<%= index %>"
+                                                            id="<%= option.key %>"
+                                                        >
+                                                        </label>
+                                                    </div>
+                                                <% } else { %>
+                                                    <input
+                                                        class="form-check-input"
+                                                        type="radio"
+                                                        name="star"
+                                                        id="starOption<%= index %>"
+                                                        value="<%= option.value %>"
+                                                        <%= guest?.star === option.value ? "checked" : "" %>
+                                                    >
+
+                                                    <label
+                                                        class="form-check-label"
+                                                        for="starOption<%= index %>"
+                                                        id="<%= option.key %>"
+                                                    >
+                                                    </label>
+                                                <% } %>
+                                                
+                                            </div>
+
+                                        <% }); %>
+                                    </div>
+                                </fieldset>
+
+                                <!-- =========================================================
+                                QUESTION 2
+                                ========================================================== -->
+
+                                <div class="mb-3">
+                                    <label
+                                        for="presenting"
+                                        id="starQ2"
+                                        class="form-label">
+                                    </label>
+
+                                    <textarea
+                                        id="presenting"
+                                        name="presenting"
+                                        class="form-control"
+                                        rows="4"
+                                        maxlength="1000"
+                                    ><%= navigation?.displayGuest?.presenting ?? "" %></textarea>
+                                </div>                                
+                                
+                                <div id="<%= navigation?.displayGuest?.finished == 'true' ? 'star2FooterUpdate' : 'star2FooterAdd' %>"></div>
+                                <!-- =========================================================
+                                    FEEDBACK
+                                ========================================================== -->
+
+                                <div
+                                    id="starFeedback"
+                                    class="alert d-none"
+                                    role="alert"
+                                >
+                                    <span id="starFeedbackText"></span>
+                                </div>
+
+                            </div>   
+
+                            <!-- =========================================================
+                                    SUBMIT
+                                ========================================================== -->
+                            <div class="d-flex justify-content-center mt-4">
+                                    <button
+                                        id="starSubmitButton"
+                                        type="submit"
+                                        class="btn btn-outline-dark ma-button w-100 gap-2"
+                                    >
+                                        <span id="starSubmitButtonText"></span>
+                                        <i class="bi bi-person-arms-up"></i>
+                                    </button>
+                            </div>
+                        </form>
+                        
+                    <% } %>
+
+                    <% if (navigation.tracker.panelNumber == "3") { %>
+                        <div class="card-header">
+                            <div class="row align-items-center">
+                                <div id="star-header-left" class="col-sm text-start text-emoji-medium"></div>
+                                <div class="col-8 text-center cardTitle"><%= navigation?.displayGuest?.firstName ?? "" %>, <span id="<%= navigation?.displayGuest?.finished == 'true' ? 'starDataUpdateTitle' : 'starDataInputTitle' %>"></span></div>
+                                <div id="star-header-right" class="col-sm text-end text-emoji-medium"></div>
+                            </div>
+                        </div>
+
+                        <form id="starFormSong" novalidate>
+                            <div class="card-body">
+                            
+                                <!-- =========================================================
+                                    QUESTION 3
+                                ========================================================== -->
+
+                                <!-- <fieldset> -->
+
+                                    <legend id="starQ3" class="mb-2">
+                                    </legend>
+
+                                    <p id="starQ3Instructions" class="mb-3 instructions"></p>
+
+                                    <div class="row g-3">
+                                        <div class="col-12 p-2 input-group">
+                                            <span id="song1Label" class="input-group-text"></span>
+                                            <input
+                                                id="song1"
+                                                name="song1"
+                                                type="text"
+                                                class="form-control"
+                                                maxlength="200"
+                                                placeholder="Example: Vogue, by Madonna"
+                                                value="<%= navigation?.displayGuest?.song1 ?? "" %>"
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3">
+                                        <div class="col-12 p-2 input-group">
+                                            <span id="song2Label" class="input-group-text"></span>
+                                            <input
+                                                id="song2"
+                                                name="song2"
+                                                type="text"
+                                                class="form-control"
+                                                maxlength="200"
+                                                placeholder="Example: Michael Jackson's Beat it"
+                                                value="<%= navigation?.displayGuest?.song2 ?? "" %>"
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3">
+                                        <div class="col-12 p-2 input-group">
+                                            <span id="song3Label" class="input-group-text"></span>
+                                            <input
+                                                id="song3"
+                                                name="song3"
+                                                type="text"
+                                                class="form-control"
+                                                maxlength="200"
+                                                placeholder="Song 3"
+                                                value="<%= navigation?.displayGuest?.song3 ?? "" %>"
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3">
+                                        <div class="col-12 p-2 input-group">
+                                            <span id="song4Label" class="input-group-text"></span>
+                                            <input
+                                                id="song4"
+                                                name="song4"
+                                                type="text"
+                                                class="form-control"
+                                                maxlength="200"
+                                                placeholder="Song 4"
+                                                value="<%= navigation?.displayGuest?.song4 ?? "" %>"
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3">
+                                        <div class="col-12 p-2 input-group">
+                                            <span id="song5Label" class="input-group-text"></span>
+                                            <input
+                                                id="song5"
+                                                name="song5"
+                                                type="text"
+                                                class="form-control"
+                                                maxlength="200"
+                                                placeholder="Song 5"
+                                                value="<%= navigation?.displayGuest?.song5 ?? "" %>"
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3">
+                                        <div class="col-12 p-2 input-group">
+                                            <span id="song6Label" class="input-group-text"></span>
+                                            <input
+                                                id="song6"
+                                                name="song6"
+                                                type="text"
+                                                class="form-control"
+                                                maxlength="200"
+                                                placeholder="Song 6"
+                                                value="<%= navigation?.displayGuest?.song6 ?? "" %>"
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3">
+                                       <div class="col-12 p-2 input-group">
+                                            <span id="song7Label" class="input-group-text"></span>
+                                            <input
+                                                id="song7"
+                                                name="song7"
+                                                type="text"
+                                                class="form-control"
+                                                maxlength="200"
+                                                placeholder="Song 7"
+                                                value="<%= navigation?.displayGuest?.song7 ?? "" %>"
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <!-- =========================================================
+                                                FEEDBACK
+                                            ========================================================== -->
+
+                                            <div
+                                                id="starMusicFeedback"
+                                                class="alert d-none"
+                                                role="alert"
+                                            >
+                                                <span id="starMusicFeedbackText"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                <!-- </fieldset> -->
+                            </div>
+                                
+                            <div class="d-flex justify-content-center mt-2">
+                                <button
+                                    id="starSubmitSongButton"
+                                    type="submit"
+                                    class="btn btn-outline-dark ma-button w-100 gap-2"
+                                >
+                                    <span id="<%= navigation?.displayGuest?.finished == 'true' ? 'starUpdateButtonText' : 'starSubmitButtonText' %>"></span>
+                                    <i class="bi bi-person-arms-up"></i>
+                                </button>
+                            </div>
+                            
+                        </form>
+                        
+                    <% } %>
+                </div>
+
+                
+            </div>
+            
+        </main>       
+
+        <%- include("partials/footer") %>
+
+        <!-- <script src="/js/resize.js"></script>
+        <script type="module" src="/js/language.js"></script>
+        <script type="module" src="/js/menuAccess.js"></script> -->
+        <script type="module" src="/js/star.js"></script>
+        <!-- <script>
+            localStorage.setItem("starVisited", "true");
+        </script> -->
+        <script>
+            window.btnNav = <%- JSON.stringify(navigation?.next?.url).replace(/</g, "\\u003c") %>;
+        </script>
+    </body>
+</html>

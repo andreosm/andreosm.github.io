@@ -1,0 +1,45 @@
+{
+    "buttonBack": "Indietro",
+    "buttonNext": "Avanti",
+    
+    "menu-home": "Casa",
+    "menu-party": "La Festa",
+    "menu-venue": "Il Locale",
+    "menu-food": "Mangiare",
+    "menu-beverage": "Bevande",
+    "menu-rsvp": "RSVP",
+    "home-title": "Marcos's Birthday Party!",
+    "home-intro1": "Welcome!",
+    "home-text1": "If you’ve made it here, chances are you are curious about the teasers in the invitation.",
+    "home-text2": "Good. That was exactly the idea.",
+    "home-text3": "This website was created to bring a little preview of what is being prepared for the celebration. Here, you’ll be able to discover the <strong>venue</strong>, get a taste of the <strong>food and drinks</strong> that will be served, learn a little more about how the celebration will unfold, and get more details as the date approaches.",
+    "home-text4": "And then, of course, you will understand what is behind the little mystery that started all of this.",
+    "home-text5": "67.",
+    "home-text6": "Or is it 6–7?",
+    "home-text7": "Perhaps 60 + 7?",
+    "home-text8": "Details to come. Until then, explore, enjoy the preview, and start getting ready for July 2027.",
+    "home-countdownTitle": "The countdown has begun",
+    "home-days": "Days",
+    "home-hours": "Hours",
+    "home-minutes": "Minutes",
+    "home-seconds": "Seconds",
+    "party": {
+        "title": "The Party",
+        "subtitle": "A celebration in São Paulo",
+        "description": "..."
+    },
+    "venue": {
+        "title": "The Venue",
+        "description": "..."
+    },
+    "food": {
+        "title": "Food & Beverage",
+        "description": "..."
+    },
+    "rsvp": {
+        "title": "RSVP",
+        "yes": "Yes",
+        "no": "No",
+        "submit": "Submit"
+    }
+}

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-page-title="the-partyPageTitle">
+<html lang="en" data-page-title="beveragesPageTitle">
 
     <head>
         <meta charset="UTF-8">
@@ -13,7 +13,7 @@
             rel="stylesheet">
 
         <!-- Site CSS -->
-        <link rel="stylesheet" href="../css/site3.css">
+        <link rel="stylesheet" href="/css/site3.css">
     </head>
 
     <body>
@@ -46,68 +46,12 @@
             alt=""
         >
 
-        <!-- BG FADED CONTENT -->
-         <img 
-            id="fadedPostcard"
-            class="postcard-art left-art"
-            src="/images/css/postcard-faded-en.png"
-            alt=""
-        >
 
         <!-- CONTENT -->
         <main id="pageContent" class="page-content">
             <h2 id="event-title" class="kaushan-script"></h2>
-            <h5 id="party-title1"></h5> 
-            <div id="party-content1" class="content"></div>
-            <h4 id="party-title2" class="kaushan-script"></h4>
-            <div id="party-content2" class="content"></div>
-
-            <div style="margin: 2rem">
-                <div class="d-flex justify-content-between">
-                    <a class="icon-link icon-link-hover"
-                    href="/index.html"
-                    style="--bs-icon-link-transform: translate3d(-.25rem, 0, 0);">
-
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            class="bi bi-arrow-left"
-                            viewBox="0 0 16 16">
-
-                            <path fill-rule="evenodd"
-                                d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
-                        </svg>
-
-                        <span data-button="buttonBack"></span>
-                    </a>
-
-                    <a class="icon-link icon-link-hover" 
-                    href="be-a-star.html"><span data-button="buttonNext"></span> 
-                        <svg xmlns="http://www.w3.org/2000/svg" 
-                            width="16" 
-                            height="16" 
-                            fill="currentColor" 
-                            class="bi bi-arrow-right" 
-                            viewBox="0 0 16 16">
-                        
-                            <path fill-rule="evenodd" 
-                            d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
-                        </svg>    
-                    </a>
-                </div>
-            </div>
-
-            <!-- <p id="party-schedule"></p>
-            <p id="party-text1"></p>
-            <p id="party-text2"></p>
-            <p id="party-text3"></p>
-            <p id="party-text4"></p>
-            <h5 id="party-title2"></h5>  -->
-
-            
+            <h5 id="beverages-title"></h5>   
         </main>
-
 
         <!-- <main class="container page-content">
             <section class="hero-section">
@@ -147,8 +91,8 @@
         >
 
 
-        <!-- DESKTOP NAVBAR -->
-        <nav id="desktopNav" class="desktop-nav">
+                <!-- DESKTOP NAVBAR -->
+        <nav id="desktopNav" class="site-nav desktop-nav">
 
             <ul class="navbar-nav">
 
@@ -159,7 +103,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link active" href="" id="menu-party">
+                    <a class="nav-link" href="the-party.html" id="menu-party">
                         
                     </a>
                 </li>
@@ -183,7 +127,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="beverages.html" id="menu-beverage">
+                    <a class="nav-link active" href="" id="menu-beverage">
                     
                     </a>
                 </li>
@@ -256,13 +200,13 @@
         <!-- MOBILE / HAMBURGER NAVIGATION -->
         <nav
             id="mobileNav"
-            class="mobile-nav"
+            class="site-nav mobile-nav"
             aria-hidden="true"
         >
 
             <button
                 id="mobileNavClose"
-                class="mobile-nav-close"
+                class="site-nav mobile-nav-close"
                 type="button"
                 aria-label="Close navigation"
             >
@@ -319,10 +263,6 @@
             </div>
 
         </div>
-
-        <script>
-            localStorage.setItem("partyVisited", "true");
-        </script>
     </body>
 
 </html>

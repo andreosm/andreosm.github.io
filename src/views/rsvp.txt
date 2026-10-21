@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" data-page-title="pageTitle">
+    <%- include("partials/head") %>
+    <body>
+
+        <%- include("partials/postcard-frame") %>
+        <%- include("partials/desktop-artwork") %>
+        <%- include("partials/navigation") %>
+        <%- include("partials/mobile-navigation") %>
+   
+        <main id="pageContent">
+            <div class="container col-lg-6 pt-2 pt-md-3 pt-lg-4">
+                <div class="card" style="width: 18rem;">
+                    <img src="..." class="card-img-top" alt="...">
+                    <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+            </div>
+          
+            
+            <div
+                id="rsvpContainer"
+                class="container"
+            >
+
+                <form
+                    id="rsvpForm"
+                    method="post"
+                    action="/rsvp"
+                    novalidate
+                >
+
+                    <!-- ========================================
+                        GREETING
+                        ======================================== -->
+
+                    <div class="mb-4">
+
+                        <h2
+                            id="rsvpGreeting"
+                            class="text-center"
+                        >
+                            Dear
+                           
+                        </h2>
+
+                    </div>
+
+
+                    <!-- ========================================
+                        QUESTION 1
+                        ======================================== -->
+
+                    <fieldset class="mb-4">
+
+                        <legend class="fs-5">
+
+                            Would you like to attend
+                            the party?
+
+                        </legend>
+
+
+                        <div class="form-check">
+
+                            <input
+                                class="form-check-input"
+                                type="radio"
+                                name="attending"
+                                id="attendingYes"
+                                value="yes"
+                            >
+
+                            <label
+                                class="form-check-label"
+                                for="attendingYes"
+                            >
+                                Yes
+                            </label>
+
+                        </div>
+
+
+                        <div class="form-check">
+
+                            <input
+                                class="form-check-input"
+                                type="radio"
+                                name="attending"
+                                id="attendingNo"
+                                value="no"
+                            >
+
+                            <label
+                                class="form-check-label"
+                                for="attendingNo"
+                            >
+                                No
+                            </label>
+
+                        </div>
+
+                    </fieldset>
+
+
+                    <!-- ========================================
+                        NO MESSAGE
+                        ======================================== -->
+
+                    <div
+                        id="declineMessage"
+                        class="alert alert-secondary d-none"
+                        role="status"
+                    >
+
+                        I'm sorry you won't be able
+                        to make it. You will be missed!
+
+                    </div>
+
+
+                    <!-- ========================================
+                        QUESTION 2
+                        ======================================== -->
+
+                    <div
+                        id="partySizeSection"
+                        class="mb-4 d-none"
+                    >
+
+                        <label
+                            for="partySize"
+                            class="form-label"
+                        >
+
+                            Including you, how many
+                            people do you estimate
+                            will be attending?
+
+                        </label>
+
+
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="partySize"
+                            name="partySize"
+                            min="0"
+                            step="1"
+                            inputmode="numeric"
+                        >
+
+                         <input
+          id="partySize"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          maxlength="2"
+          aria-label="Number of people attending"
+        >
+
+
+                        <div
+                            id="partySizeError"
+                            class="invalid-feedback"
+                        >
+
+                            Please enter a positive
+                            whole number.
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ========================================
+                        SUBMIT
+                        ======================================== -->
+
+                    <div
+                        class="
+                            d-flex
+                            justify-content-center
+                            mt-4
+                        "
+                    >
+
+                        <button
+                            id="submitRsvp"
+                            type="submit"
+                            class="btn btn-primary"
+                            disabled
+                        >
+
+                            Submit RSVP
+
+                        </button>
+
+                    </div>
+
+                    <script src="/js/rsvp.js"></script>
+
+                    <% if (typeof feedback !== "undefined" && feedback) { %>
+
+                        <div
+                            class="alert alert-<%= feedback.type %> alert-dismissible fade show"
+                            role="alert"
+                        >
+                            <%= feedback.message %>
+
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="alert"
+                                aria-label="Close"
+                            ></button>
+                        </div>
+
+                    <% } %>
+                </form>
+
+            </div>
+        </main>
+
+        <!-- <script src="/js/resize.js"></script> -->
+        <script type="module" src="/js/language.js"></script>
+        <script type="module" src="/js/menuAccess.js"></script>
+        <script src="/js/feedback.js"></script>
+
+        <script>
+            localStorage.setItem("starVisited", "true");
+        </script>
+
+        <div id="status" class="status" role="status" aria-live="polite"></div>
+
+    </body>
+</html>

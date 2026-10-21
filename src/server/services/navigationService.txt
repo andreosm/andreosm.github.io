@@ -1,0 +1,251 @@
+// export type StepId =
+//   | "welcome"
+//   | "party"
+//   | "star"
+//   | "rsvp"
+//   | "thats60s"
+//   | "thats7s"
+//   | "end";
+
+import { NavigationButton, NavigationState, NextAction } from "../models/navigation.js";
+
+import { StepId, StepperState, StepDefinition, STEPS } from "../models/stepper.js";
+// import { isStepsCompleted } from "./services/stepperService.js";
+
+export type StarPanel = 1 | 2 | 3;
+// export type CurrentPage = "index" | "party" | "rsvp" | "star1" | "star2" | "star3" | "end";
+// export type NextAction = "navigate" | "submit" | "submit-navigate" | "none";
+
+// export interface StepperState {
+//   currentStep: StepId;
+//   completedSteps: StepId[];
+// }
+
+export interface GuestProgress {
+  identified: boolean;
+  completedSteps: StepId[];
+}
+
+// export interface StepDefinition {
+//   id: StepId;
+//   label: string;
+//   url: string;
+// }
+
+// export interface StepView extends StepDefinition {
+//   active: boolean;
+//   completed: boolean;
+// }
+
+
+
+// export interface NavButtons {
+//   showNext: boolean;
+//   showNextLink: boolean;
+//   showBack: boolean;
+//   // showRsvp: boolean;
+//   // showStar: boolean;
+//   showLogout: boolean;
+//   nextUrl: string | null;
+//   backUrl: string | null;
+// }
+
+// export interface NavigationState {
+//   showNavbar: boolean;
+//   guidedMode: boolean;
+//   back: NavigationButton;
+//   next: NavigationButton;
+//   // navButtons: NavButtons;
+//   steps: StepDefinition;
+//   stepper: StepperState;
+// }
+
+
+// export const STEPS: readonly StepDefinition[] = [
+//   { id: "welcome", label: "Welcome", url: "/" },
+//   { id: "party", label: "The Party", url: "/party" },
+//   { id: "star", label: "Be a Star", url: "/star?panel=1" },
+//   { id: "rsvp", label: "RSVP", url: "/rsvp" },
+//   { id: "thats60s", label: "That's 60s", url: "/star?panel=2" },
+//   { id: "thats7s", label: "That's 7s", url: "/star?panel=3" },
+//   { id: "end", label: "End", url: "/finish" },
+// ];
+
+// export const RESTRICTED_PATHS = new Set([
+//   "/party",
+//   "/star",
+//   "/rsvp",
+//   "/finish",
+// ]);
+
+// export function isRestrictedPage(path: string): boolean {
+//   const normalized = path.replace(/\/+$/, "") || "/";
+//   return RESTRICTED_PATHS.has(normalized);
+// }
+
+// export function isProcessComplete(progress: GuestProgress): boolean {
+//   return (
+//     progress.identified &&
+//     STEPS.every((step) => progress.completedSteps.includes(step.id))
+//   );
+// }
+
+export function getStepFromPage(path: string, panel: StarPanel = 1): StepId {
+  switch (path) {
+    case "/":
+    case "/index":
+      return "welcome";
+    case "/party":
+      return "party";
+    case "/rsvp":
+      return "rsvp";
+    case "/finish":
+      return "end";
+    case "/star":
+      return panel === 1 ? "star" : panel === 2 ? "thats60s" : "thats7s";
+    default:
+      return "welcome";
+  }
+}
+
+// function getStepIndex(id: StepId): number {
+//   return STEPS.findIndex((step) => step.id === id);
+// }
+
+function button(
+  visible: boolean,
+  url: string | null = null,
+  action: NextAction = "none",
+): NavigationButton {
+  return { visible, url, action };
+}
+
+
+export function getNavigationState(
+  req: Request,
+  progress: GuestProgress,
+  currentStep: StepId,
+): NavigationState {
+  const complete = isStepsCompleted(req, progress);
+  const guidedMode = !complete;
+  const index = getStepIndex(currentStep);
+
+  const previous = index > 0 ? STEPS[index - 1] : null;
+  const next = index < STEPS.length - 1 ? STEPS[index + 1] : null;
+
+  let backButton: NavigationButton;
+  let nextButton: NavigationButton;
+
+  if (guidedMode) {
+    backButton = button(
+      previous !== null,
+      previous?.url ?? null,
+      previous ? "navigate" : "none",
+    );
+
+    // RSVP and the two later Star panels save before advancing.
+    const submitBeforeNext: StepId[] = ["rsvp", "thats60s", "thats7s"];
+
+    nextButton = button(
+      next !== null,
+      next?.url ?? null,
+      !next
+        ? "none"
+        : submitBeforeNext.includes(currentStep)
+          ? "submit-navigate"
+          : "navigate",
+    );
+  } else {
+    backButton = button(false);
+
+    switch (currentStep) {
+      case "rsvp":
+      case "thats7s":
+        // Save and show feedback without leaving the page.
+        nextButton = button(true, null, "submit");
+        break;
+
+      case "star":
+        nextButton = button(true, "/star?panel=2", "navigate");
+        break;
+
+      case "thats60s":
+        nextButton = button(true, "/star?panel=3", "submit-navigate");
+        break;
+
+      default:
+        nextButton = button(false);
+    }
+  }
+
+  // const steps: StepView[] = STEPS.map((step) => ({
+  //   ...step,
+  //   active: step.id === currentStep,
+  //   completed: complete || progress.completedSteps.includes(step.id),
+  // }));
+
+  // const navButtons: NavButtons = {
+  //   showNext: nextButton.visible,
+  //   showNextLink: nextButton.action === "navigate",
+  //   showBack: backButton.visible,
+  //   showRsvp: complete,
+  //   showStar: complete,
+  //   showLogout: progress.identified,
+  //   nextUrl: nextButton.url,
+  //   backUrl: backButton.url,
+  // };
+
+  return {
+    showNavbar: complete,
+    guidedMode,
+    back: backButton,
+    next: nextButton,
+    // navButtons,
+    // steps,
+    // stepper: {
+    //   currentStep,
+    //   completedSteps: steps
+    //     .filter((step) => step.completed)
+    //     .map((step) => step.id),
+    // },
+  };
+}
+
+// export function completeStep(
+//   progress: GuestProgress,
+//   stepId: StepId,
+// ): GuestProgress {
+//   if (!progress.completedSteps.includes(stepId)) {
+//     progress.completedSteps.push(stepId);
+//   }
+
+//   return progress;
+// }
+
+// export function completeSteps(
+//   progress: GuestProgress,
+//   stepIds: StepId[],
+// ): GuestProgress {
+//   for (const id of stepIds) {
+//     completeStep(progress, id);
+//   }
+
+//   return progress;
+// }
+
+export function getNextIncompleteStep(
+  progress: GuestProgress,
+): StepDefinition | null {
+  return (
+    STEPS.find((step) => !progress.completedSteps.includes(step.id)) ?? null
+  );
+}
+
+// export function getProgressPercentage(progress: GuestProgress): number {
+//   const completed = STEPS.filter((step) =>
+//     progress.completedSteps.includes(step.id),
+//   ).length;
+
+//   return Math.round((completed / STEPS.length) * 100);
+// }
+

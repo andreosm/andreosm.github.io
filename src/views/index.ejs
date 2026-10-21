@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" data-page-title="pageTitle">
+    <%- include("partials/head") %>
+    <body>
+
+        <%- include("partials/postcard-frame") %>
+        <%- include("partials/desktop-artwork") %>
+        <%- include("partials/navigation") %>
+        <%- include("partials/mobile-navigation") %>
+
+        <main id="pageContent">
+            <div class="container col-lg-6 pt-2 pt-md-3 pt-lg-4">
+                <h2 id="event-title" class="kaushan-script text-center"></h2>
+                <div id="home-title" class="pageTitle text-center"></div>
+                <h5 id="" class="text-center"></h5>   
+
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div id="home-header-left" class="col text-start text-emoji-medium"></div>
+                            <div id="<%= navigation?.identified ? 'home-header-center-name' : 'home-header-center-date' %>" class="col text-center cardTitle"><span><%= navigation?.displayGuest?.salutation %> <%= navigation?.displayGuest?.relationship %> <%= navigation?.displayGuest?.firstName %></span></div>
+                            <div id="home-header-right" class="col text-end text-emoji-medium"></div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div id="home-content1" class="text-center"></div>
+                        <div class="container countdown-container text-center demo-box-green mt-3">
+                            <hr/>
+                            <div class="row">
+                                <div class="col fw-bold" id="home-days"></div>
+                                <div class="col fw-bold" id="home-hours"></div>
+                                <div class="col fw-bold" id="home-minutes"></div>
+                                <div class="col fw-bold" id="home-seconds"></div>
+                            </div>
+                            <hr/>
+                            <div class="row">
+                                <div class="col" id="countdownDays"></div>
+                                <div class="col" id="countdownHours"></div>
+                                <div class="col" id="countdownMinutes"></div>
+                                <div class="col" id="countdownSeconds"></div>
+                            </div> 
+                            <hr/>
+                            <div id="home-timezone" class="mb-4"></div>
+                            
+                            <!-- <img 
+                                id="fadedPostcard1"
+                                data-localized-src="postcard-faded-home1.png"
+                                class="desktop-art home-page"
+                                alt=""
+                            >
+                            <img 
+                                id="fadedPostcard2"
+                                data-localized-src="postcard-faded-home2.png"
+                                class="desktop-art home-page"
+                                alt=""
+                            > -->
+                            <div class="row align-items-center g-4 pb-5">
+
+                                <!-- Photo --> <!-- 1086X1448-->
+                                <div class="col-12 col-lg-6">
+                                    <img
+                                    src="/images/photos/Route67-9.png"
+                                    
+                                    alt="Route 67"
+                                    style="width:217px; height: 289px;"
+                                    >
+                                </div>
+
+                                <!-- Text -->
+                                <div id="route-67" class="col-12 col-lg-6"></div>
+
+                            </div>
+
+                            <!-- stepper was here -->
+                            
+                        </div>
+                      
+                    </div>
+                    <div class="pt-4"><%- include("partials/buttons") %></div>
+                    
+                </div>            
+            </div>
+        </main>        
+
+        <%- include("partials/footer") %>
+        <script type="module" src="/js/countdown.js"></script>
+        <!-- <script>
+            currentStep = "rsvp";
+            completedSteps = ["welcome", "rsvp"];
+
+            
+
+            const stepper = getStepper(req);
+
+            const result = await response.json();
+
+            completeStep(result, "rsvp");
+
+            updateStepper("party", ["home", "rsvp"]);
+
+            refreshStepper(result.stepper);
+        </script> -->
+    
+    </body>
+</html>

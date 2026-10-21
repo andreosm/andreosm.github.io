@@ -1,18 +1,36 @@
-"use strict";
 const DEFAULT_LANGUAGE = "en";
-const LANGUAGE_STORAGE_KEY = "preferredLanguage";
-function getSavedLanguage() {
-    const language = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+const LANGUAGE_API_URL = "/api/guest/language";
+let currentTranslations = {};
+let currentLanguage = DEFAULT_LANGUAGE;
+// interface Window {
+//   invitationLanguage?: Language;
+//   translate: (key: string) => string;
+// }
+function isValidLanguage(value) {
+    return value === "en" || value === "pt" || value === "it";
+}
+function getInitialLanguage() {
+    console.debug(window.preferredLanguage);
+    // return isValidLanguage(window.effectiveLanguage)
+    //   ? window.effectiveLanguage
+    //   : DEFAULT_LANGUAGE;
+    const language = window.preferredLanguage;
     if (language === "en" || language === "pt" || language === "it") {
         return language;
     }
     return DEFAULT_LANGUAGE;
 }
-function saveLanguage(language) {
-    const currentLanguage = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-    localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
-    if (currentLanguage != language)
-        showLanguageToast(language);
+async function saveLanguage(language) {
+    const response = await fetch(LANGUAGE_API_URL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ language }),
+    });
+    if (!response.ok) {
+        throw new Error(`Unable to save preferred language: ${response.status}`);
+    }
 }
 async function loadTranslations(language) {
     const url = `/locales/${language}.json`;
@@ -35,11 +53,21 @@ function translatePage(translations) {
     setPageTitle(translations);
     Object.entries(translations).forEach(([id, translation]) => {
         const element = document.getElementById(id);
-        if (element) {
+        if (element && typeof translation === "string") {
             element.innerHTML = translation;
         }
     });
     setPageButtons(translations);
+}
+function updateLocalizedImages(language) {
+    document
+        .querySelectorAll("img[data-localized-src]")
+        .forEach((img) => {
+        const filename = img.dataset.localizedSrc;
+        if (filename) {
+            img.src = `/images/locales/${language}/${filename}`;
+        }
+    });
 }
 function showLanguageToast(language) {
     const toastElement = document.getElementById("languageToast");
@@ -84,24 +112,52 @@ function setPageTitle(translations) {
 }
 async function setLanguage(language) {
     console.log("Setting language:", language);
+    const translations = await loadTranslations(language);
+    currentTranslations = translations;
+    currentLanguage = language;
+    translatePage(translations);
+    updateLocalizedImages(language);
+    document.documentElement.lang = language;
+}
+async function changePreferredLanguage(language) {
+    if (language === currentLanguage) {
+        return;
+    }
     try {
+        // Load the translations before saving the preference.
         const translations = await loadTranslations(language);
+        // Persist the preference in the guest's CSV record.
+        await saveLanguage(language);
+        // Apply the language only after successful persistence.
+        currentTranslations = translations;
+        currentLanguage = language;
         translatePage(translations);
-        saveLanguage(language);
+        updateLocalizedImages(language);
         document.documentElement.lang = language;
+        showLanguageToast(language);
     }
     catch (error) {
-        console.error("Unable to load language:", error);
+        console.error("Unable to change preferred language:", error);
     }
 }
 function initializeLanguageButtons() {
     const buttons = document.querySelectorAll("[data-language]");
     console.log(`Found ${buttons.length} language buttons.`);
+    let changingLanguage = false;
     buttons.forEach((button) => {
         button.addEventListener("click", async () => {
             const language = button.dataset.language;
+            if (!isValidLanguage(language) || changingLanguage) {
+                return;
+            }
             console.log("Language selected:", language);
-            await setLanguage(language);
+            changingLanguage = true;
+            try {
+                await changePreferredLanguage(language);
+            }
+            finally {
+                changingLanguage = false;
+            }
         });
     });
 }
@@ -113,12 +169,21 @@ function setPageButtons(translations) {
         }
     });
 }
+function translate(key) {
+    return getTranslation(currentTranslations, key) ?? key;
+}
+window.translate = translate;
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("Language system initialized.");
-    // registerCurrentPage();
-    // updateMenuAccess();
     initializeLanguageButtons();
-    const language = getSavedLanguage();
+    const language = getInitialLanguage();
+    await loadTranslations(language);
     console.log("Initial language:", language);
-    await setLanguage(language);
+    try {
+        await setLanguage(language);
+    }
+    catch (error) {
+        console.error("Unable to initialize language:", error);
+    }
 });
+export {};

@@ -1,0 +1,33 @@
+<div class="d-flex align-items-center gap-3 w-100">   
+    <div class="flex-grow-1">
+        <div class="party-stepper" aria-label="Party progress">
+            <div class="party-stepper-steps">
+
+                <% steps.forEach((step) => { %>
+                <% const completed = stepper.completedSteps.includes(step.id); %>
+                <% const active = stepper.currentStep === step.id; %>
+
+                <div
+                    class="party-step <%= completed ? 'completed' : '' %> <%= active ? 'active' : '' %>"
+                    <%= active ? 'aria-current="step"' : '' %>
+                >
+                    <div class="party-step-indicator" data-step-id="<%= step.id %>">
+                    <% if (completed && !active) { %>
+                        <i class="bi bi-check-lg"></i>
+                    <% } else { %>
+                        <%= steps.indexOf(step) + 1 %>
+                    <% } %>
+                    </div>
+
+                    <span
+                    id="<%= step.translationKey %>"
+                    class="party-step-label"
+                    ><%= step.label %></span>
+                </div>
+
+                <% }); %>
+
+            </div>
+        </div>                      
+    </div>
+</div>

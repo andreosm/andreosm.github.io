@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" data-page-title="pageTitle">
+    <%- include("partials/head") %>
+    <body>
+
+        <%- include("partials/postcard-frame") %>
+        <%- include("partials/desktop-artwork") %>
+        <%- include("partials/navigation") %>
+        <%- include("partials/mobile-navigation") %>
+
+        <main id="pageContent">
+            <div class="container col-lg-6 pt-2 pt-md-3 pt-lg-4">
+                <h2 id="event-title" class="kaushan-script text-center"></h2>
+                <h5 id="rsvp-title" class="text-center"></h5>
+                <div class="pt-4"><!-- stepper was here --></div>
+                <div class="card mt-4">
+                    <% if (navigation?.displayGuest?.showDisclaimer) { %>
+                        <div id="rsvpDisclaimer" class="toggle-element">
+                            <div class="card-header text-center">
+                                <h5><%= navigation?.displayGuest?.salutation ?? "" %> <%= navigation?.displayGuest?.relationship ?? "" %> <%= navigation?.displayGuest?.firstName ?? "" %>,</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="rsvp-sub-title" class="d-flex justify-content-evenly"></div>
+                                <div id="rsvp-content1"></div>
+                                <div id="rsvp-content2"></div>
+                                <div class="container d-flex justify-content-between">
+                                    <span id="rsvp-signature1" class="signature1"></span>
+                                    <span id="rsvp-signature2" class="signature2"></span>
+                                </div>
+                            </div>
+                             <%- include("partials/buttons") %>
+                        </div>
+                    <% } %>
+
+                    <div class="card-header toggle-element <%= navigation?.displayGuest?.showDisclaimer ? 'd-none' :  '' %>">
+                        <h6><%= navigation?.identified ? navigation.displayGuest?.firstName : "" %>, <span id="<%= (navigation.displayGuest?.partySizeEst ?? 0) >= 0 ? 'rsvpDataUpdateTitle' : 'rsvpDataInputTitle' %>"></span></h6>
+                    </div>
+                    <div class="card-body toggle-element <%= navigation?.displayGuest?.showDisclaimer ? 'd-none' :  '' %>">
+                        <form id="rsvpForm" method="post" action="/rsvp" novalidate>
+                            <div class="row g-3 align-items-center">
+                                <!-- ========================================
+                                QUESTION 1
+                                ======================================== -->
+                                <fieldset class="mb-4">
+                                    <legend id="rsvpQ1"></legend>
+
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="attending" id="attendingYes" value="yes" <%= (navigation?.displayGuest?.partySizeEst ?? 0) > 0 ? "checked" : "" %>>
+                                        <label class="form-check-label" for="attendingYes" id="lblAttendingYes"></label>
+                                    </div>
+
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="attending" id="attendingNo" value="no" <%= (navigation?.displayGuest?.partySizeEst ?? 0) == 0 ? "checked" : "" %>>
+                                        <label class="form-check-label" for="attendingNo" id="lblAttendingNo"></label>
+                                    </div>
+                                </fieldset>
+
+                                <!-- ========================================
+                                QUESTION 2
+                                ======================================== -->
+                                <div id="partySizeSection" class="mb-2">
+                                    <label for="partySize" id="rsvp-party-size-label" class="form-label"></label>
+
+                                    <input id="partySize" name="partySize" type="text" class="form-control" 
+                                        inputmode="numeric" autocomplete="off" maxlength="2" 
+                                        aria-label="Number of people attending"
+                                        value="<%= (guest?.partySizeEst ?? 0) > 0 ? guest.partySizeEst : '' %>"
+                                    <div id="partySizeError" class="invalid-feedback"></div>
+
+                                </div>
+
+                                <!-- ========================================
+                                SUBMIT
+                                ======================================== -->
+                                <div id="rsvpFeedback" class="alert d-none" role="alert">
+                                    <span id="rsvpFeedbackText"></span>
+                                </div>
+                            </div>
+                                
+                            <div class="d-flex toggle-element justify-content-center mt-2 <%= navigation?.displayGuest?.showDisclaimer? 'd-none' :  '' %>">
+                                <button id="submitRsvp" type="submit" class="btn btn-outline-dark ma-button w-100 gap-2" disabled>
+                                    <span id="<%= (navigation?.displayGuest?.partySizeEst ?? 0) > -1 ? "buttonUpdateRsvp" : "buttonSubmitRsvp" %>"></span>
+                                    <i id="btnSubmitIcon" class="bi-patch-question"></i>
+                                </button>
+                            </div>                                
+                            
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+        <%- include("partials/language-toast") %>
+        <%- include("partials/footer") %>
+        <!-- <script src="/js/resize.js"></script>
+        <script type="module" src="/js/language.js"></script>
+        <script type="module" src="/js/menuAccess.js"></script>-->
+        <script type="module" src="/js/rsvp.js"></script> 
+        // <script>
+        //     localStorage.setItem("rsvpVisited", "true");
+        // </script>
+        <script>
+            const elements = document.querySelectorAll(".toggle-element");
+            function toggleElements() {
+                elements.forEach((element) => {
+                    element.classList.toggle("d-none");
+                });
+            }
+        </script>
+        <script>
+            window.btnNav = <%- JSON.stringify(navigation?.next?.url).replace(/</g, "\\u003c") %>;
+        </script>
+    </body>
+</html>

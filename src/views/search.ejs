@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" data-page-title="pageTitle">
+    <%- include("partials/head") %>
+    <body>
+
+        <%- include("partials/postcard-frame") %>
+        <%- include("partials/desktop-artwork") %>
+        <%- include("partials/navigation") %>
+        <%- include("partials/mobile-navigation") %>
+
+    <main id="pageContent">
+        <div class="container col-lg-6 pt-2 pt-md-3 pt-lg-4">
+            <h2 id="event-title" class="kaushan-script text-center"></h2>
+            <h5 id="search-title" class="text-center"></h5>
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div id="search-header-left" class="col text-start text-emoji-medium"></div>
+                        <div id="search-header-center" class="col text-center cardTitle"></div>
+                        <div id="search-header-right" class="col text-end text-emoji-medium"></div>
+                    </div>
+                </div>
+
+                <section id="guestSearchSection">
+                    <form id="guestSearchForm" novalidate>
+                        <div class="card-body">
+                            <div id="searchInstructions" class="pt-2 pb-2"></div> 
+                            <div class="row">
+                                <div class="col-12 col-lg-8">
+                                    <div class="input-group mb-3">
+                                        <span id="firstNameLabel" class="input-group-text"></span>
+                                        <input
+                                            id="firstName"
+                                            name="firstName"
+                                            type="text"
+                                            class="form-control"
+                                            aria-label="First Name"
+                                            maxlength="100"
+                                            required
+                                        >
+                                        <div
+                                            id="firstNameFeedback"
+                                            class="invalid-feedback">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 col-lg-8">
+                                    <div class="input-group mb-3">
+                                        <span id="lastNameLabel" class="input-group-text"></span>
+                                        <input
+                                            id="lastName"
+                                            name="lastName"
+                                            type="text"
+                                            class="form-control"
+                                            aria-label="Last Name"
+                                            maxlength="100"
+                                            required
+                                        >
+                                        <div
+                                            id="lastNameFeedback"
+                                            class="invalid-feedback">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                                           
+                            <div class="row">
+                                <div class="col-12">
+                                    <div
+                                        id="searchFeedback"
+                                        class="alert d-none"
+                                        role="alert"
+                                    >
+                                        <span id="searchFeedbackText"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <button
+                                type="submit"
+                                id="searchButton"
+                                class="btn btn-outline-dark gap-2 w-100">
+                                    <span id="searchButtonText"></span>
+                                    <i class="bi bi-search"></i>
+                            </button>
+                        </div>   
+                    </form>
+                </section>
+
+                <section id="accessCodeSection" class="d-none">
+                    <form id="accessCodeForm" novalidate>
+                        <div class="card-body">
+                            <div id="searchInstructions2" class="pt-2 pb-2"></div> 
+                            <div class="row">
+                                <div class="col-12 col-lg-8">
+                                    <div class="input-group mb-3">
+                                        <span id="firstNameLabelFake" class="input-group-text"></span>
+                                        <input
+                                            id="firstNameFake"
+                                            name="firstNameFake"
+                                            type="text"
+                                            class="form-control"
+                                            aria-label="First Name"
+                                            maxlength="100"
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 col-lg-8">
+                                    <div class="input-group mb-3">
+                                        <span id="lastNameLabelFake" class="input-group-text"></span>
+                                        <input
+                                            id="lastNameFake"
+                                            name="lastNameFake"
+                                            type="text"
+                                            class="form-control"
+                                            aria-label="Last Name"
+                                            maxlength="100"
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="accessCodeInstructions" class="pt-2 pb-2"></div> 
+  
+                            <div class="row">
+                                <div class="col-12 col-lg-8">
+                                    <div class="input-group mb-3">
+                                        <span id="accessCodeLabel" class="input-group-text"></span>
+                                        <input
+                                            id="accessCode"
+                                            name="accessCode"
+                                            type="text"
+                                            class="form-control"
+                                            aria-label="Access code"
+                                            maxlength="10"
+                                            required
+                                        >
+                                        <div
+                                            id="accessCodeFeedback"
+                                            class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div
+                                        id="codeFeedback"
+                                        class="alert d-none"
+                                        role="alert"
+                                    >
+                                        <span id="codeFeedbackText"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex">
+                            <button
+                                type="submit"
+                                id="accessCodeButton"
+                                class="btn btn-outline-dark gap-2 w-100">
+                                    <span id="accessCodeButtonText"></span>
+                                    <i class="bi bi-search"></i>
+                            </button>
+                        </div> 
+
+                    </form>
+                </section>
+            </div>
+        
+        </div>
+    </main>
+
+        <%- include("partials/language-toast") %>
+
+        <script src="/js/resize.js"></script>
+        <script type="module" src="/js/language.js"></script>
+        <script type="module" src="/js/menuAccess.js"></script>
+        <script type="module" src="/js/rsvp.js"></script>
+        <script type="module" src="/js/search.js"></script>
+
+    </body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" data-page-title="pageTitle">
+    <%- include("partials/head") %>
+    <body>
+
+        <%- include("partials/postcard-frame") %>
+        <%- include("partials/desktop-artwork") %>
+        <%- include("partials/navigation") %>
+        <%- include("partials/mobile-navigation") %>
+
+        <main id="pageContent" class="page-content">
+            <h2 id="event-title" class="kaushan-script"></h2>
+            <h5 id="home-title"></h5>   
+            <div id="home-content1" class="content text-center"></div>
+
+            <div class="container-md countdown-container text-center content">
+                <div class="row border border-white">
+                    <div class="col fw-bold" id="home-days"></div>
+                    <div class="col fw-bold" id="home-hours"></div>
+                    <div class="col fw-bold" id="home-minutes"></div>
+                    <div class="col fw-bold" id="home-seconds"></div>
+                </div>
+                <div class="row border border-white">
+                    <div class="col" id="countdownDays"></div>
+                    <div class="col" id="countdownHours"></div>
+                    <div class="col" id="countdownMinutes"></div>
+                    <div class="col" id="countdownSeconds"></div>
+                </div>            
+            </div>
+
+            <div id="home-content2" class="content"></div>
+
+            <%- include("partials/buttons", {
+                showBack: false,
+                showNext: true,
+                backurl: "",
+                nexturl: "party",
+                justify: "justify-content-end"
+            }) %>
+
+        </main>
+
+        <img 
+                id="fadedPostcard"
+                class="desktop-art home-page"
+                src="/images/css/postcard-faded-home-en.png"
+                alt=""
+            >
+
+        <%- include("partials/language-toast") %>
+
+        <script src="/js/resize.js"></script>
+        <script type="module" src="/js/language.js"></script>
+        <script type="module" src="/js/menuAccess.js"></script>
+        <script type="module" src="/js/countdown.js"></script>
+    </body>
+</html>

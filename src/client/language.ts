@@ -1,11 +1,37 @@
 type Language = "en" | "pt" | "it";
 
 const DEFAULT_LANGUAGE: Language = "en";
-const LANGUAGE_STORAGE_KEY = "preferredLanguage";
+const LANGUAGE_API_URL = "/api/guest/language";
+
 declare const bootstrap: any;
 
-function getSavedLanguage(): Language {
-  const language = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+let currentTranslations: Record<string, string> = {};
+let currentLanguage: Language = DEFAULT_LANGUAGE;
+
+declare global {
+  interface Window {
+    preferredLanguage?: Language;
+    translate: (key: string) => string;
+  }
+}
+
+// interface Window {
+//   invitationLanguage?: Language;
+//   translate: (key: string) => string;
+// }
+
+function isValidLanguage(value: unknown): value is Language {
+  return value === "en" || value === "pt" || value === "it";
+}
+
+function getInitialLanguage(): Language {
+  console.debug(window.preferredLanguage);
+
+  // return isValidLanguage(window.effectiveLanguage)
+  //   ? window.effectiveLanguage
+  //   : DEFAULT_LANGUAGE;
+
+  const language = window.preferredLanguage;
 
   if (language === "en" || language === "pt" || language === "it") {
     return language;
@@ -14,15 +40,23 @@ function getSavedLanguage(): Language {
   return DEFAULT_LANGUAGE;
 }
 
-function saveLanguage(language: Language): void {
-  const currentLanguage = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+async function saveLanguage(language: Language): Promise<void> {
+  const response = await fetch(LANGUAGE_API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ language }),
+  });
 
-  localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
-
-  if (currentLanguage != language) showLanguageToast(language);
+  if (!response.ok) {
+    throw new Error(`Unable to save preferred language: ${response.status}`);
+  }
 }
 
-async function loadTranslations(language: Language): Promise<any> {
+async function loadTranslations(
+  language: Language,
+): Promise<Record<string, string>> {
   const url = `/locales/${language}.json`;
 
   console.log("Loading translations from:", url);
@@ -42,10 +76,13 @@ async function loadTranslations(language: Language): Promise<any> {
   return translations;
 }
 
-function getTranslation(translations: any, key: string): string | undefined {
+function getTranslation(
+  translations: Record<string, string>,
+  key: string,
+): string | undefined {
   return key
     .split(".")
-    .reduce((object, property) => object?.[property], translations);
+    .reduce<any>((object, property) => object?.[property], translations);
 }
 
 function translatePage(translations: Record<string, string>): void {
@@ -54,12 +91,24 @@ function translatePage(translations: Record<string, string>): void {
   Object.entries(translations).forEach(([id, translation]) => {
     const element = document.getElementById(id);
 
-    if (element) {
+    if (element && typeof translation === "string") {
       element.innerHTML = translation;
     }
   });
 
   setPageButtons(translations);
+}
+
+function updateLocalizedImages(language: Language): void {
+  document
+    .querySelectorAll<HTMLImageElement>("img[data-localized-src]")
+    .forEach((img) => {
+      const filename = img.dataset.localizedSrc;
+
+      if (filename) {
+        img.src = `/images/locales/${language}/${filename}`;
+      }
+    });
 }
 
 function showLanguageToast(language: Language): void {
@@ -119,16 +168,41 @@ function setPageTitle(translations: Record<string, string>): void {
 async function setLanguage(language: Language): Promise<void> {
   console.log("Setting language:", language);
 
+  const translations = await loadTranslations(language);
+
+  currentTranslations = translations;
+  currentLanguage = language;
+
+  translatePage(translations);
+  updateLocalizedImages(language);
+
+  document.documentElement.lang = language;
+}
+
+async function changePreferredLanguage(language: Language): Promise<void> {
+  if (language === currentLanguage) {
+    return;
+  }
+
   try {
+    // Load the translations before saving the preference.
     const translations = await loadTranslations(language);
 
-    translatePage(translations);
+    // Persist the preference in the guest's CSV record.
+    await saveLanguage(language);
 
-    saveLanguage(language);
+    // Apply the language only after successful persistence.
+    currentTranslations = translations;
+    currentLanguage = language;
+
+    translatePage(translations);
+    updateLocalizedImages(language);
 
     document.documentElement.lang = language;
+
+    showLanguageToast(language);
   } catch (error) {
-    console.error("Unable to load language:", error);
+    console.error("Unable to change preferred language:", error);
   }
 }
 
@@ -137,13 +211,25 @@ function initializeLanguageButtons(): void {
 
   console.log(`Found ${buttons.length} language buttons.`);
 
+  let changingLanguage = false;
+
   buttons.forEach((button) => {
     button.addEventListener("click", async () => {
-      const language = button.dataset.language as Language;
+      const language = button.dataset.language;
+
+      if (!isValidLanguage(language) || changingLanguage) {
+        return;
+      }
 
       console.log("Language selected:", language);
 
-      await setLanguage(language);
+      changingLanguage = true;
+
+      try {
+        await changePreferredLanguage(language);
+      } finally {
+        changingLanguage = false;
+      }
     });
   });
 }
@@ -158,17 +244,28 @@ function setPageButtons(translations: Record<string, string>): void {
   });
 }
 
+function translate(key: string): string {
+  return getTranslation(currentTranslations, key) ?? key;
+}
+
+window.translate = translate;
+
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("Language system initialized.");
 
-  // registerCurrentPage();
-  // updateMenuAccess();
-
   initializeLanguageButtons();
 
-  const language = getSavedLanguage();
+  const language = getInitialLanguage();
+
+  await loadTranslations(language);
 
   console.log("Initial language:", language);
 
-  await setLanguage(language);
+  try {
+    await setLanguage(language);
+  } catch (error) {
+    console.error("Unable to initialize language:", error);
+  }
 });
+
+export {};

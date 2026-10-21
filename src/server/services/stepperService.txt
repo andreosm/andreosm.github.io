@@ -1,0 +1,110 @@
+import type { Request } from "express";
+
+import {
+  STEPS,
+  createStepperState,
+  GuestProgress,
+  type StepId,
+  type StepperState,
+} from "../models/stepper";
+
+export function getStepper(req: Request, stepper: StepperState): StepperState {
+  // if (!req.session.stepper) {
+  //   req.session.stepper = createStepperState();
+  // }
+
+  if (!stepper) stepper = createStepperState();
+
+  // return req.session.stepper;
+  return stepper;
+}
+
+// export function setCurrentStep(req: Request, step: StepId): StepperState {
+//   const stepper = getStepper(req);
+
+//   stepper.currentStep = step;
+
+//   return stepper;
+// }
+
+// export function completeStep(req: Request, step: StepId): StepperState {
+//   const stepper = getStepper(req);
+
+//   if (!stepper.completedSteps.includes(step)) {
+//     stepper.completedSteps.push(step);
+//   }
+
+//   return stepper;
+// }
+
+// export function isStepCompleted(req: Request, step: StepId): boolean {
+//   return getStepper(req).completedSteps.includes(step);
+// }
+
+export function isStepsCompleted(req: Request, steps: StepId[]) {
+  for (const step of steps) { 
+    completeStep(req, step);
+  }
+}
+
+export function getStepIndex(step: StepId): number {
+  return STEPS.findIndex((s) => s.id === step);
+}
+
+export function resetStepper(req: Request): StepperState {
+  req.session.stepper = createStepperState();
+
+  return req.session.stepper;
+}
+
+function refreshStepper(stepper: StepperState): void {
+
+  const stepIds: StepId[] = [
+    "welcome",
+    "party",
+    "star",
+    "rsvp",
+    "thats60s",
+    "thats7s",
+    "end"
+  ];
+
+  const elements = document.querySelectorAll<HTMLElement>(
+    ".party-stepper .party-step"
+  );
+
+  elements.forEach((element, index) => {
+
+    const stepId = stepIds[index];
+
+    if (!stepId) return;
+
+    const active = stepper.currentStep === stepId;
+    const completed = stepper.completedSteps.includes(stepId);
+
+    // Update the CSS classes
+    element.classList.toggle("active", active);
+    element.classList.toggle("completed", completed);
+
+    // Update aria-current
+    if (active) {
+      element.setAttribute("aria-current", "step");
+    } else {
+      element.removeAttribute("aria-current");
+    }
+
+    // Update the step indicator
+    const indicator = element.querySelector<HTMLElement>(
+      ".party-step-indicator"
+    );
+
+    if (indicator) {
+      if (completed && !active) {
+        indicator.innerHTML = '<i class="bi bi-check-lg"></i>';
+      } else {
+        indicator.textContent = String(index + 1);
+      }
+    }
+
+  });
+}

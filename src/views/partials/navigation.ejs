@@ -1,0 +1,103 @@
+<!-- DESKTOP NAVBAR -->
+<nav id="desktopNav" class="site-nav desktop-nav">
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link <%= navigation.active.activeItem === 'index' ? 'active' : '' %>" href="/index?s=m" id="menu-home">
+                
+            </a>
+        </li>
+        <% if (navigation.misc.visible) { %>
+
+        <li class="nav-item" id="navTheParty">
+            <a class="nav-link <%= navigation.active.activeItem  === 'party' ? 'active' : '' %>" href="/party?s=m" id="menu-party">
+                
+            </a>
+        </li>
+        
+        <li class="nav-item">
+            <a class="nav-link <%= navigation.active.activeItem  === 'rsvp' ? 'active' : '' %>" href="/rsvp?s=m" id="menu-rsvp">
+                
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link <%= navigation.active.activeItem  === 'venue' ? 'active' : '' %>" href="/venue?s=m" id="menu-venue">
+                
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link <%= navigation.active.activeItem  === 'food' ? 'active' : '' %>" href="/food?s=m" id="menu-food">
+                Food
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link <%= navigation.active.activeItem  === 'beverages' ? 'active' : '' %>" href="/beverages?s=m" id="menu-beverage">
+            
+            </a>
+        </li>
+   
+        <li class="nav-item" id="navBeAStar">
+            <a class="nav-link <%= navigation.active.activeItem  === 'star' ? 'active' : '' %>" href="/star?s=m" id="menu-star">
+                
+            </a>
+        </li>
+      
+        <li class="nav-item">
+            <a class="nav-link <%= navigation.active.activeItem  === 'photos' ? 'active' : '' %>" href="/photos?s=m" id="menu-photos">
+                
+            </a>
+        </li>
+
+        <% } %>
+
+        <% if (navigation.logout.visible) { %>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout" id="menu-logout"></a>
+            </li>
+        <% } %>
+    </ul>
+    G: <%= navigation?.displayGuest?.guid %> <br/> F:<%= navigation?.displayGuest?.finished %> <br/>FN:<%= navigation?.displayGuest?.firstName %><br/> L:<%= navigation?.displayGuest?.preferredLanguage %>
+    <!-- LANGUAGE SELECTOR -->
+     <!-- <hr /> -->
+    <!-- <div class="d-flex flex-column flex-lg-row gap-2"> -->
+        <div class="language-selector">
+            <button
+                type="button"
+                class="language-button"
+                data-language="en"
+                aria-label="English">
+                <img src="/images/flags/us.svg" alt="English">
+            </button>
+            <button
+                type="button"
+                class="language-button"
+                data-language="it"
+                aria-label="Italiano">
+                <img src="/images/flags/it.svg" alt="Italiano">
+            </button>
+            <button
+                type="button"
+                class="language-button"
+                data-language="pt"
+                aria-label="Português">
+                <img src="/images/flags/br.svg" alt="Português">
+            </button>
+        </div>
+    <!-- </div> -->
+
+    
+</nav>
+
+<!-- HAMBURGER -->
+<button
+    id="hamburgerButton"
+    class="hamburger-button"
+    type="button"
+    aria-label="Open navigation"
+    aria-expanded="false"
+    aria-controls="mobileNav"
+>
+    ☰
+</button>
+
+<%- include("language-toast") %>
