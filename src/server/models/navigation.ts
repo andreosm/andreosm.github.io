@@ -1,37 +1,58 @@
-// export interface NavButtons {
-// //   activePage: string;
-//   showNext: boolean;
-//   showNextLink: boolean;
-//   showBack: boolean;
-// //   showButtons: boolean;
-//   showLogout: boolean;
-//   nextUrl: string | null;
-//   backUrl: string | null;
-// }
+/*
+3- navigation
+    3.1 nav
+        3.1.1 navbaritem
+    3.2 logout
+        3.2.1 navbaritem
+    3.3 active
+      3.3.1 navbaritem
+    3.3 next
+      3.3.1 ButtonItem
+    3.4 back
+      3.4.1 ButtonItem
+    
+      3.5 NavBarItem
+        3.5.1 is visible
+        3.5.2 PageName | ""
+    
+    3.6 ButtonItem
+        3.6.1 is visible
+        3.6.2 url
+        3.6.3 panel
+        3.6.4 action
+*/
+// import { Guest } from "./guest";
+import { StepTracker, StepperState, STEPS } from "./stepTracker";
+import { PageName, PanelNumber } from "./page.js";
+import { GuestState } from "./guest.js";
 
-// export interface NavigationButton {
-//   visible: boolean;
-//   url: string | null;
-//   action: NextAction;
-// }
-
-import { PageTrackerDefinition } from "./pageTracker";
-import { Guest, GuestParams } from "./guest";
-
-
-export type NextAction = "navigate" | "submit" | "toggle" | "submit-navigate" | "none";
-
-export interface NavigationButton {
-  visible: boolean;
-  url: string | null;
-  action: NextAction;
-}
+export type ButtonAction = "navigate" | "submit" | "toggle" | "submit-navigate" | "none";
 
 export interface NavBarItem {
   visible: boolean;
-  activeItem: string | null;
+  active: string;
 }
 
+export interface ButtonItem {
+  visible: boolean;
+  url: string;
+  action: ButtonAction;
+}
+
+export interface PageNavigationState {
+  stepper: StepperState | null;
+  nav: NavigationState;
+  guest: GuestState;
+  steps: typeof STEPS;
+}
+
+export interface NavigationState {
+  navBar: NavBarItem | null;
+  logout: NavBarItem | null;
+  next: ButtonItem | null;
+  back: ButtonItem | null;
+  active: NavBarItem | null;
+}
 
 // export interface GuestParams2 {
 //   identified: boolean;
@@ -104,17 +125,7 @@ export interface NavBarItem {
 //   backUrl: string | null;
 // }
 
-export interface NavigationState {
-  logout: NavBarItem;
-  misc: NavBarItem;
-  active: NavBarItem;
-  identified: boolean;
-  finished: boolean;
-  back: NavigationButton;
-  next: NavigationButton;
-  tracker: PageTrackerDefinition;
-  displayGuest: Guest;
-}
+
 
 
 

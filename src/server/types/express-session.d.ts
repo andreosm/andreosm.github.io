@@ -1,22 +1,26 @@
 import "express-session";
 
 import type { Guest } from "../models/guest";
-// import type { NavButtons } from "../models/navButtons";
 import type { Language } from "../models/language";
-// import type { StepperState } from "../models/stepper";
-import { NavigationState } from "../models/navigation";
+import type { StepperState } from "../models/stepTracker";
+import { PageNavigationState } from "../models/navigation.js";
 
 declare module "express-session" {
   interface SessionData {
-    guest?: Guest;
+    guest: Guest;
     pendingGuest?: Guest;
     returnTo?: string;
-    navigation?: NavigationState;
-    // navButtons?: NavButtons;
-    // effectiveLanguage: Language;
-    // stepper?: StepperState;
-    // stepTracker?: StepperState;
+    navigation?: PageNavigationState;
+    stepper?: StepperState;
   }
 }
 
 export {};
+
+
+
+declare module "express-session" {
+  interface SessionData {
+    stepper?: StepperState;
+  }
+}

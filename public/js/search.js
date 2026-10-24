@@ -108,11 +108,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // VERIFY ACCESS CODE
     // ================================================================
     accessCodeForm.addEventListener("submit", async (event) => {
-        console.debug("here");
+        // console.debug("here");
         event.preventDefault();
         clearFeedback("codeFeedback", "codeFeedbackText");
         const accessCode = accessCodeInput.value.trim();
-        console.debug("accessCode is" + accessCode);
+        //console.debug("accessCode is" + accessCode);
         let valid = true;
         // --------------------------------------------------------
         // Validate access code

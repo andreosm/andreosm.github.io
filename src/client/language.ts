@@ -25,7 +25,7 @@ function isValidLanguage(value: unknown): value is Language {
 }
 
 function getInitialLanguage(): Language {
-  console.debug(window.preferredLanguage);
+  //console.debug(window.preferredLanguage);
 
   // return isValidLanguage(window.effectiveLanguage)
   //   ? window.effectiveLanguage

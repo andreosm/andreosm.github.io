@@ -199,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ================================================================
 
   accessCodeForm.addEventListener("submit", async (event: SubmitEvent) => {
-    console.debug("here");
+   // console.debug("here");
     
     event.preventDefault();
 
@@ -207,7 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const accessCode = accessCodeInput.value.trim();
 
-    console.debug("accessCode is" + accessCode);
+    //console.debug("accessCode is" + accessCode);
 
     let valid = true;
 

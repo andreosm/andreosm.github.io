@@ -21,9 +21,6 @@ declare global {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-
-   
-
     console.log(
       "All radios:",
       document.querySelectorAll('input[name="star"]').length,
@@ -286,7 +283,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   return;
                 }
 
-                console.debug("selected" + selectedStar?.value);
+                //console.debug("selected" + selectedStar?.value);
                 // ========================================================
                 // QUESTION 2
                 // ========================================================
@@ -374,7 +371,7 @@ document.addEventListener("DOMContentLoaded", () => {
           songs.push(input.value.trim());
         }
 
-
+        
         // ========================================================
         // SEND TO SERVER
         // ========================================================

@@ -12,6 +12,7 @@ interface GuestCsvRow {
   Language: string;
   PreferredLanguage: string;
   AccessCode: string;
+  Gender: string;
   FullName: string;
   Salutation: string;
   Relationship: string;
@@ -67,13 +68,13 @@ function mapRowToGuest(row: GuestCsvRow): Guest {
     row.PreferredLanguage === "en"
       ? row.PreferredLanguage
       : null;
-
+  
   return {
     guid: row.GUID,
     language,
     preferredLanguage,
     accessCode: row.AccessCode,
-
+    gender: row.Gender,
     fullName: row.FullName,
     salutation: row.Salutation,
     relationship: row.Relationship,
@@ -84,11 +85,11 @@ function mapRowToGuest(row: GuestCsvRow): Guest {
     partySize: defaultPartySize(row.PartySize),
     partySizeEst: defaultPartySize(row.PartySizeEst),
     partySizeConf: defaultPartySize(row.PartySizeConf),
-    outOfTown: row.OutOfTown,
-    wantsRecom: row.WantsRecom,
+    outOfTown: row.OutOfTown.trim().toLowerCase() === "true",
+    wantsRecom: row.WantsRecom.trim().toLowerCase() === "true",
     star: row.Star,
     presenting: row.Presenting,
-    song0: row.Song0,
+    song0: row.Song0.trim().toLowerCase() === "true",
     song1: row.Song1,
     song2: row.Song2,
     song3: row.Song3,
@@ -96,7 +97,7 @@ function mapRowToGuest(row: GuestCsvRow): Guest {
     song5: row.Song5,
     song6: row.Song6,
     song7: row.Song7,
-    finished: row.Finished === "true" ? true : false,
+    finished: row.Finished.trim().toLowerCase() === "true",
   };
 }
 
@@ -139,6 +140,14 @@ export async function findGuest(
 
   if (!row) {
     return null;
+  }
+
+  const mappedGuest = mapRowToGuest(row);
+
+  //console.debug("Reading CSV file with these properties: ");
+
+  for (const [key, value] of Object.entries(mappedGuest)) {
+    console.log(`${key}: ${value}`);
   }
 
   return mapRowToGuest(row);
@@ -195,10 +204,12 @@ export async function updateGuest(key: string, guest: Guest): Promise<void> {
     throw new Error("Guest GUID was not found.");
   }
 
+//  console.debug("updating guest, key: " + key);
   switch (key) {
     case "rsvp":
       row.PartySizeEst = String(guest.partySizeEst);
       row.PartySizeConf = String(guest.partySizeConf);
+  //    console.debug("updating guest, PartySizeEst: " + guest.partySizeEst);
       break;
     case "star":
       row.Star = String(guest.star);
@@ -224,6 +235,12 @@ export async function updateGuest(key: string, guest: Guest): Promise<void> {
   row.Finished = guestIsFinished(guest) ? "true" : "false";
 
   await writeFile(rows);
+
+  console.debug("CSV file written with these properties: ");
+
+  for (const [key, value] of Object.entries(guest)) {
+    console.log(`${key}: ${value}`);
+  }
 }
 
 // export async function guestIsFinished(guest: Guest): Promise<boolean> { 
@@ -487,6 +504,7 @@ async function writeFile(rows: GuestCsvRow[]): Promise<void> {
       "Language",
       "PreferredLanguage",
       "AccessCode",
+      "Gender",
       "FullName",
       "Salutation",
       "Relationship",

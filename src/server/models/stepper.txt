@@ -13,10 +13,7 @@ export interface StepDefinition {
   translationKey: string;
 }
 
-export interface StepperState {
-  currentStep: StepId;
-  completedSteps: StepId[];
-}
+
 
 export const STEPS: StepDefinition[] = [
   { id: "welcome", label: "Welcome", translationKey: "stepWelcome" },

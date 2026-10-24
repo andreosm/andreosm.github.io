@@ -173,7 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 showFeedback("starFeedback", "starFeedbackText", "danger", "starSelectionRequired");
                 return;
             }
-            console.debug("selected" + selectedStar?.value);
+            //console.debug("selected" + selectedStar?.value);
             // ========================================================
             // QUESTION 2
             // ========================================================

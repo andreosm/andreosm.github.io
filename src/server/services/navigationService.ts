@@ -1,25 +1,40 @@
-import {
-  NavigationState,
-  NavigationButton,
-  NavBarItem,
-  NextAction,
-} from "../models/navigation.js";
+import type { Request } from "express";
 
-import { 
-  GuestParams,
-  DisplayGuest,
-  GuestProgress,
-} from "../models/guest.js";
+// import {
+//   NavigationState,
+//   NavigationButton,
+//   NavBarItem,
+//   NextAction,
+// } from "../models/navigation.js";
 
-import {
-  PanelNumber,
-  PageName,
-  PageTrackerDefinition,
-} from "../models/pageTracker.js";
+// import { GuestParams } from "../models/guest.js";
 
-import {
-  StepTrackerId,
-} from "../models/stepTracker.js";
+// import {
+//   PanelNumber,
+//   PageName,
+//   PageTrackerDefinition,
+//   PageParams,
+// } from "../models/pageTracker.js";
+
+// import { STEPS } from "../models/stepTracker.js";
+
+// import type { StepId, StepperState } from "../models/stepTracker";
+
+// import {
+//   getStepper,
+//   setCurrentStep,
+//   completeStep,
+//   resetStepper,
+// } from "./stepperService.js";
+
+// export interface NavigationParams {
+//   guest: Guest;
+//   trackers: Tracker[];
+// }
+
+// import {
+//   StepTrackerId,
+// } from "../models/stepTracker.js";
 
 // export type FlowId =
 //   | "welcome"
@@ -36,233 +51,402 @@ import {
 //     url: string;
 //   }
 
-  // export const FLOW: Flow[] = [
-  //   { id: "welcome", label: "Welcome", url: "/index" },
-  //   { id: "party", label: "The Party", url: "/party" },
-  //   { id: "star", label: "Be a Star", url: "/star?panel=1" },
-  //   { id: "rsvp", label: "RSVP", url: "/rsvp" },
-  //   { id: "thats60s", label: "That's 60s", url: "/star?panel=2" },
-  //   { id: "thats7s", label: "That's 7s", url: "/star?panel=3" },
-  //   { id: "end", label: "End", url: "/finish-line" },
-  // ];
-
-  
-
-const NAVFLOW: readonly PageTrackerDefinition[] = [
-  {
-    stepId: "welcome",
-    stepLabel: "Welcome",
-    translationKey: "step1",
-    pageName: "index",
-    panelNumber: 0,
-    nextUrl: "party",
-    nextUrlParm: "",
-    backUrl: "",
-    backUrlParm: "",
-    action: "navigate",
-  },
-  {
-    stepId: "party",
-    stepLabel: "Party",
-    translationKey: "step2",
-    pageName: "party",
-    panelNumber: 0,
-    nextUrl: "star",
-    nextUrlParm: "?sp=1",
-    backUrl: "index",
-    backUrlParm: "",
-    action: "navigate",
-  },
-  {
-    stepId: "star",
-    stepLabel: "Star",
-    translationKey: "step3",
-    pageName: "star",
-    panelNumber: 1,
-    nextUrl: "rsvp",
-    nextUrlParm: "",
-    backUrl: "party",
-    backUrlParm: "",
-    action: "navigate",
-  },
-  {
-    stepId: "rsvp",
-    stepLabel: "RSVP",
-    translationKey: "step4",
-    pageName: "rsvp",
-    panelNumber: 0,
-    nextUrl: "star",
-    nextUrlParm: "?sp=2",
-    backUrl: "star",
-    backUrlParm: "?sp=1",
-    action: "toggle",
-  },
-  {
-    stepId: "thats60s",
-    stepLabel: "That's 60",
-    translationKey: "step5",
-    pageName: "star",
-    panelNumber: 2,
-    nextUrl: "star",
-    nextUrlParm: "?sp=3",
-    backUrl: "star",
-    backUrlParm: "?sp=2",
-    action: "submit-navigate",
-  },
-  {
-    stepId: "thats7s",
-    stepLabel: "That's 7",
-    translationKey: "step6",
-    pageName: "star",
-    panelNumber: 3,
-    nextUrl: "finish",
-    nextUrlParm: "",
-    backUrl: "",
-    backUrlParm: "",
-    action: "submit-navigate",
-  },
-  {
-    stepId: "end",
-    stepLabel: "End",
-    translationKey: "step7",
-    pageName: "finish",
-    panelNumber: 0,
-    nextUrl: "",
-    nextUrlParm: "",
-    backUrl: "",
-    backUrlParm: "",
-    action: "none",
-  },
-];
-  
-
-
-// const FLOW: readonly StepDefinition[] = [
-//   { id: "welcome", label: "Welcome", url: "/" },
+// export const FLOW: Flow[] = [
+//   { id: "welcome", label: "Welcome", url: "/index" },
 //   { id: "party", label: "The Party", url: "/party" },
 //   { id: "star", label: "Be a Star", url: "/star?panel=1" },
 //   { id: "rsvp", label: "RSVP", url: "/rsvp" },
 //   { id: "thats60s", label: "That's 60s", url: "/star?panel=2" },
 //   { id: "thats7s", label: "That's 7s", url: "/star?panel=3" },
-//   { id: "end", label: "End", url: "/finish" },
+//   { id: "end", label: "End", url: "/finish-line" },
 // ];
 
-function button(
-  visible: boolean,
-  url: string | null = null,
-  args: string | null = null,
-  action: NextAction = "none",
-): NavigationButton {
-  if (args) url = url + args;
-  return { visible, url, action };
+import { PageState } from "../models/page.js";
+import { NavigationState } from "../models/navigation.js";
+
+import { GuestState } from "../models/guest.js";
+
+
+import { StepId, StepTracker, StepperState } from "../models/stepTracker"; 
+
+export interface PageNavigationDefinition {
+  stepId: StepId;
+  stepLabel: string;
+  translationKey: string;
+  pageState: PageState;
+  navState: NavigationState;
+
+  // completedSteps: StepId[];
 }
 
-function getFlowIndex(tracker: PageTrackerDefinition): number {
-  return NAVFLOW.findIndex((flow) => flow.stepId === tracker.stepId);
-}
+export const NAVFLOW: readonly PageNavigationDefinition[] = [
+  {
+    stepId: "welcome",
+    stepLabel: "Welcome",
+    translationKey: "step1",
 
-function getPageTrackerDefinition(
-  pageName: PageName,
-  panel: PanelNumber = 0,
-): PageTrackerDefinition {
+    pageState: {
+      pageName: "index",
+      panelNumber: 0,
+      pageNavigation: true,
+    },
 
-  //  for (let i = 0; i < NAVFLOW.length; i++) {
-  //    console.debug("for index: " + i + " we have this flow: " + NAVFLOW[i].translationKey)     
-  //  }
+    navState: {
+      navBar: {
+        visible: false,
+        active: ""
+      },
+      logout: {
+        visible: false,
+        active: ""
+      },
+      next: {
+        visible: true,
+        url: "/party",
+        action: "navigate",
+      },
+      back: {
+        visible: false,
+        url: "",
+        action: "none",
+      },
+      active: {
+        visible: false,
+        active: ""
+      },
+    },
+  },
+  {
+    stepId: "party",
+    stepLabel: "Party",
+    translationKey: "step2",
 
-  const tracker = NAVFLOW.find((p) => p.pageName === pageName && p.panelNumber === panel);
+    pageState: {
+      pageName: "party",
+      panelNumber: 0,
+      pageNavigation: true,
+    },
 
-  if (!tracker) return NAVFLOW[0];
+    navState: {
+      navBar: {
+        visible: false,
+        active: ""
+      },
+      logout: {
+        visible: true,
+        active: ""
+      },
+      next: {
+        visible: true,
+        url: "/star",
+        action: "navigate",
+      },
+      back: {
+        visible: true,
+        url: "/index",
+        action: "navigate",
+      },
+      active: {
+        visible: false,
+        active: ""
+      },
+    },
+  },
+  {
+    stepId: "star",
+    stepLabel: "Star",
+    translationKey: "step3",
 
-  return tracker;
-}
+    pageState: {
+      pageName: "star",
+      panelNumber: 1,
+      pageNavigation: true,
+    },
 
-export function getNavigationState(
-  guestParams: GuestParams,
-  // progress: GuestProgress,
-  //     currentStep: StepId,
-): NavigationState {
-  const identified = guestParams.identified;
-  const complete = guestParams.finished; // isProcessComplete(progress);
+    navState: {
+      navBar: {
+        visible: false,
+        active: ""
+      },
+      logout: {
+        visible: true,
+        active: ""
+      },
+      next: {
+        visible: true,
+        url: "/rsvp",
+        action: "navigate",
+      },
+      back: {
+        visible: true,
+        url: "/party",
+        action: "navigate",
+      },
+      active: {
+        visible: false,
+        active: ""
+      },
+    },
+  },
+  {
+    stepId: "rsvp",
+    stepLabel: "RSVP",
+    translationKey: "step4",
+
+    pageState: {
+      pageName: "rsvp",
+      panelNumber: 0,
+      pageNavigation: true,
+    },
+
+    navState: {
+      navBar: {
+        visible: false,
+        active: ""
+      },
+      logout: {
+        visible: true,
+        active: ""
+      },
+      next: {
+        visible: true,
+        url: "/star?sp=2",
+        action: "navigate",
+      },
+      back: {
+        visible: true,
+        url: "/star?sp=1",
+        action: "navigate",
+      },
+      active: {
+        visible: false,
+        active: ""
+      },
+    },
+  },
+  {
+    stepId: "thats60s",
+    stepLabel: "That's 60",
+    translationKey: "step5",
+
+    pageState: {
+      pageName: "star",
+      panelNumber: 2,
+      pageNavigation: true,
+    },
+
+    navState: {
+      navBar: {
+        visible: false,
+        active: ""
+      },
+      logout: {
+        visible: true,
+        active: ""
+      },
+      next: {
+        visible: true,
+        url: "/star?s[=3",
+        action: "toggle",
+      },
+      back: {
+        visible: true,
+        url: "/rsvp",
+        action: "navigate",
+      },
+      active: {
+        visible: false,
+        active: ""
+      },
+    },
+  },
+  {
+    stepId: "thats7s",
+    stepLabel: "That's 7",
+    translationKey: "step6",
+
+    pageState: {
+      pageName: "star",
+      panelNumber: 3,
+      pageNavigation: true,
+    },
+
+    navState: {
+      navBar: {
+        visible: false,
+        active: ""
+      },
+      logout: {
+        visible: true,
+        active: ""
+      },
+      next: {
+        visible: true,
+        url: "/finish",
+        action: "navigate",
+      },
+      back: {
+        visible: true,
+        url: "/star?sp=2",
+        action: "navigate",
+      },
+      active: {
+        visible: false,
+        active: ""
+      },
+    },
+  },
+  {
+    stepId: "end",
+    stepLabel: "End",
+    translationKey: "step7",
+
+    pageState: {
+      pageName: "finish",
+      panelNumber: 0,
+      pageNavigation: true,
+    },
+
+    navState: {
+      navBar: {
+        visible: false,
+        active: ""
+      },
+      logout: {
+        visible: true,
+        active: ""
+      },
+      next: {
+        visible: false,
+        url: "",
+        action: "none",
+      },
+      back: {
+        visible: false,
+        url: "",
+        action: "none",
+      },
+      active: {
+        visible: false,
+        active: ""
+      },
+    },
+  },
+];
+
+// function button(
+//   visible: boolean,
+//   url: string | null = null,
+//   args: string | null = null,
+//   action: NextAction = "none",
+// ): NavigationButton {
+//   if (args) url = url + args;
+//   return { visible, url, action };
+// }
+
+// export function getPageNavigationFlowIndex(tracker: PageTrackerDefinition): number {
+//   return NAVFLOW.findIndex((flow) => flow.stepId === tracker.stepId);
+// }
+
+// function getPageTrackerDefinition(pageName: PageName, panel: PanelNumber = 0,): PageTrackerDefinition {
+
+//   const tracker = NAVFLOW.find(
+//     (p) => p.pageName === pageName && p.panelNumber === panel,
+//   );
+
+//   if (!tracker) return NAVFLOW[0];
+
+//   return tracker;
+// }
+
+// export function getNavigationState(req: Request, guestParams: GuestParams, ): NavigationState {
+  // const identified = guestParams.identified;
+  // const complete = guestParams.finished; // isProcessComplete(progress);
+
+  // const tracker = getPageTrackerDefinition(
+  //   guestParams.pageParams.pageName,
+  //   guestParams.pageParams.panelNumber,
+  // );
+
+  // console.log("tracker: " + tracker.pageName + "|" + tracker.panelNumber + "|" + identified + "|" + complete);
+
   // const currentStep = getStepFromPage(guestParams.pageParams.pageName);
-  const tracker = getPageTrackerDefinition(
-    guestParams.pageParams.pageName,
-    guestParams.pageParams.panelNumber,
-  );
 
-  const displayGuest = guestParams.displayGuest!;
+  // const displayGuest = guestParams.displayGuest;
 
-  console.debug("i am at service");
-  
-  console.debug("guest parms: " + guestParams.pageParams.pageName);
+  // console.debug("is it completed" + complete);
 
-  const logout: NavBarItem = {
-    visible: identified,
-    activeItem: "",
-  };
+  // console.debug("guest parms: " + guestParams.pageParams.pageName);
 
-  const misc: NavBarItem = {
-    visible: complete,
-    activeItem: "",
-  };
+  // const logout: NavBarItem = {
+  //   visible: identified,
+  //   activeItem: "",
+  // };
 
-  const active: NavBarItem = {
-    visible: true,
-    activeItem: guestParams.pageParams.pageName,
-  };
+  // const misc: NavBarItem = {
+  //   visible: complete,
+  //   activeItem: "",
+  // };
 
-  const guidedMode = !complete;
+  // const active: NavBarItem = {
+  //   visible: true,
+  //   activeItem: guestParams.pageParams.pageName,
+  // };
 
-  // const index = getStepIndex(currentStep);
-  const index = getFlowIndex(tracker!);
+  // const guidedMode = !complete;
 
-  console.debug("the index is: " + index);
+  // // const index = getStepIndex(currentStep);
+  // const index = getFlowIndex(tracker!);
 
-  // const previous = index > 0 ? NAVFLOW[index - 1] : null;
-  // const next = index < NAVFLOW.length - 1 ? NAVFLOW[index + 1] : null;
-  const previous = index == 0 ? null : (NAVFLOW[index]?.backUrl ? NAVFLOW[index] : null);
-  const next = index < NAVFLOW.length - 1 ? (NAVFLOW[index]?.nextUrl ? NAVFLOW[index] : null) : null
+  //console.debug("the index is: " + index);
 
-  //const pitStop = getPitStopFromPage(pageParms.pageName, pageParms.panelNumber);
-  console.debug("previous:" + previous?.backUrl + previous?.backUrlParm);
-  console.debug("next:" + next?.nextUrl + next?.nextUrlParm);
+  // const previous =
+  //   index == 0 ? null : NAVFLOW[index]?.backUrl ? NAVFLOW[index] : null;
+  // const next =
+  //   index < NAVFLOW.length - 1
+  //     ? NAVFLOW[index]?.nextUrl
+  //       ? NAVFLOW[index]
+  //       : null
+  //     : null;
 
+  // // let stepper: StepperState = NAVFLOW[index].stepper;
 
-  let backButton: NavigationButton;
-  let nextButton: NavigationButton;
+  // let backButton: NavigationButton;
+  // let nextButton: NavigationButton;
 
-  if (guidedMode) {
-    backButton = button(
-      previous != null,
-      previous?.backUrl,
-      previous?.backUrlParm ?? null,
-      previous?.action,
-    );
+  // if (guidedMode) {
+  //   backButton = button(
+  //     previous != null,
+  //     previous?.backUrl,
+  //     previous?.backUrlParm ?? null,
+  //     previous?.action,
+  //   );
 
-    const submitBeforeNext: StepTrackerId[] = ["rsvp", "thats60s", "thats7s"];
+  //   //const submitBeforeNext: StepTrackerId[] = ["rsvp", "thats60s", "thats7s"];
 
-    nextButton = button(
-      next != null,
-      next?.nextUrl,
-      next?.nextUrlParm ?? null,
-      next?.action,
-    );
-  } else { 
-    backButton = button(false);
-    nextButton = button(false);
-  }
+  //   nextButton = button(
+  //     next != null,
+  //     next?.nextUrl,
+  //     next?.nextUrlParm ?? null,
+  //     next?.action,
+  //   );
+  // } else {
+  //   backButton = button(false);
+  //   nextButton = button(false);
+  // }
 
-  if (guidedMode) {
+  // res.render("party", {
+  //   stepper: getStepper(req),
+  //   steps: STEPS,
+  // });
+
+  // if (guidedMode) {
     // backButton = button(
     //   previous !== null,
     //   previous?.url ?? null,
     //   previous ? "navigate" : "none",
     // );
-    
-
     // RSVP and the two later Star panels save before advancing.
-    
-
     // nextButton = button(
     //   next !== null,
     //   next?.url ?? null,
@@ -272,9 +456,8 @@ export function getNavigationState(
     //       ? "submit-navigate"
     //       : "navigate",
     // );
-    
-  } else {
-    backButton = button(false);
+  // } else {
+    // backButton = button(false);
 
     // switch (currentStep) {
     //   case "welcome":
@@ -298,7 +481,7 @@ export function getNavigationState(
     //   default:
     //     nextButton = button(false);
     // }
-  }
+  // }
 
   // console.debug(backButton);
   // console.debug(nextButton);
@@ -319,38 +502,46 @@ export function getNavigationState(
   //   nextUrl: nextButton.url,
   //   backUrl: backButton.url,
   // };
-  console.debug(tracker);
-  console.debug(displayGuest);
+  // console.debug(tracker);
+  // console.debug(displayGuest);
 
-  return {
-    logout,
-    misc,
-    active,
-    identified,
-    finished: complete,
-    back: backButton,
-    next: nextButton,
-    tracker,
-    displayGuest
+  // setCurrentStep(req, NAVFLOW[index].stepId);
+  // console.debug("iteration " + index);
 
-    //   guestParams,
-    //   pageParms,
+  // for (let i = 0; i <= index; i++) {
+  //   completeStep(req, NAVFLOW[i].stepId);
+  // }
 
-    //   showLogout: identified,
+  // return {
+  //   logout,
+  //   misc,
+  //   active,
+  //   identified,
+  //   finished: complete,
+  //   back: backButton,
+  //   next: nextButton,
+  //   tracker,
+  //   stepper: getStepper(req),
+  //   displayGuest: req.session.guest!,
 
-    //   //   pitStop,
-    //   // guidedMode,
+  //   //   guestParams,
+  //   //   pageParms,
 
-    //   navButtons,
-    //   steps,
-    //   stepper: {
-    //     currentStep,
-    //     completedSteps: steps
-    //       .filter((step) => step.completed)
-    //       .map((step) => step.id),
-    //   },
-  };
-}
+  //   //   showLogout: identified,
+
+  //   //   //   pitStop,
+  //   //   // guidedMode,
+
+  //   //   navButtons,
+  //   //   steps,
+  //   //   stepper: {
+  //   //     currentStep,
+  //   //     completedSteps: steps
+  //   //       .filter((step) => step.completed)
+  //   //       .map((step) => step.id),
+  //   //   },
+  // };
+// }
 
 // export function getNavigationState(
 //   progress: GuestProgress,

@@ -135,6 +135,7 @@ rsvpForm?.addEventListener("submit", async (event) => {
             body,
         });
         const result = await response.json();
+        //console.debug("results from rsvp: " + result);
         const guestData = document.getElementById("guestData");
         const finished = typeof guestData?.dataset.finished === "string"
             ? guestData?.dataset.finished
@@ -148,7 +149,7 @@ rsvpForm?.addEventListener("submit", async (event) => {
                 showFeedback("rsvpFeedback", "rsvpFeedbackText", result.feedbackType, result.feedbackKey);
             }
             else {
-                window.location.href = "/" + window.btnNav; // "/star?goto=2";
+                window.location.href = "/" + window.btnNav;
                 return;
             }
         }

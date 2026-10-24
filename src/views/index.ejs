@@ -71,27 +71,28 @@
                                 <div id="route-67" class="col-12 col-lg-6"></div>
 
                             </div>
-
-                            <!-- stepper was here -->
-                            
+                            <%- include("partials/stepper", { steps, stepper }) %>
                         </div>
-                      
-                    </div>
-                    <div class="pt-4"><%- include("partials/buttons") %></div>
-                    
+                        
+                    </div>                   
+                    <%- include("partials/buttons") %>
                 </div>            
             </div>
+            
         </main>        
 
         <%- include("partials/footer") %>
         <script type="module" src="/js/countdown.js"></script>
+        <script>
+            window.btnNav = <%- JSON.stringify(navigation?.stepper).replace(/</g, "\\u003c") %>;
+        </script>
         <!-- <script>
             currentStep = "rsvp";
             completedSteps = ["welcome", "rsvp"];
 
             
 
-            const stepper = getStepper(req);
+            const stepper = getStepper();
 
             const result = await response.json();
 

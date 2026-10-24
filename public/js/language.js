@@ -10,7 +10,7 @@ function isValidLanguage(value) {
     return value === "en" || value === "pt" || value === "it";
 }
 function getInitialLanguage() {
-    console.debug(window.preferredLanguage);
+    //console.debug(window.preferredLanguage);
     // return isValidLanguage(window.effectiveLanguage)
     //   ? window.effectiveLanguage
     //   : DEFAULT_LANGUAGE;

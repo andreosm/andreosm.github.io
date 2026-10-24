@@ -3,63 +3,48 @@ import path from "path";
 import session from "express-session";
 
 import { Request, Response, NextFunction } from "express";
-
-import { Guest, noGuest, GuestParams, GuestProgress } from "./models/guest.js";
-
-import { findGuest, updateGuest } from "./services/guestCsvService.js";
-
-import { PageParams, PanelNumber, PageName } from "./models/pageTracker.js";
-
-
-
-
 // import {
-//   GuestParams,
-//   PageParams,
-//   GuestProgress,
-//   getStepFromPage,
-// } from "./models/navigation.js";
+//   PageParms,
+//   isPageName,
+//   isPanelNumber,
+//   isNumber,
+//   PanelNumber,
+// } from "./models/page.js";
 
-import { getNavigationState } from "./services/navigationService.js";
-
-// import { StepperState, STEPS, StepId } from "./models/stepper";
-import { Language } from "./models/language.js";
-// import { STEPS, GuestProgress } from "./models/stepper.js";
-
-// import { StepId } from "./models/stepper";
-
-// import {
-//   // completeStep,
-//   getStepper,
-//   // setCurrentStep,
-// } from "./services/stepperService";
+// import { Guest, noGuest, isIdentified, GuestParms } from "./models/guest.js";
 
 // 
-// import { getStepFromPage, NavigationService } from "./services/navigationService.js";
+
+// import { PageParams  } from "./models/pageTracker.js";
+
+// import { getNavigationState } from "./services/navigationService.js";
+
+// 
+
+// import { Language } from "./models/language.js";
 
 // import {
-//   // getNavigationState,
-//   // getStepFromPage,
-//   // type GuestProgress,
-//   // type StarPanel,
-// } from "./services/navigationService.js";
+//   getStepper,
+//   setCurrentStep,
+//   completeStep,
+//   resetStepper,
+// } from "./services/stepperService.js";
+// import { getPageNavigationState } from "./services/pageNavigation.js";
 
-// declare module "express-session" {
-//   interface SessionData {
-//     guest?: Guest;
-//     pendingGuest?: Guest;
-//     returnTo?: string;
-//     // navButtons?: NavButtons;
-//     // effectiveLanguage: Language;
-//   }
-// }
+import { getPageState, PageParms } from "./models/page.js";
+import { getPageNavigationState } from "./services/pageNavigation.js";
+import { Guest, noGuest, isFinished } from "./models/guest.js";
+import { findGuest, updateGuest } from "./services/guestCsvService.js";
+
+import { STEPS } from "./models/stepTracker.js";
+import { getStepper, setCurrentStep, completeStep } from "./services/stepperService.js"; 
 
 const app = express();
 
 function requireGuest(req: Request, res: Response, next: NextFunction): void {
   if (!req.session.guest) {
     req.session.returnTo = req.originalUrl;
-    console.debug("original url from server.ts: " + req.originalUrl);
+   // console.debug("original url from server.ts: " + req.originalUrl);
     res.redirect("/search?reason=search");
     return;
   }
@@ -94,166 +79,112 @@ app.use(
   }),
 );
 
-// function resolveStarPanel(value: unknown): NavigationService.StarPanel {
-//   const panel = Number(value);
-//   return panel === 2 || panel === 3 ? panel : 1;
+
+// const PAGE_NAMES = ["index", "party", "rsvp", "star", "finish"] as const;
+
+// type PageList = (typeof PAGE_NAMES)[number];
+
+// function getPageName(value: string): PageList {
+//   return (PAGE_NAMES as readonly string[]).includes(value)
+//     ? (value as PageList)
+//     : "index";
 // }
-const PAGE_NAMES = ["index", "party", "rsvp", "star", "finish"] as const;
 
-type PageList = (typeof PAGE_NAMES)[number];
-
-function getPageName(value: string): PageList {
-  return (PAGE_NAMES as readonly string[]).includes(value)
-    ? (value as PageList)
-    : "index";
-}
-
-function isPanelNumber(value: number): value is PanelNumber {
-  return Number.isInteger(value) && value >= 0 && value <= 3;
-}
+// function isPanelNumber(value: number): value is PanelNumber {
+//   return Number.isInteger(value) && value >= 0 && value <= 3;
+// }
 
 app.use((req, res, next) => {
+  
+  const path = req.path === "/" ? "index" : req.path.slice(1);
+  const query = req.query.sp as string;
+
+  const pageParms: PageParms = {
+    pageName: path,
+    panelNumber: query,
+  };
+
+  const pageState = getPageState(pageParms);
+
+  if (!pageState.pageNavigation) {
+    res.locals.stepper = null;
+    return next();
+  }
+
   const guest = req.session.guest ?? noGuest;
-  console.debug("guest is: " + guest.guid);
-
-  const isIdentified = guestIsIdentified(guest);
-  console.debug("isIdentified: " + isIdentified);
-
   res.locals.guest = guest;
 
-  const path = req.path.replace(/^\/+/, "") || "index";
-  const query = req.query.sp;
 
-  const pageValue: PageName = getPageName(path);
-  let panelValue: PanelNumber = 0;
+  
+ // res.locals.stepper = getStepperState(pageName, panelNumber);
 
-  if (typeof query === "string" && query.trim() !== "") { 
-    const value = Number(query);
+  const navigation = getPageNavigationState(req, pageState, guest);
 
-     if (isPanelNumber(value)) {
-       panelValue = value;
-     }    
-  }
-
-  const pageParams: PageParams = {
-    pageName: pageValue,
-    panelNumber: panelValue,
-  }
-
-  let display!: Guest;
-
-  if (isIdentified) {
-    display = guest
-  }
-
-  const displayGuest = isIdentified ? display : null;
-
-  // const displayGuest: DisplayGuest = {
-  //   firstName: guest.firstName ?? "",
-  //   lastName: guest.lastName ?? "",
-  //   relationship: guest.relationship ?? "",
-  //   showDisclaimer: guest.showDisclaimer,
-  // };  
-
-  const guestParams: GuestParams = {
-     identified: isIdentified,
-     translation: "en",
-     finished: false,
-      pageParams: pageParams,
-      displayGuest: display!
-   };
-
-  const navigation = getNavigationState(guestParams);
+  console.debug(navigation);
 
   req.session.navigation = navigation;
   res.locals.navigation = navigation;
 
-  // 
-  // req.session.guest = guest ?? emptyGuest;
-  // 
+  next();
+  
+  
+  
+  
+  
+ // console.debug("guest is: " + guest.guid);
 
-  // 
-  // 
- 
-
-
-  // const panel = resolveStarPanel(req.query.sp);
-  // const currentStep = getStepFromPage(req.path, panel);
-
-  // const GuestProgress = {
-  //   identified: false,
-  //   completedSteps: [],
-  // };
+  
+  //console.debug("isIdentified: " + isIdentified);
 
   
 
-  // res.locals.navigation = getNavigationState(
-  //   GuestProgress,
-  //   currentStep,
-  //   "index",
-  //   0,
-  // );
+  
+  
 
-  //res.locals.displayGuest = req.session.guest ?? emptyGuest;
-  // Adapt this property to your persisted Guest model.
-  // const progress: NavigationService.GuestProgress = {
-  //   identified: Boolean(guest),
-  //   completedSteps: guest?.completedSteps ?? [],
+  // const pageValue: PageName = getPageName(path);
+  // let panelValue: PanelNumber = 0;
+
+  // if (typeof query === "string" && query.trim() !== "") { 
+  //   const value = Number(query);
+
+  //    if (isPanelNumber(value)) {
+  //      panelValue = value;
+  //    }    
+  // }
+
+  // const pageParams: PageParams = {
+  //   pageName: pageValue,
+  //   panelNumber: panelValue,
+  // }
+
+  // let display!: Guest;
+
+  // if (isIdentified) {
+  //   display = guest
+  // }
+
+  // const displayGuest = isIdentified ? display : null;
+  // let translation: string = "";
+  // let finished: boolean = false;
+
+  // if (isIdentified) { 
+  //   translation = (display.preferredLanguage !== null && display.preferredLanguage !== undefined) ? display.preferredLanguage : display.language;
+  //   finished = display.finished === undefined ? false : display.finished;
+  // }
+
+  // const guestParams: GuestParams = {
+  //    identified: isIdentified,
+  //    translation, // display.preferredLanguage !== null ? display.preferredLanguage : display.language,
+  //    finished,
+  //     pageParams: pageParams,
+  //   displayGuest: display!,
+      
   // };
+  
+  // console.debug("language is " + display?.preferredLanguage!);
+  // console.debug("finished " + display?.finished!);
 
-  // const panel = resolveStarPanel(req.query.sp); //sp = show panel
-  // const currentStep = NavigationService.getStepFromPage(req.path, panel);
-  // const navigation = NavigationService.getNavigationState(progress, currentStep);
-
-  // res.locals.navigation = navigation;
-  // res.locals.navButtons = navigation.navButtons;
-  // res.locals.stepper = navigation.stepper;
-  // res.locals.steps = navigation.steps;
-  // res.locals.showNavbar = navigation.showNavbar;
-
-  // res.locals.navigation = req.session.navigation;
-  // res.locals.guest = req.session.guest ?? null;
-  //res.locals.navButtons = req.session.navButtons ?? null;
-  // res.locals.language = req.session.guest?.language ?? "en";
-  // res.locals.effectiveLanguage =
-  //   req.session.guest?.preferredLanguage ?? req.session.guest?.language ?? "";
-
-  // let navigation: NavigationService.NavigationState;
-
-  // navigation = NavigationService.getNavigationState(
-  //   guest ? getProgress(guest) : false,
-  //   currentStep,
-  // );
-
-  // req.session.navigation = navigation;
-
-  // if (guest) {
-  //   navigation = NavigationService.getNavigationState(
-  //     getProgress(guest),
-  //     currentStep,
-  //   );
-  // }
-
-  // const navButtons = getNavButtons(req);
-  // updateStepper(req.session.guest, "index");
-
-  // const stepIds: StepId[] = [];
-
-  // const GuestProgress = {
-  //   identified: false,
-  //   completedSteps: stepIds,
-  // }
-
-  // const currentStep = getStepFromPage(req.path);
-  // const navigation = getNavigationState(GuestProgress, currentStep, "index", 0);
-  // res.locals.navigation = getNavigationState(
-  //   GuestProgress,
-  //   currentStep,
-  //   "index",
-  //   0,
-  // );
-
-  // 
+  
 
   next();
 });
@@ -291,31 +222,6 @@ app.use(
   express.static(path.join(process.cwd(), "node_modules", "bootstrap-icons")),
 );
 
-// const StepperState = {
-//   currentStep: "welcome" as StepId,
-//   completedSteps: [] as StepId[],
-// };
-
-// ============================================================
-// ROUTES GET
-// ============================================================
-
-// const NavButtons = {
-//   activePage: "index",
-//   showNext: true,
-//   showNextLind: false,
-//   showBack: false,
-//   showButtons: false,
-//   showLogout: false,
-//   nextUrl: "",
-//   backUrl: ""
-// }
-
-// type GUID = string;
-
-// function getEmptyGuid(): GUID {
-//   return "00000000-0000-0000-0000-000000000000";
-// }
 
 // ============================================================
 // ROUTES GET
@@ -329,6 +235,7 @@ app.get("/logout", (req: Request, res: Response) => {
       return;
     }
 
+    //resetStepper(req);
     res.redirect("/index");
   });
 });
@@ -337,6 +244,9 @@ app.get(
   "/invite/:guid",
   async (req: Request<{ guid: string }>, res: Response) => {
     try {
+      req.session.destroy;
+      //resetStepper(req);
+
       const guest = await getGuest(req, req.params.guid, null, null);
 
       if (!guest) {
@@ -359,6 +269,7 @@ app.get("/search", (req: Request, res: Response) => {
   
   delete req.session.guest;
   delete res.locals.guest;
+  //resetStepper(req);
 
   res.render("search", {
     reason,
@@ -366,154 +277,40 @@ app.get("/search", (req: Request, res: Response) => {
 });
 
 app.get("/index", (req: Request, res: Response) => {
-  // const pageParams: PageParams = {
-  //   pageName: "index",
-  //   panelNumber: 0,
-  // };
-
-  // const guest = req.session.guest;
-  // const isIdentified = guestIsIdentified(guest);
-
-  // const guestParams: GuestParams = {
-  //   identified: isIdentified,
-  //   translation: "en",
-  //   finished: false,
-  //   pageParams: pageParams
-  // };
-
-  // const navigation = getNavigationState(
-  //   guestParams,
-  // );
-
-  // console.debug("i am at server - index");
   
-  // req.session.navigation = navigation;
+   completeStep(req, "welcome");
+   setCurrentStep(req, "welcome");
 
- 
-
-  // const currentStep = getStepFromPage(req.path);
-
-  // const progress: GuestProgress = {
-  //   identified: Boolean(guest),
-  //   completedSteps: [],
-  // };
-
-
-
-  // console.debug(guestParams);
-  // console.debug(navigation);
-
-  // const panel = resolveStarPanel(req.query.sp);
-  // const currentStep = getStepFromPage(req.path);
-
-  // let navigation: NavigationService.NavigationState;
-
-  // navigation = NavigationService.getNavigationState(
-  //   guest ? getProgress(guest) : false,
-  //   currentStep,
-  // );
-
-  // req.session.navigation = navigation;
-
-  // if (guest) {
-  //   navigation = NavigationService.getNavigationState(
-  //     getProgress(guest),
-  //     currentStep,
-  //   );
-  // }
-
-  // const navButtons = getNavButtons(req);
-  // updateStepper(req.session.guest, "index");
-
-  // const stepIds: StepId[] = [];
-
-  // const GuestProgress = {
-  //   identified: false,
-  //   completedSteps: stepIds,
-  // }
-
-  // const navigation = getNavigationState(GuestProgress, currentStep, "index", 0);
-
-  // console.debug(navigation);
-
-  res.render("index", {});
+   res.render("index", {
+     stepper: getStepper(req),
+     steps: STEPS,
+   });
+  
 });
 
 app.get("/party", requireGuest, (req: Request, res: Response) => {
-  // const pageParams: PageParams = {
-  //   pageName: "party",
-  //   panelNumber: 0,
-  // };
 
-  // const guest = req.session.guest;
-  // const isIdentified = guestIsIdentified(guest);
-
-  // const guestParams: GuestParams = {
-  //   identified: isIdentified,
-  //   translation: "en",
-  //   finished: false,
-  //   pageParams: pageParams,
-  // };
-
-  // const navigation = getNavigationState(guestParams);
-
-  // req.session.navigation = navigation;
-
-  //  console.debug("i am at server - party");
+  // completeStep(req, "index");
+  // setCurrentStep(req, "party");
 
   res.render("party", {
-    // navButtons,
     // stepper: getStepper(req),
     // steps: STEPS,
   });
 });
 
 app.get("/rsvp", requireGuest, (req: Request, res: Response) => {
-  res.render("rsvp", {})
+  res.render("rsvp", {
+    // stepper: getStepper(req),
+    // steps: STEPS,
+  });
 });
 
 app.get("/star", requireGuest, (req: Request, res: Response) => {
-  //   const guest = req.session.guest;
-  //   const panel = resolveStarPanel(req.query.sp);
-  //   const currentStep = NavigationService.getStepFromPage(req.path, panel);
-
-  //   let navigation: NavigationService.NavigationState;
-
-  //   getStepper(req);
-
-  //   navigation = NavigationService.getNavigationState(
-  //     guest ? getProgress(guest) : false,
-  //     currentStep,
-  //   );
-
-  // req.session.navigation = navigation;
-
-  // const navButtons = getNavButtons(req);
-  // const goto = typeof req.query.goto === "string" ? req.query.goto : "1";
-
-  // if (!guestIsIdentified(guest)) {
-  //   setCurrentStep(req, "star");
-  //   completeStep(req, "party");
-  // }
-
-  // if (guestIsIdentified(guest) && !guestIsFinished(guest)) {
-  // }
-
-  // if (guestIsIdentified(guest) && guestHasRsvp(guest) && !guestHasStar(guest)) {
-  //   setCurrentStep(req, "thats60s");
-  //   completeStep(req, "rsvp");
-  // }
-
-  // if (guestIsIdentified(guest) && guestHasStar(guest)) {
-  //   setCurrentStep(req, "thats7s");
-  //   completeStep(req, "thats60s");
-  // }
+  
 
   res.render("star", {
-    // guest: req.session.guest,
     starOptions,
-    // navButtons,
-    // goto,
     // stepper: getStepper(req),
     // steps: STEPS,
   });
@@ -521,7 +318,10 @@ app.get("/star", requireGuest, (req: Request, res: Response) => {
 
 app.get("/finish", (req: Request, res: Response) => {
   
-  res.render("finish", { });
+  res.render("finish", {
+    // stepper: getStepper(req),
+    // steps: STEPS,
+  });
 });
 
 // ============================================================
@@ -602,19 +402,14 @@ app.post("/search/access-code", (req: Request, res: Response) => {
 
       const redirectUrl = req.session.returnTo || "/";
 
-      console.debug("redirectUrl: " + redirectUrl);
+     // console.debug("redirectUrl: " + redirectUrl);
 
       delete req.session.returnTo;
-
-      //const navButtons = getNavButtons(req);
-      //const StepperState = getNewStep(req);
 
       return res.status(200).json({
         success: true,
         redirectUrl,
-        // navButtons,
-        //stepper: getStepper(req),
-        //steps: STEPS,
+
       });
     }
   } catch (error) {
@@ -628,16 +423,18 @@ app.post("/search/access-code", (req: Request, res: Response) => {
 
 app.post("/rsvp", requireGuest, async (req: Request, res: Response) => {
   try {
-    const guest = req.session.guest!;
-    const identified = guestIsIdentified(guest);
+    const guest = req.session.guest;
+    if (!guest) return;
+    // const identified = guestIsIdentified(guest);
 
-    if (!identified) { 
-      return res.status(401).json({
-        success: false,
-        key: "guestNotIdentified",
-      });
-    }
+    // if (!identified) { 
+    //   return res.status(401).json({
+    //     success: false,
+    //     key: "guestNotIdentified",
+    //   });
+    // }
 
+    //console.debug("1- guest guid is: " + guest.guid);
     const attending = req.body.attending;
 
     let partySize: number;
@@ -685,9 +482,6 @@ app.post("/rsvp", requireGuest, async (req: Request, res: Response) => {
     //guest.finished = guestIsFinished(guest);
 
     await putGuest(req, "rsvp");
-    // await getGuest(guest.guid, null, null); // Refresh the guest data after update
-    // delete req.session.guest;
-    // req.session.guest = guest!;
 
     // -------------------------
     // SUCCESS FEEDBACK
@@ -706,9 +500,6 @@ app.post("/rsvp", requireGuest, async (req: Request, res: Response) => {
       success: true,
       feedbackType: "success",
       feedbackKey: "rsvpAccepted",
-      // partySize,
-      // stepper: getStepper(req),
-      // steps: STEPS,
     });
   } catch (error) {
     console.error("RSVP update failed:", error);
@@ -723,16 +514,17 @@ app.post("/rsvp", requireGuest, async (req: Request, res: Response) => {
 
 app.post("/star", requireGuest, async (req: Request, res: Response) => {
   const guest = req.session.guest;
-  const identified = guestIsIdentified(guest);
+  if (!guest) return;
+  // const identified = guestIsIdentified(guest);
 
-  if (!identified || guest === undefined) {
-    return res.status(401).json({
-      success: false,
-      key: "guestNotIdentified",
-    });
-  }
+  // if (!identified || guest === undefined) {
+  //   return res.status(401).json({
+  //     success: false,
+  //     key: "guestNotIdentified",
+  //   });
+  // }
 
-  const { star, presenting, songs } = req.body;
+  
   const whichForm = req.body.whichForm;
   let whichUpdate: "star" | "songs" = "star";
 
@@ -741,6 +533,8 @@ app.post("/star", requireGuest, async (req: Request, res: Response) => {
   // --------------------------------------------------------
 
   if (whichForm === "1") {
+    const { star, presenting } = req.body;
+
     if (typeof star !== "string" || !star.trim()) {
       return res.status(400).json({
         success: false,
@@ -754,28 +548,34 @@ app.post("/star", requireGuest, async (req: Request, res: Response) => {
   }
 
   if (whichForm === "2") {
-    if (!Array.isArray(songs) || songs.length !== 7) {
+    const songs: unknown = req.body?.songs;
+
+    // Validate that songs is an array of exactly 7 strings
+    if (
+      !Array.isArray(songs) ||
+      songs.length !== 7 ||
+      !songs.every((song) => typeof song === "string")
+    ) {
       return res.status(400).json({
         success: false,
         key: "starSaveError",
       });
     }
 
-    guest.song1 = String(songs[0] ?? "").trim();
-    guest.song2 = String(songs[1] ?? "").trim();
-    guest.song3 = String(songs[2] ?? "").trim();
-    guest.song4 = String(songs[3] ?? "").trim();
-    guest.song5 = String(songs[4] ?? "").trim();
-    guest.song6 = String(songs[5] ?? "").trim();
-    guest.song7 = String(songs[6] ?? "").trim();
+    // Assign each song to its corresponding CSV field
+    guest.song1 = songs[0].trim();
+    guest.song2 = songs[1].trim();
+    guest.song3 = songs[2].trim();
+    guest.song4 = songs[3].trim();
+    guest.song5 = songs[4].trim();
+    guest.song6 = songs[5].trim();
+    guest.song7 = songs[6].trim();
 
-    const hasAtLeastOneSong = songs.some(
-      (song) => String(song ?? "").trim().length > 0,
-    );
+    // Check whether at least one song was entered
+    const hasAtLeastOneSong = songs.some((song) => song.trim() !== "");
 
-    if (!hasAtLeastOneSong) {
-      guest.song0 = "true";
-    }
+    // Set song0 accordingly
+    guest.song0 = !hasAtLeastOneSong;
 
     whichUpdate = "songs";
   }
@@ -788,18 +588,10 @@ app.post("/star", requireGuest, async (req: Request, res: Response) => {
     //guest.finished = guestIsFinished(guest);
 
     await putGuest(req, whichUpdate);
-    // await getGuest(guest.guid, null, null); // Refresh the guest data after update
-    // delete req.session.guest;
-    // req.session.guest = guest!;
-
 
     return res.json({
       success: true,
       key: "starSaved",
-      // stepper: getStepper(req),
-      // navButtons,
-      // steps: STEPS,
-      // finished: guestIsFinished(req) ? "true" : "false",
     });
   } catch (error) {
     console.error("Error saving Star information:", error);
@@ -834,9 +626,12 @@ async function getGuest(
 async function putGuest(req: Request, key: string): Promise<Guest | null> {
   const guest = req.session.guest ?? noGuest;
 
-  if (guestIsIdentified(guest)) return null;  
+  // console.debug("2- guest guid is: " + req.session.guest?.guid);
+  //console.debug("3- guest guid is: " + guest?.guid);
 
-  //guest.finished = guestIsFinished(guest) ? true : false;
+  if (!isFinished(guest)) return null;  
+
+  guest.finished = isFinished(guest) ? true : false;
 
   await updateGuest(key, guest);
 
@@ -844,158 +639,9 @@ async function putGuest(req: Request, key: string): Promise<Guest | null> {
   req.session.guest = guest;
 
   return guest;
-}
+};
 
-
-
-
-
-
-
-/* 
-app.get("/venue", (req: Request, res: Response) => {
-  const navButtons = getNavButtons(req);
-  // setCurrentStep(req, "index");
-  // completeStep(req, "");
-
-  res.render("venue", {
-    activePage: "venue",
-  });
-});
-
-app.get("/rsvp", requireGuest, (req: Request, res: Response) => {
-  const guest = req.session.guest;
-  const navButtons = getNavButtons(req);
-  setCurrentStep(req, "rsvp");
-
-  if (guestIsIdentified(guest) && !guestIsFinished(guest)) {
-    completeStep(req, "star");
-  }
-  
-  res.render("rsvp", {
-    guest: req.session.guest,
-    showDisclaimer: guestIsIdentified(guest) && guestShowDisclaimer(guest) ? true : false,
-    navButtons,
-    stepper: getStepper(req),
-    steps: STEPS,
-  });
-});
-
-app.get("/search", (req: Request, res: Response) => {
-  const navButtons = getNavButtons(req);
-  const source = req.query.s;
-  const reason =
-    typeof req.query.reason === "string" ? req.query.reason : "false";
-
-  // setCurrentStep(req, "index");
-  // completeStep(req, "");
-
-  res.render("search", {
-    activePage: "",
-    reason,
-    navButtons,
-  });
-});
-
-
-
-
-
-
-
-// app.get("/index", (req: Request, res: Response) => {});
-
-// ============================================================
-// ROUTES POST
-// ============================================================
-
-app.post("/api/guest/language", async (req, res) => {
-  const guest = req.session.guest;
-  const language = req.body.language;
-
-  if (!guest) {
-    return res.status(401).json({
-      error: "Guest not identified",
-    });
-  }
-
-  if (!["en", "pt", "it"].includes(language)) {
-    return res.status(400).json({
-      error: "Invalid language",
-    });
-  }
-
-  try {
-    await putGuest("language", { ...guest, preferredLanguage: language });
-
-    await getGuest(guest.guid, null, null); // Refresh the guest data after update
-    delete req.session.guest;
-    req.session.guest = guest!;
-    // Keep the current session synchronized.
-    // guest.preferredLanguage = language;
-    // req.session.effectiveLanguage = language;
-
-    return res.json({
-      success: true,
-      language,
-    });
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).json({
-      error: "Unable to save language preference",
-    });
-  }
-});
-
-
-
-
-
-
-
-app.post("/index", (req: Request, res: Response) => {});
-
-app.post("/index", (req: Request, res: Response) => { });
-
-app.post("/index", (req: Request, res: Response) => { });
-
-app.post("/index", (req: Request, res: Response) => {}); */
-
-// ============================================================
-// HELPER FUNCTIONS
-// ============================================================
-
-
-
-
-
-
-
-
-
-// function getProgress(guest: Guest): NavigationService.GuestProgress {
-  
-//   let stepIds: StepId[] = [];
-//   const isIdentified = guestIsIdentified(guest);
-
-//   if (isIdentified) { 
-//     if (guestHasRsvp(guest)) stepIds.push("rsvp");
-//     if (guestHasStar(guest)) stepIds.push("thats60s");
-//     if (guestHasSongs(guest)) stepIds.push("thats7s");
-//     if (guestIsFinished(guest)) stepIds.push("end");
-//   }
-  
-//   return {
-//     identified: isIdentified,
-//     completedSteps: stepIds
-//   }
-// }
-
-
-
-
-function guestIsIdentified(guest: Guest | undefined): boolean {
+/* function guestIsIdentified(guest: Guest | undefined): boolean {
   if (!guest) return false;
 
   const EMPTY_GUID = "00000000-0000-0000-0000-000000000000";
@@ -1054,45 +700,13 @@ function guestHasSongs(guest: Guest | undefined): boolean {
 }
   
 function guestIsFinished(guest: Guest | undefined): boolean {
-  if (guest == null) {
+  if (guest === null || guest === undefined || !guestIsIdentified(guest)) {
     return false;
   }
 
-  return (
-    (guestHasRsvp(guest) && guestHasStar(guest) && guestHasSongs(guest)) ||
-    (guest.finished)
-  );
-}
+  return guestHasRsvp(guest) && guestHasStar(guest) && guestHasSongs(guest);
+} */
 
-// function updateStepper(req: Request, page: string): void {
-//   const guest = req.session.guest;
-
-//   const isIdentified = (guest == null || guest == undefined) ? false : guestIsIdentified(guest);
-
-//   if (!isIdentified) {
-//     switch (page) { 
-//       case "party":
-//         setCurrentStep(req, "party");
-//         completeStep(req, "welcome");
-//       default:
-//         break;
-//     }
-//   }
-
-//   if (isIdentified) {
-//     if (guestIsFinished(guest)) { 
-//       completeStep(req, "welcome");
-//       completeStep(req, "party");
-//       completeStep(req, "star");
-//       completeStep(req, "rsvp");
-//       completeStep(req, "thats60s");
-//       completeStep(req, "thats7s");
-//       completeStep(req, "end");
-//     }
-//   }
-
-
-// }
 
 const starOptions = [
   { value: "absolutely", key: "starAbsolutely" },
