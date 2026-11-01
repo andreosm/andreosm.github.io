@@ -1,0 +1,30 @@
+<% if (navigation?.guest?.finished == false) { %>
+    <div class="language-selector-opt d-flex justify-content-center align-items-center gap-3">
+        <button
+            type="button"
+            class="language-button d-flex align-items-center gap-2 rounded-4"
+            data-language="en"
+            aria-label="English">
+            <img src="/images/flags/us.svg" alt="">
+            <span>English</span>
+        </button>
+
+        <button
+            type="button"
+            class="language-button d-flex align-items-center gap-2 rounded-4"
+            data-language="it"
+            aria-label="Italiano">
+            <img src="/images/flags/it.svg" alt="">
+            <span>Italiano</span>
+        </button>
+
+        <button
+            type="button"
+            class="language-button d-flex align-items-center gap-2 rounded-4"
+            data-language="pt"
+            aria-label="Português">
+            <img src="/images/flags/br.svg" alt="">
+            <span>Português</span>
+        </button>
+    </div>
+ <% } %>

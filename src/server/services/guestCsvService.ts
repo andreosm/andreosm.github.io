@@ -3,7 +3,7 @@ import path from "path";
 import { parse } from "csv-parse/sync";
 import { stringify } from "csv-stringify/sync";
 
-import { Guest } from "../models/guest";
+import { Guest, isFinished } from "../models/guest";
 
 const CSV_PATH = path.join(process.cwd(), "data", "guests.csv");
 
@@ -81,7 +81,7 @@ function mapRowToGuest(row: GuestCsvRow): Guest {
     firstName: row.FirstName,
     lastName: row.LastName,
     showDisclaimer: row.ShowDisclaimer.trim().toLowerCase() === "true",
-    sent: row.Sent,
+    sent: row.Sent.trim().toLocaleLowerCase() === "true",
     partySize: defaultPartySize(row.PartySize),
     partySizeEst: defaultPartySize(row.PartySizeEst),
     partySizeConf: defaultPartySize(row.PartySizeConf),
@@ -146,9 +146,9 @@ export async function findGuest(
 
   //console.debug("Reading CSV file with these properties: ");
 
-  for (const [key, value] of Object.entries(mappedGuest)) {
-    console.log(`${key}: ${value}`);
-  }
+  // for (const [key, value] of Object.entries(mappedGuest)) {
+  //   console.log(`${key}: ${value}`);
+  // }
 
   return mapRowToGuest(row);
 }
@@ -232,15 +232,15 @@ export async function updateGuest(key: string, guest: Guest): Promise<void> {
       throw new Error(`Invalid key: ${key}`);
   }
 
-  row.Finished = guestIsFinished(guest) ? "true" : "false";
+  row.Finished = isFinished(guest) ? "true" : "false";
 
   await writeFile(rows);
 
-  console.debug("CSV file written with these properties: ");
+  //console.debug("CSV file written with these properties: ");
 
-  for (const [key, value] of Object.entries(guest)) {
-    console.log(`${key}: ${value}`);
-  }
+  // for (const [key, value] of Object.entries(guest)) {
+  //   console.log(`${key}: ${value}`);
+  // }
 }
 
 // export async function guestIsFinished(guest: Guest): Promise<boolean> { 
@@ -454,39 +454,39 @@ export async function updatePartySizeEstimate(
   await fs.rename(temporaryPath, CSV_PATH); 
 }*/
 
-function guestIsFinished(guest: Guest | undefined): boolean {
-  if (!guest || guest == null || guest == undefined) {
-    return false;
-  }
+// function guestIsFinished(guest: Guest | undefined): boolean {
+//   if (!guest || guest == null || guest == undefined) {
+//     return false;
+//   }
 
-  const EMPTY_GUID = "00000000-0000-0000-0000-000000000000";
+//   const EMPTY_GUID = "00000000-0000-0000-0000-000000000000";
 
-  if (guest.guid.toLowerCase() === EMPTY_GUID) { 
-    return false;
-  }
+//   if (guest.guid.toLowerCase() === EMPTY_GUID) { 
+//     return false;
+//   }
 
-const hasRsvp =
-  (guest?.partySizeEst ?? 0) >= 0 || (guest?.partySizeConf ?? 0) >= 0;
+// const hasRsvp =
+//   (guest?.partySizeEst ?? 0) >= 0 || (guest?.partySizeConf ?? 0) >= 0;
 
-const star = typeof guest?.star === "string" ? guest?.star : "";
+// const star = typeof guest?.star === "string" ? guest?.star : "";
 
-  const hasStar = star.trim() !== "";
+//   const hasStar = star.trim() !== "";
   
-  const hasSongs = [
-    guest.song0,
-    guest.song1,
-    guest.song2,
-    guest.song3,
-    guest.song4,
-    guest.song5,
-    guest.song6,
-    guest.song7,
-  ].some((song) => String(song ?? "").trim().length > 0);
+//   const hasSongs = [
+//     guest.song0,
+//     guest.song1,
+//     guest.song2,
+//     guest.song3,
+//     guest.song4,
+//     guest.song5,
+//     guest.song6,
+//     guest.song7,
+//   ].some((song) => String(song ?? "").trim().length > 0);
 
-  return (
-    (hasRsvp && hasStar && hasSongs) || guest.finished
-  );
-}
+//   return (
+//     (hasRsvp && hasStar && hasSongs) || guest.finished
+//   );
+// }
 
 function normalizeName(value: string): string {
   return value

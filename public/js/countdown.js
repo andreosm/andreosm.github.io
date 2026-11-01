@@ -9,6 +9,7 @@ function updatePartyCountdown() {
     const countdownHours = document.getElementById("countdownHours");
     const countdownMinutes = document.getElementById("countdownMinutes");
     const countdownSeconds = document.getElementById("countdownSeconds");
+    const daysLeft = document.getElementById("daysLeft");
     if (difference <= 0) {
         if (countdown) {
             countdown.textContent = "The celebration has begun!";
@@ -19,6 +20,12 @@ function updatePartyCountdown() {
     const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
     const minutes = Math.floor((difference / (1000 * 60)) % 60);
     const seconds = Math.floor((difference / 1000) % 60);
+    const daysLeftText = {
+        en: "There are ",
+        it: "Mancano ",
+        pt: "Faltam "
+    };
+    const language = window.preferredLanguage;
     if (countdownDays) {
         countdownDays.textContent = days.toString();
     }
@@ -33,6 +40,9 @@ function updatePartyCountdown() {
         countdownSeconds.classList.remove("countdown-seconds-blink");
         void countdownSeconds.offsetWidth;
         countdownSeconds.classList.add("countdown-seconds-blink");
+    }
+    if (daysLeft) {
+        daysLeft.textContent = daysLeftText[language] + days;
     }
 }
 updatePartyCountdown();

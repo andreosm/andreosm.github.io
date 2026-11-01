@@ -18,7 +18,11 @@ export function getStepper(req: Request): StepperState {
 
 export function setCurrentStep(req: Request, step: StepId): void {
   const stepper = initializeStepper(req);
-  stepper.currentStep = step;
+    stepper.currentStep = step;
+    
+    if (step === "end") {
+      completeStep(req, step);
+    }
 }
 
 export function completeStep(req: Request, step: StepId): void {

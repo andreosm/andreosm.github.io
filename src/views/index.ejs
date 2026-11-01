@@ -13,12 +13,12 @@
                 <h2 id="event-title" class="kaushan-script text-center"></h2>
                 <div id="home-title" class="pageTitle text-center"></div>
                 <h5 id="" class="text-center"></h5>   
-
+                <%- include("partials/language-selector") %>
                 <div class="card mt-4">
                     <div class="card-header">
                         <div class="row align-items-center">
                             <div id="home-header-left" class="col text-start text-emoji-medium"></div>
-                            <div id="<%= navigation?.identified ? 'home-header-center-name' : 'home-header-center-date' %>" class="col text-center cardTitle"><span><%= navigation?.displayGuest?.salutation %> <%= navigation?.displayGuest?.relationship %> <%= navigation?.displayGuest?.firstName %></span></div>
+                            <div id="<%= navigation?.guest?.identified ? 'home-header-center-name' : 'home-header-center-date' %>" class="col text-center fs-xl ls-md fw-bold kaushan-script"><span><%= navigation?.guest?.identified ? (navigation?.guest?.curGuest?.salutation + " " + navigation?.guest?.curGuest?.relationship + " " + navigation?.guest?.curGuest?.firstName) : "" %></span></div>
                             <div id="home-header-right" class="col text-end text-emoji-medium"></div>
                         </div>
                     </div>
@@ -28,10 +28,10 @@
                         <div class="container countdown-container text-center demo-box-green mt-3">
                             <hr/>
                             <div class="row">
-                                <div class="col fw-bold" id="home-days"></div>
-                                <div class="col fw-bold" id="home-hours"></div>
-                                <div class="col fw-bold" id="home-minutes"></div>
-                                <div class="col fw-bold" id="home-seconds"></div>
+                                <div class="col fs-lg fw-bold kaushan-script" id="home-days"></div>
+                                <div class="col fs-lg fw-bold kaushan-script" id="home-hours"></div>
+                                <div class="col fs-lg fw-bold kaushan-script" id="home-minutes"></div>
+                                <div class="col fs-lg fw-bold kaushan-script" id="home-seconds"></div>
                             </div>
                             <hr/>
                             <div class="row">
@@ -66,12 +66,27 @@
                                     style="width:217px; height: 289px;"
                                     >
                                 </div>
-
-                                <!-- Text -->
-                                <div id="route-67" class="col-12 col-lg-6"></div>
-
+                                
+                                <div class="col-12 col-lg-6 align-items-center">
+                                    <div id="route-67-title" class="pb-2"></div> 
+                                    <% if (navigation.guest.identified == true && navigation.guest.finished == true) { %>
+                                        <span id="daysLeft"></span>
+                                        <span id="route-67-content-2"></span>
+                                    <% } else { %>
+                                        <span id="daysLeft"></span>
+                                        <span id="route-67-content-1"></span>
+                                    <% } %>
+                                </div>
                             </div>
-                            <%- include("partials/stepper", { steps, stepper }) %>
+                            
+                                <% if (navigation.stepper) { %>
+                                    <%- include("partials/stepper", {
+                                        steps: navigation.steps,
+                                        stepper: navigation.stepper
+                                    }) %>
+                                <% } %>
+
+                           
                         </div>
                         
                     </div>                   
@@ -83,25 +98,6 @@
 
         <%- include("partials/footer") %>
         <script type="module" src="/js/countdown.js"></script>
-        <script>
-            window.btnNav = <%- JSON.stringify(navigation?.stepper).replace(/</g, "\\u003c") %>;
-        </script>
-        <!-- <script>
-            currentStep = "rsvp";
-            completedSteps = ["welcome", "rsvp"];
-
-            
-
-            const stepper = getStepper();
-
-            const result = await response.json();
-
-            completeStep(result, "rsvp");
-
-            updateStepper("party", ["home", "rsvp"]);
-
-            refreshStepper(result.stepper);
-        </script> -->
     
     </body>
 </html>

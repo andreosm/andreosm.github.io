@@ -12,14 +12,19 @@
             <div class="container col-lg-6 pt-2 pt-md-3 pt-lg-4">
                 <h2 id="event-title" class="kaushan-script text-center"></h2>
                 <!-- <h5 id="star-title1" class="text-center"></h5> -->
-            <div class="pt-4"><%- include("partials/stepper") %></div>
+            <div class="pt-4"><% if (navigation.stepper) { %>
+    <%- include("partials/stepper", {
+        steps: navigation.steps,
+        stepper: navigation.stepper
+    }) %>
+<% } %></div>
                 <div class="card mt-4">                    
 
-                    <% if (navigation.tracker.panelNumber == "1") { %>
+                    <% if (navigation?.page?.panelNumber == "1") { %>
                         <div class="card-header">
                             <div class="row align-items-center">
                                 <div id="star-header-left" class="col text-start text-emoji-medium"></div>
-                                <div id="star-header-center" class="col text-center cardTitle text-nowrap"></div>
+                                <div id="star-header-center" class="col text-center fs-md ls-md fw-bold kaushan-script text-nowrap"></div>
                                 <div id="star-header-right" class="col text-end text-emoji-medium"></div>
                             </div>
                         </div>
@@ -92,11 +97,11 @@
                         <%- include("partials/buttons") %>
                     <% } %>
 
-                    <% if (navigation.tracker.panelNumber == "2") { %>
+                    <% if (navigation?.page?.panelNumber == "2") { %>
                         <div class="card-header">
                             <div class="row align-items-center">
                                 <div id="star-header-left" class="col-sm text-start text-emoji-medium"></div>
-                                <div class="col-8 text-center cardTitle"><%= navigation?.displayGuest?.firstName ?? "" %>, <span id="<%= navigation?.displayGuest?.finished == 'true' ? 'starDataUpdateTitle' : 'starDataInputTitle' %>"></span></div>
+                                <div class="col-8 text-center fs-md ls-md fw-bold kaushan-script"><%= navigation?.guest?.curGuest?.firstName ?? "" %>, <span id="<%= navigation?.guest?.curGuest?.finished == 'true' ? 'starDataUpdateTitle' : 'starDataInputTitle' %>"></span></div>
                                 <div id="star-header-right" class="col-sm text-end text-emoji-medium"></div>
                             </div>
                         </div>
@@ -176,22 +181,31 @@
                                         class="form-control"
                                         rows="4"
                                         maxlength="1000"
-                                    ><%= navigation?.displayGuest?.presenting ?? "" %></textarea>
+                                    ><%= navigation?.guest?.curGuest?.presenting ?? "" %></textarea>
                                 </div>                                
                                 
-                                <div id="<%= navigation?.displayGuest?.finished == 'true' ? 'star2FooterUpdate' : 'star2FooterAdd' %>"></div>
+                                <div id="<%= navigation?.guest?.curGuest?.finished == 'true' ? 'star2FooterUpdate' : 'star2FooterAdd' %>"></div>
                                 <!-- =========================================================
                                     FEEDBACK
                                 ========================================================== -->
-
-                                <div
-                                    id="starFeedback"
-                                    class="alert d-none"
-                                    role="alert"
-                                >
-                                    <span id="starFeedbackText"></span>
-                                </div>
-
+                                <% if (navigation.nav.submit.enabled) { %>
+                                    <div
+                                        id="starFeedback"
+                                        class="alert d-none"
+                                        role="alert"
+                                    >
+                                        <span id="starFeedbackText"></span>
+                                    </div>
+                                <% } %>
+                                <% if (!navigation.nav.submit.enabled) { %>
+                                    <div
+                                        id="starFeedback"
+                                        class="alert alert-danger"
+                                        role="alert"
+                                    >
+                                        <span id="starPanelDisabled"></span>
+                                    </div>
+                                <% } %>
                             </div>   
 
                             <!-- =========================================================
@@ -202,6 +216,9 @@
                                         id="starSubmitButton"
                                         type="submit"
                                         class="btn btn-outline-dark ma-button w-100 gap-2"
+                                <% if (!navigation.nav.submit.enabled) { %>
+                                        disabled                            
+                                <% } %> 
                                     >
                                         <span id="starSubmitButtonText"></span>
                                         <i class="bi bi-person-arms-up"></i>
@@ -211,11 +228,11 @@
                         
                     <% } %>
 
-                    <% if (navigation.tracker.panelNumber == "3") { %>
+                    <% if (navigation?.page?.panelNumber == "3") { %>
                         <div class="card-header">
                             <div class="row align-items-center">
                                 <div id="star-header-left" class="col-sm text-start text-emoji-medium"></div>
-                                <div class="col-8 text-center cardTitle"><%= navigation?.displayGuest?.firstName ?? "" %>, <span id="<%= navigation?.displayGuest?.finished == 'true' ? 'starDataUpdateTitle' : 'starDataInputTitle' %>"></span></div>
+                                <div class="col-8 text-center fs-md ls-md fw-bold kaushan-script"><%= navigation?.guest?.curGuest?.firstName ?? "" %>, <span id="<%= navigation?.guest?.curGuest?.finished == 'true' ? 'starDataUpdateTitle' : 'starDataInputTitle' %>"></span></div>
                                 <div id="star-header-right" class="col-sm text-end text-emoji-medium"></div>
                             </div>
                         </div>
@@ -244,7 +261,7 @@
                                                 class="form-control"
                                                 maxlength="200"
                                                 placeholder="Example: Vogue, by Madonna"
-                                                value="<%= navigation?.displayGuest?.song1 ?? "" %>"
+                                                value="<%= navigation?.guest?.curGuest?.song1 ?? "" %>"
                                             >
                                         </div>
                                     </div>
@@ -259,7 +276,7 @@
                                                 class="form-control"
                                                 maxlength="200"
                                                 placeholder="Example: Michael Jackson's Beat it"
-                                                value="<%= navigation?.displayGuest?.song2 ?? "" %>"
+                                                value="<%= navigation?.guest?.curGuest?.song2 ?? "" %>"
                                             >
                                         </div>
                                     </div>
@@ -274,7 +291,7 @@
                                                 class="form-control"
                                                 maxlength="200"
                                                 placeholder="Song 3"
-                                                value="<%= navigation?.displayGuest?.song3 ?? "" %>"
+                                                value="<%= navigation?.guest?.curGuest?.song3 ?? "" %>"
                                             >
                                         </div>
                                     </div>
@@ -289,7 +306,7 @@
                                                 class="form-control"
                                                 maxlength="200"
                                                 placeholder="Song 4"
-                                                value="<%= navigation?.displayGuest?.song4 ?? "" %>"
+                                                value="<%= navigation?.guest?.curGuest?.song4 ?? "" %>"
                                             >
                                         </div>
                                     </div>
@@ -304,7 +321,7 @@
                                                 class="form-control"
                                                 maxlength="200"
                                                 placeholder="Song 5"
-                                                value="<%= navigation?.displayGuest?.song5 ?? "" %>"
+                                                value="<%= navigation?.guest?.curGuest?.song5 ?? "" %>"
                                             >
                                         </div>
                                     </div>
@@ -319,7 +336,7 @@
                                                 class="form-control"
                                                 maxlength="200"
                                                 placeholder="Song 6"
-                                                value="<%= navigation?.displayGuest?.song6 ?? "" %>"
+                                                value="<%= navigation?.guest?.curGuest?.song6 ?? "" %>"
                                             >
                                         </div>
                                     </div>
@@ -334,7 +351,7 @@
                                                 class="form-control"
                                                 maxlength="200"
                                                 placeholder="Song 7"
-                                                value="<%= navigation?.displayGuest?.song7 ?? "" %>"
+                                                value="<%= navigation?.guest?.curGuest?.song7 ?? "" %>"
                                             >
                                         </div>
                                     </div>
@@ -344,14 +361,24 @@
                                             <!-- =========================================================
                                                 FEEDBACK
                                             ========================================================== -->
-
-                                            <div
-                                                id="starMusicFeedback"
-                                                class="alert d-none"
-                                                role="alert"
-                                            >
-                                                <span id="starMusicFeedbackText"></span>
-                                            </div>
+                                            <% if (navigation.nav.submit.enabled) { %>
+                                                <div
+                                                    id="starMusicFeedback"
+                                                    class="alert d-none"
+                                                    role="alert"
+                                                >
+                                                    <span id="starMusicFeedbackText"></span>
+                                                </div>
+                                            <% } %>
+                                            <% if (!navigation.nav.submit.enabled) { %>
+                                                <div
+                                                    id="starMusicFeedback"
+                                                    class="alert alert-danger"
+                                                    role="alert"
+                                                >
+                                                    <span id="starPanelDisabled"></span>
+                                                </div>
+                                            <% } %>
                                         </div>
                                     </div>
 
@@ -363,8 +390,11 @@
                                     id="starSubmitSongButton"
                                     type="submit"
                                     class="btn btn-outline-dark ma-button w-100 gap-2"
+                            <% if (!navigation.nav.submit.enabled) { %>
+                                    disabled                            
+                            <% } %>       
                                 >
-                                    <span id="<%= navigation?.displayGuest?.finished == 'true' ? 'starUpdateButtonText' : 'starSubmitButtonText' %>"></span>
+                                    <span id="<%= navigation?.guest?.curGuest?.finished == 'true' ? 'starUpdateButtonText' : 'starSubmitButtonText' %>"></span>
                                     <i class="bi bi-person-arms-up"></i>
                                 </button>
                             </div>
@@ -383,13 +413,13 @@
 
         <!-- <script src="/js/resize.js"></script>
         <script type="module" src="/js/language.js"></script>
-        <script type="module" src="/js/menuAccess.js"></script> -->
+        -->
         <script type="module" src="/js/star.js"></script>
         <!-- <script>
             localStorage.setItem("starVisited", "true");
         </script> -->
         <script>
-            window.btnNav = <%- JSON.stringify(navigation?.next?.url).replace(/</g, "\\u003c") %>;
+            window.btnNav = <%- JSON.stringify(navigation?.nav?.next?.url ?? null).replace(/</g, '\\u003c') %>;
         </script>
     </body>
 </html>

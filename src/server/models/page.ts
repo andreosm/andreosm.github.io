@@ -37,83 +37,176 @@ Page has
     4.1 current step
     4.2 completed steps
 */
+import { NAVFLOW } from "../services/navigationService.js";
 
-export type PageName = "index" | "party" | "star" | "rsvp" | "finish";
+export type PageName =
+  | "index"
+  | "party"
+  | "star"
+  | "rsvp"
+  | "finish"
+  | "search"
+  | "venue"
+    | "food"
+    | "not-found";
+
+export type GuidedPageName = "index" | "party" | "star" | "rsvp";
+
 export type PanelNumber = 0 | 1 | 2 | 3;
 
-export interface PageState { 
-    pageName: PageName;
-    panelNumber: PanelNumber;
-    pageNavigation: boolean;
+export interface PageState {
+  pageName: PageName;
+  panelNumber: PanelNumber;
 }
 
-export function getPageState(pageParms: PageParms): PageState { 
-    let pageNavigation: boolean = false;
-    let pageName: PageName = "index";
-    let panelNumber: PanelNumber = 0;
+const validPages: ReadonlySet<string> = new Set<PageName>([
+  "index",
+  "party",
+  "star",
+  "rsvp",
+  "finish",
+  "search",
+  "venue",
+    "food",
+  "not-found",
+]);
 
-      if (isPageName(pageParms.pageName)) {
-          pageNavigation = true;
+const guidedPages: ReadonlySet<string> = new Set<GuidedPageName>([
+  "index",
+  "party",
+  "star",
+  "rsvp",
+]);
 
-          switch (pageParms.pageName) {
-              case "party":
-                  pageName = "party";
-                  break;
-              case "star":
-                  pageName = "star";
-                  break;
-              case "rsvp":
-                  pageName = "rsvp";
-                  break;
-              case "finish":
-                  pageName = "finish"
-                  break;
-          }
-      }
-    
-    if (isNumber(pageParms.panelNumber) && isPanelNumber(Number(pageParms.panelNumber))) { 
-        switch (pageParms.panelNumber) {
-          case "1":
-            panelNumber = 1;
-            break;
-          case "2":
-            panelNumber = 2;
-            break;
-          case "3":
-            panelNumber = 3;
-            break;
-        }
-    }
-
-    return {pageName, panelNumber, pageNavigation }
+export function isPageName(value: string): value is PageName {
+  return validPages.has(value);
 }
 
-export interface PageParms {
-  pageName: string;
-  panelNumber: string;
+export function isGuidedPage(value: PageName): value is GuidedPageName {
+  return guidedPages.has(value);
 }
 
-const validPages: readonly PageName[] = ["index", "party", "star", "rsvp", "finish"];
-const validPanels: readonly PanelNumber[] = [0, 1, 2, 3];
+// export function isGuidedPage(
+//   pageName: PageName,
+//   panelNumber: PanelNumber,
+// ): boolean {
+//   return NAVFLOW.some(
+//     (flow) =>
+//       flow.pageState.pageName === pageName &&
+//       flow.pageState.panelNumber === panelNumber,
+//   );
+// }
 
-function isPageName(value: string): value is PageName {
-  return validPages.some((page) => page === value);
+export function isPanelNumber(value: number): value is PanelNumber {
+  return value === 0 || value === 1 || value === 2 || value === 3;
 }
 
-function isNumber(value: string): boolean {    
-    if (!value && value !== undefined && value !== "") {
-        return false;
-    }
+export function parsePanelNumber(value: unknown): PanelNumber | null {
+  if (value === undefined) {
+    return 0;
+  }
 
-    try { 
-        const number = Number(value);
-        return true;
-    }
-    catch { 
-        return false;
-    }   
+  if (typeof value !== "string" || !/^[0-3]$/.test(value)) {
+    return null;
+  }
+
+  const panel = Number(value);
+
+  return isPanelNumber(panel) ? panel : null;
 }
 
-function isPanelNumber(value: number): value is PanelNumber {
-  return validPanels.some((panel) => panel === value);
-}
+
+
+
+
+
+
+
+
+
+
+
+
+// export function getPageState(pageParms: PageParms): PageState {
+//   let pageNavigation: boolean = false;
+//   let pageName: PageName = "index";
+//   let panelNumber: PanelNumber = 0;
+
+//   // console.debug("page name is " + pageParms.pageName);
+
+//   if (isPageName(pageParms.pageName)) {
+//     pageNavigation = true;
+
+//     switch (pageParms.pageName) {
+//       case "party":
+//         pageName = "party";
+//         break;
+//       case "star":
+//         pageName = "star";
+//         break;
+//       case "rsvp":
+//         pageName = "rsvp";
+//         break;
+//       case "finish":
+//         pageName = "finish";
+//         break;
+//     }
+//   }
+
+//   if (
+//     isNumber(pageParms.panelNumber) &&
+//     isPanelNumber(Number(pageParms.panelNumber))
+//   ) {
+//     switch (pageParms.panelNumber) {
+//       case "1":
+//         panelNumber = 1;
+//         break;
+//       case "2":  
+//         panelNumber = 2;
+//         break;
+//       case "3":
+//         panelNumber = 3;
+//         break;
+//     }
+//   }
+//   // console.debug("page state is " + pageName + " and " + pageNavigation);
+
+//   return { pageName, panelNumber, pageNavigation };
+// }
+
+// export interface PageParms {
+//   pageName: string;
+//   panelNumber: string;
+// }
+
+// const validPages: readonly PageName[] = ["index", "party", "star", "rsvp", "finish"];
+// const validPanels: readonly PanelNumber[] = [0, 1, 2, 3];
+
+// function isPageName(value: string): value is PageName {
+//   return validPages.some((page) => page === value);
+// }
+
+// export function isPageName(value: string): value is PageName {
+//   return validPages.has(value);
+// }
+
+// export function isNumber(value: string): boolean {
+//   if (!value && value !== undefined && value !== "") {
+//     return false;
+//   }
+
+//   try {
+//     const number = Number(value);
+//     return true;
+//   } catch {
+//     return false;
+//   }
+// }
+
+// export function isPanelNumber(value: number): value is PanelNumber {
+//   return validPanels.some((panel) => panel === value);
+// }
+
+// function isPanelNumber(value: number): value is PanelNumber {
+//   return value === 0 || value === 1 || value === 2 || value === 3;
+// }

@@ -13,28 +13,55 @@
                 <h2 id="event-title" class="kaushan-script text-center"></h2>
                 <div id="" class=" text-center"></div>
                 <h5 id="" class="text-center"></h5>   
-                <div class="pt-4"><%- include("partials/stepper", { steps, stepper }) %></div>
+                <div class="pt-4"><% if (navigation.stepper) { %>
+    <%- include("partials/stepper", {
+        steps: navigation.steps,
+        stepper: navigation.stepper
+    }) %>
+<% } %></div>
                 
                 <div class="card mt-4">
                     <div class="card-header">
-                        <div class="row align-items-center">
-                            <div id="finish-header-left" class="col text-start text-emoji-medium"></div>
-                            <div id="finish-thankyou" class="col text-center cardTitle"></div><span> <%= navigation?.displayGuest?.firstName.length > 0 ? navigation?.displayGuest?.firstName : '' %></span>
-                            <div id="finish-header-right" class="col text-end text-emoji-medium"></div>
+                        <div class="d-flex align-items-center flex-nowrap w-100">
+
+                            <div id="finish-header-left"
+                                class="text-start text-emoji-medium flex-shrink-0">
+                            </div>
+
+                            <div class="d-flex align-items-center justify-content-center flex-nowrap flex-grow-1 text-center strong">
+                                <span class="cardTitle"></span>
+                                <span id="finish-thankyou" class="fs-xl ls-md fw-bold kaushan-script"></span>
+                                <span class="ms-1 fs-lg fw-bold kaushan-script">
+                                    <%= navigation?.guest?.identified
+                                        ? navigation?.guest?.curGuest?.firstName
+                                        : '' %>
+                                </span>
+                            </div>
+
+                            <div id="finish-header-right"
+                                class="text-end text-emoji-medium flex-shrink-0">
+                            </div>
+
                         </div>
                     </div>
 
                     <div class="card-body">
-                        <div id="finish-content1" class="text-center"></div>                   
+                        <div id="finish-content1" class="text-center"></div>   
+                        <div class="container d-flex justify-content-between">
+                                    <span id="rsvp-signature1" class="signature2"></span>
+                                    <span id="rsvp-signature2" class="signature2"></span>
+                                </div>                
                     </div>
-                    <div class="pt-4"><%- include("partials/buttons") %></div>
-                    
+                                       
                 </div>            
             </div>
         </main>        
 
         <%- include("partials/footer") %>
-        <script type="module" src="/js/countdown.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+        <script src="/js/confetti.js" defer></script>
+
+        <script type="module" src="/js/confetti.js"></script>
     
     </body>
 </html>

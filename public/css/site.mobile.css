@@ -1,0 +1,125 @@
+
+/* MOBILE OVERRIDES — extracted from original site.css.
+   Load AFTER site.desktop.css to preserve mobile overrides.
+   Breakpoints retained: 700px, 576px and 480px.
+   Untested mobile geometry intentionally retained, with source-order conflicts annotated. */
+
+@media (max-width: 576px) {
+
+    .party-step-label {
+        font-size: 0.65rem;
+    }
+
+    .party-step-indicator {
+        width: 30px;
+        height: 30px;
+    }
+
+    .party-step:not(:last-child)::after {
+        top: 14px;
+        left: calc(50% + 17px);
+        width: calc(100% - 34px);
+    }
+
+}
+
+@media (max-width: 480px) {
+
+    .mobile-nav {
+        width: calc(100vw - 30px);
+    }
+
+    .site-nav .nav-link {
+        padding: 0.65rem
+                25px
+                0.65rem
+                15px;
+    }
+
+    .site-nav .language-selector {
+        padding-right: 25px;
+    }
+
+}
+
+@media screen and (max-width: 700px) {
+
+    :root {
+        --mobile-postcard-strip: 15px;
+        --mobile-content-horizontal-padding: 40px;
+    }
+
+    .postcard-strips-top {
+        height: var(--mobile-postcard-strip);
+        background-size: auto var(--mobile-postcard-strip);
+    }
+
+    .postcard-strips-left {
+        top: var(--mobile-postcard-strip);
+        width: var(--mobile-postcard-strip);
+        height: 100vh;
+        background-size: var(--mobile-postcard-strip) auto;
+        background-repeat: repeat-y;
+        background-position: left top;
+    }
+
+    .postcard-strips-bottom {
+        display: none;
+    }
+
+    .countdown-container {
+        width: calc(100vw - var(--mobile-postcard-strip) - var(--mobile-content-horizontal-padding));
+        box-sizing: border-box;
+        border: solid 1px red;
+    }
+
+    #home-timezone {
+        text-align: left !important;
+    }
+
+    /* REVIEW: Both top and bottom were specified in the original CSS.
+       They are distinct properties, not automatic overrides;
+       retained for fidelity. */
+    #pageContent {
+        position: relative;
+        left: var(--mobile-postcard-strip);
+        top: auto;
+        right: auto;
+        bottom: auto;
+        width: calc(
+                    100vw -
+                    var(--mobile-postcard-strip)
+                );
+        height: auto;
+        margin: 0;
+        padding: 45px
+                20px
+                40px
+                20px;
+        transform: none;
+        box-sizing: border-box;
+        z-index: 10;
+    }
+
+    /* CONSOLIDATED: Original rules at lines 1026, 1739.
+       Duplicate selector merged; no conflicting values. */
+    .desktop-art {
+        display: none !important;
+    }
+
+    /* CONSOLIDATED: Original rules at lines 849, 1030, 1749.
+       LATEST-WINS: display: original line 849 (block)
+       -> line 1030 (block) */
+    .mobile-art {
+        display: block !important;
+    }
+
+    .mobile-skyline img {
+        position: relative;
+        left: 0;
+        width: 100%;
+        height: auto;
+        transform: none;
+    }
+
+}

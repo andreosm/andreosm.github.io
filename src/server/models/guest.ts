@@ -20,7 +20,7 @@ export interface Guest {
   firstName: string | null;
   lastName: string | null;
   showDisclaimer: boolean;
-  sent: string | null;
+  sent: boolean;
   partySize: number;
   partySizeEst: number;
   partySizeConf: number;
@@ -51,7 +51,7 @@ export const noGuest: Guest = {
   firstName: "",
   lastName: "",
   showDisclaimer: false,
-  sent: "",
+  sent: false,
   partySize: -1,
   partySizeEst: -1,
   partySizeConf: -1,
@@ -95,14 +95,22 @@ export interface GuestState {
   identified: boolean;
   finished: boolean;
   translation: string;
+  curGuest: Guest;
 }
 
 export function getGuestState(guest: Guest): GuestState { 
   const identified = isIdentified(guest);
   const finished = isFinished(guest);
   const translation = translateTo(guest);
+  let curGuest: Guest;
 
-  return { identified, finished, translation: translation };
+  if (identified) { 
+    curGuest = guest;
+  } else {
+    curGuest = noGuest;
+  }
+
+  return { identified, finished, translation: translation, curGuest };
 }
 
 export function translateTo(guest: Guest): Language { 
@@ -124,7 +132,15 @@ export function isFinished(guest: Guest): boolean {
     return false;
   }
 
-  return hasRsvp(guest) && hasStar(guest) && hasSongs(guest); 
+  return (hasRsvp(guest) && hasStar(guest) && hasSongs(guest)) || hasDeclined(guest); 
+}
+
+export function hasDeclined(guest: Guest): boolean { 
+  return guest.partySizeEst === 0;
+}
+
+export function isAttending(guest: Guest): boolean { 
+  return guest.partySizeEst > 0;
 }
 
 export function hasRsvp(guest: Guest): boolean {
@@ -132,7 +148,7 @@ export function hasRsvp(guest: Guest): boolean {
     return false;
   }
   return (guest?.partySizeEst ?? 0) >= 0 || (guest?.partySizeConf ?? 0) >= 0;
- }
+}
 
 export function hasStar(guest: Guest): boolean { 
   if (!isIdentified(guest)) {

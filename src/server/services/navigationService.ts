@@ -88,31 +88,35 @@ export const NAVFLOW: readonly PageNavigationDefinition[] = [
     pageState: {
       pageName: "index",
       panelNumber: 0,
-      pageNavigation: true,
     },
 
     navState: {
       navBar: {
         visible: false,
-        active: ""
+        active: "",
       },
       logout: {
         visible: false,
-        active: ""
+        active: "",
       },
       next: {
         visible: true,
         url: "/party",
+        panel: 0,
         action: "navigate",
       },
       back: {
         visible: false,
         url: "",
+        panel: 0,
         action: "none",
+      },
+      submit: {
+        enabled: true,
       },
       active: {
         visible: false,
-        active: ""
+        active: "",
       },
     },
   },
@@ -124,31 +128,35 @@ export const NAVFLOW: readonly PageNavigationDefinition[] = [
     pageState: {
       pageName: "party",
       panelNumber: 0,
-      pageNavigation: true,
     },
 
     navState: {
       navBar: {
         visible: false,
-        active: ""
+        active: "",
       },
       logout: {
         visible: true,
-        active: ""
+        active: "",
       },
       next: {
         visible: true,
-        url: "/star",
+        url: "/star?sp=1",
+        panel: 1,
         action: "navigate",
       },
       back: {
         visible: true,
         url: "/index",
+        panel: 0,
         action: "navigate",
+      },
+      submit: {
+        enabled: true,
       },
       active: {
         visible: false,
-        active: ""
+        active: "",
       },
     },
   },
@@ -160,31 +168,35 @@ export const NAVFLOW: readonly PageNavigationDefinition[] = [
     pageState: {
       pageName: "star",
       panelNumber: 1,
-      pageNavigation: true,
     },
 
     navState: {
       navBar: {
         visible: false,
-        active: ""
+        active: "",
       },
       logout: {
         visible: true,
-        active: ""
+        active: "",
       },
       next: {
         visible: true,
         url: "/rsvp",
+        panel: 0,
         action: "navigate",
       },
       back: {
         visible: true,
         url: "/party",
+        panel: 0,
         action: "navigate",
+      },
+      submit: {
+        enabled: true,
       },
       active: {
         visible: false,
-        active: ""
+        active: "",
       },
     },
   },
@@ -196,31 +208,35 @@ export const NAVFLOW: readonly PageNavigationDefinition[] = [
     pageState: {
       pageName: "rsvp",
       panelNumber: 0,
-      pageNavigation: true,
     },
 
     navState: {
       navBar: {
         visible: false,
-        active: ""
+        active: "",
       },
       logout: {
         visible: true,
-        active: ""
+        active: "",
       },
       next: {
         visible: true,
-        url: "/star?sp=2",
-        action: "navigate",
+        url: "star?sp=2",
+        panel: 0,
+        action: "toggle",
       },
       back: {
         visible: true,
-        url: "/star?sp=1",
+        url: "star?sp=1",
+        panel: 1,
         action: "navigate",
+      },
+      submit: {
+        enabled: true,
       },
       active: {
         visible: false,
-        active: ""
+        active: "",
       },
     },
   },
@@ -232,31 +248,35 @@ export const NAVFLOW: readonly PageNavigationDefinition[] = [
     pageState: {
       pageName: "star",
       panelNumber: 2,
-      pageNavigation: true,
     },
 
     navState: {
       navBar: {
         visible: false,
-        active: ""
+        active: "",
       },
       logout: {
         visible: true,
-        active: ""
+        active: "",
       },
       next: {
         visible: true,
-        url: "/star?s[=3",
+        url: "star?sp=3",
+        panel: 3,
         action: "toggle",
       },
       back: {
         visible: true,
         url: "/rsvp",
+        panel: 0,
         action: "navigate",
+      },
+      submit: {
+        enabled: true,
       },
       active: {
         visible: false,
-        active: ""
+        active: "",
       },
     },
   },
@@ -268,31 +288,35 @@ export const NAVFLOW: readonly PageNavigationDefinition[] = [
     pageState: {
       pageName: "star",
       panelNumber: 3,
-      pageNavigation: true,
     },
 
     navState: {
       navBar: {
         visible: false,
-        active: ""
+        active: "",
       },
       logout: {
         visible: true,
-        active: ""
+        active: "",
       },
       next: {
         visible: true,
-        url: "/finish",
+        url: "finish",
+        panel: 0,
         action: "navigate",
       },
       back: {
         visible: true,
         url: "/star?sp=2",
+        panel: 2,
         action: "navigate",
+      },
+      submit: {
+        enabled: true,
       },
       active: {
         visible: false,
-        active: ""
+        active: "",
       },
     },
   },
@@ -304,31 +328,35 @@ export const NAVFLOW: readonly PageNavigationDefinition[] = [
     pageState: {
       pageName: "finish",
       panelNumber: 0,
-      pageNavigation: true,
     },
 
     navState: {
       navBar: {
-        visible: false,
-        active: ""
+        visible: true,
+        active: "",
       },
       logout: {
         visible: true,
-        active: ""
+        active: "",
       },
       next: {
         visible: false,
         url: "",
+        panel: 0,
         action: "none",
       },
       back: {
         visible: false,
         url: "",
+        panel: 0,
         action: "none",
       },
+      submit: {
+        enabled: true,
+      },
       active: {
-        visible: false,
-        active: ""
+        visible: true,
+        active: "",
       },
     },
   },

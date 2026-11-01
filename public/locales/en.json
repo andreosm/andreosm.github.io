@@ -6,13 +6,20 @@
     "menu-food": "Food",
     "menu-beverage": "Beverages",
     "menu-rsvp": "RSVP",
-    "menu-star": "Be a 67 Star",
+    "menu-star": "Star 67",
     "menu-photos": "Photos",
     "menu-logout": "Log out",
     "event-title": "On my 60th, you get 67.",
     "buttonBack": "Back",
     "buttonNext": "Next",
     "buttonUpdate": "Update",
+    "stepWelcome": "Welcome",
+    "stepParty": "The Party",
+    "stepStar": "Star 67",
+    "stepRSVP": "RSVP",
+    "step60s": "60 seconds",
+    "step7s": "7 musics",
+    "stepEnd": "End",
 
     "indexPageTitle": "Marcos's Birthday Party",
     "beveragesPageTitle": "Beverages | Marcos's Birthday Party",
@@ -22,10 +29,9 @@
     "the-partyPageTitle": "The Party | Marcos's Birthday Party",
     "the-venuePageTitle": "The Venue | Marcos's Birthday Party",
     "be-a-starPageTitle": "Be a Star | Marcos's Birthday Party",
-    "route-67": "<h2 class=\"kaushan-script\">Route 67</h2><p>There are 273 days to go but time flies! So, let's embrace the journey to our Historic Route 67. Mine is already completed, as you can see from the photographic evidence, Now, let's complete yours.</p><p>The markers below indicate small pitstops to your Route 67 finish line.</p><p>Click or tap on \"Next\" to continue.</p>",
-    "roadTo67U": ", your road to 67:",
-
-    
+    "route-67-title": "<h2 class=\"kaushan-script\">Route 67</h2>",
+    "route-67-content-1": " days to go but time flies! So, let's embrace the journey to our Historic Route 67. Mine is already completed, as you can see from the photographic evidence, Now, let's complete yours, shall we?<p>The markers below indicate small pitstops to your Route 67 finish line. They will be at the top of every page to track your progress.</p><p>Click or tap on \"Next\" to continue.</p>",
+    "route-67-content-2": " days to go until the party but it is approaching quite quickly!<p>Welcome back!</p><p>Whether you're here to update the information you entered previously or to get more details about the venue or else, please use the menu on the right.</p>",   
     
     "home-title": "Marcos's Birthday Party!",
     "home-title-user": ", welcome to Marcos's Birthday Party!", 
@@ -39,8 +45,7 @@
     "home-minutes": "Minutes",
     "home-seconds": "Seconds",
     
-    "home-timezone": "<sup>1</sup> Hours calculated based on São Paulo time.",
-    
+    "home-timezone": "<sup>1</sup> Hours calculated based on São Paulo time.",   
     
     
     "about-the-party2": "Read about <span class=\"strong\">\"The Party\"</span>",
@@ -55,17 +60,18 @@
     "party-header-right": "&#x1F55B; &#128342;",
     "party-schedule": "<p><span class=\"strong\">What: </span>Marcos's 60th birthday<br/><span class=\"strong\">When: </span>Sunday, July 18th, 2027 at 12:00 PM.<br/><span class=\"strong\">Where: </span>São Paulo, Brazil.<br/><span class=\"strong\">How: </span>read on</p>",
     "party-content1": "<p>You have so far received these two postcards with the catchphrases <span class=\"catchphrase\">\"On my 60th, you get 67\"</span> or <span class=\"catchphrase\">\"That is 60 + 7\"</span> or <span class=\"catchphrase\">\"You will be the star\"</span>.</p><p class=\"text-center strong\"></p>",
-    "party-curious": ", are you curious?",
+    "party-curious-M": ", are you curious?",
+    "party-curious-F": ", are you curious?",
     "party-content2": "<p>Be no more. The usage of the numbers 67 or 6-7 is obviously in reference to the meme that is a viral Internet joke that is going around and very popular among Gen Alpha kids. The ironic thing is it has no real logical meaning. While the trend is nonsensical, 67 is coincidently the year I was born.</p><p>The party will last 6-7 hours (that isn't a joke) but don’t worry, you won’t starve since there will be lots of food and drinks served thoughout the day.</p><p>Most importantly, you won't get bored either because there will be lots of fun. In fact, guess who will be providing the entertainment?</p><p class=\"text-center\"><span class=\"text-emoji-medium\">&#x1faf5;&nbsp;&#x1faf5;&nbsp;</span><span class=\"strong\" style=\"font-size: 1.2rem\"> YOU ARE! </span>&nbsp;<span class=\"text-emoji-medium\">&#x1faf5;&nbsp;&#x1faf5;</span></p><p class=\"text-center\">Yes, you are providing the entertainment... because...</p>",
    
     "party-next": "<p>Click or tap on \"Next\" below to find out <span class=\"strong\">How</span>.</p>",
-    "about-star": "Read the details in <span class=\"strong\">\"Be a 67 Star\"</span>.",
+    "about-star": "Read the details in <span class=\"strong\">\"Star 67\"</span>.",
 
     "star-title1": "Be a 67 Star",
     "star-title2": "\"On my 60th, you get 67!\"<br/><br/>\"That's 60 + 7\"", 
     "star-title3": "\"You will be the star\"",
     "star-header-left": "&#x36;&#xfe0f;&#x20e3; &#x30;&#xFE0F;&#x20E3;",
-    "star-header-center": "Be a 67 Star: 60 seconds + 7 songs",
+    "star-header-center": "Star 67 = 60 (seconds) + 7 (songs)",
     "star-header-right": "&#x36;&#xfe0f;&#x20e3; 7&#xFE0F;&#x20E3;",
     "star2FooterAdd": "Click or tap on \"Continue\" to save your answers and go to the next page to select your 7 songs.",
     "star2FooterUpdate": "Click or tap on \"Continue\" to update your answers and go to the next page to review your 7 songs.",
@@ -122,8 +128,9 @@
     "starQ3": "3- Choose your 7 songs with the artist/group names:",
     "starQ3Instructions": "Enter one song per text box, along with the name of the singer or band. Ex. Vogue, by Madonna or Madonna's Vogue<p>If you don't want to choose any song, leave the boxes blank and click on \"Continue\".",
     "starSelectionRequired": "Please select an answer to the first question.",
-    "starSaved": "Thank you! I am sincerely looking forward to sharing unforgettable memories with you.",
+    "starSaved": "Thank you! We are sincerely looking forward to sharing unforgettable memories with you.",
     "starSaveError": "We were unable to save your information. Please try again.",
+    "starPanelDisabled": "You cannot update this page because you have previously declined the RSVP. If you are attending the party, then go to the RSVP page and update your response there first.",
     "starSubmitButtonText": "Continue",
     "starUpdateButtonText": "Update",
     "song1Label": "Song + Artist/Group #1:",
@@ -133,8 +140,13 @@
     "song5Label": "Song + Artist/Group #5:",
     "song6Label": "Song + Artist/Group #6:",
     "song7Label": "Song + Artist/Group #7:",
-
-    
+    "song1Placeholder": "Example: Vogue, by Madonna",
+    "song2Placeholder": "Example: Michael Jackson, Beat it",
+    "song3Placeholder": "Example: Artist: [name], Song: [name]",
+        "song4Placeholder": "",
+        "song5Placeholder": "",
+        "song6Placeholder": "",
+        "song7Placeholder": "",
     "rsvp-title": "RSVP - Temporary Guestlist",
     "rsvp-sub-title": "<p><span class=\"text-emoji-small\">&#9995;&#127998;</span> Please, read the message below: <span class=\"text-emoji-small\">&#128071;&#127998;</span></p>",
     "rsvp-content1": "<p>You have received the birthday postcards because you are important to us and have been part of our lives and story. It would mean a great deal to share this special moment with you. We understand the party is still months away and we know how difficult it is to commit to something this far ahead, since plans and circumstances can change unexpectedly.</p><p>Since this is a sit-down celebration, we must confirm and pay in advance for each guest added to the guestlist. For that reason, we decided to finalize the guestlist in two steps.</p><p><span class=\"strong\">Step 1</span> launched with the creation of a temporary list that will give us an idea of how many people will be attending and the scope of what we need to organize and how.</p><p>Those answering \"Yes\" now will be entered in the temporary guestlist.<p><span class=\"strong\">Step 2</span> will happen closer to the day of the party. We will create the final guestlist and send a final postcard asking the ones in the temporary list to provide their definite confirmation.",
@@ -144,10 +156,12 @@
 
     "rsvp-party-size-label": "2- Party size (Including you and your guest(s)): <span class=\"required\">*</span>",
     "partySizeError": "Please enter a digit that is greater than zero.",
+    "rsvpFeedbackText": "Your updated was recorded successfully.",
 
-    "rsvpDataInputTitle": "please answer the question(s) below and click on \"Submit\".",
+    "rsvpDataInputTitle": "a very important question:",
     "rsvpDataUpdateTitle": "please update your previous answer if there is a change and click on \"Update\"",
-    "rsvpQ1": "1- Will you be able to attend the party on 18/07/2027 in São Paulo, Brazil? <span class=\"required\">*</span>",
+    "rsvpQ1-1": "1- Will you be able to attend the party on 18/07/2027",
+    "rsvpQ1-2": " in São Paulo, Brazil",
 
     "lblAttendingYes": "Yes",
     "lblAttendingNo": "No",
@@ -192,12 +206,19 @@
     "photos-title" : "Photos",
     
     
+    "finish-header-left": "&#x1F3C1; &#x1f37e; &#x1f942; &#x1F389;",
+    "finish-header-center": "Guest Finder",
+    "finish-header-right": "&#x1F389; &#x1f942; &#x1f37e; &#x1F3C1;",
     "finish-thankyou": "Thank you, ", 
-    "finish-content1": "You have crossed the finish line and your name was added to the temporary guestlist. Please, remember: at any time, if circumstances change, come back here to adjust your data. Closer to the event, you will receive a reminder to confirm your RSVP. In the meantime, check the information about the venue, food and beverages. We're excited that you can join us and are looking forward to seeing you in July.",
-
+    "finish-content1": "You have crossed the finish line and your name was added to the temporary guestlist.<p>Please, remember: at any time, if circumstances change, come back here to adjust your data.</p><p>Closer to the event, you will receive a reminder to confirm your RSVP.</><p>In the meantime, check the information about the <span class=\"strong\">venue</span>, <span class=\"strong\">food</span> and <span class=\"strong\">beverages</span>. You can access those pages as well as modify your preferred language from the menu on the right side.</p><p>We're excited that you can join us and are looking forward to seeing you in July.</p>",
+    "finish-signature1": "Marcos",
+    "finish-signature2": "Greg",
 
     
-    
+    "not-found-title": "Page Not Found!",
+    "not-found-content": "The page or resource you are looking for does not exist, has been removed or moved to another location.",
+    "not-found-home": "Please, go to the <a href=\"index\">home page</a> and try to navigate from there.",
+
     "venue-title": "The Venue",
     
     

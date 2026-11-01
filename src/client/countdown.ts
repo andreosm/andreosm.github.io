@@ -1,3 +1,5 @@
+type Language = "en" | "pt" | "it";
+
 function updatePartyCountdown(): void {
   // Party starts July 18, 2027 at noon in São Paulo
   const partyDate = new Date("2027-07-18T12:00:00-03:00");
@@ -10,6 +12,7 @@ function updatePartyCountdown(): void {
   const countdownHours = document.getElementById("countdownHours");
   const countdownMinutes = document.getElementById("countdownMinutes");
   const countdownSeconds = document.getElementById("countdownSeconds");
+  const daysLeft = document.getElementById("daysLeft");
 
   if (difference <= 0) {
     if (countdown) {
@@ -26,6 +29,14 @@ function updatePartyCountdown(): void {
   const minutes = Math.floor((difference / (1000 * 60)) % 60);
 
   const seconds = Math.floor((difference / 1000) % 60);
+
+   const daysLeftText: Record<Language, string> = {
+     en: "There are ",
+     it: "Mancano ",
+    pt: "Faltam "
+   };
+  
+  const language: Language = window.preferredLanguage as Language;
 
   if (countdownDays) {
     countdownDays.textContent = days.toString();
@@ -48,6 +59,11 @@ function updatePartyCountdown(): void {
 
     countdownSeconds.classList.add("countdown-seconds-blink");
   }
+
+  if (daysLeft) { 
+    daysLeft.textContent = daysLeftText[language] + days;
+  }
+
 }
 
 updatePartyCountdown();

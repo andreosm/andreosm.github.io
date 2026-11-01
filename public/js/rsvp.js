@@ -1,14 +1,5 @@
 import { showFeedback, clearFeedback } from "./feedback.js";
-// interface Window {
-//   translate: (key: string) => string;
-// }
 const rsvpForm = document.getElementById("rsvpForm");
-// declare global {
-//   interface Window {
-//     translate: (key: string) => string;
-//   }
-// }
-// window.translate = translate;
 const attendingYes = document.getElementById("attendingYes");
 const attendingNo = document.getElementById("attendingNo");
 const partySizeSection = document.getElementById("partySizeSection");
@@ -89,10 +80,6 @@ attendingNo?.addEventListener("change", updateFormState);
 partySizeInput?.addEventListener("input", () => {
     const valid = isValidPartySize();
     partySizeInput.classList.toggle("is-invalid", attendingYes?.checked === true && !valid);
-    // partySizeError?.classList.toggle(
-    //   "d-none",
-    //   attendingYes?.checked === true && !valid,
-    // );
     updateFormState();
 });
 rsvpForm?.addEventListener("submit", async (event) => {
@@ -120,45 +107,69 @@ rsvpForm?.addEventListener("submit", async (event) => {
     }
     // -------------------------
     // BUILD REQUEST
-    // -------------------------
-    const formData = new FormData(rsvpForm);
-    const body = new URLSearchParams();
-    formData.forEach((value, key) => {
-        body.append(key, String(value));
-    });
-    // -------------------------
-    // SUBMIT
-    // -------------------------
-    try {
-        const response = await fetch("/rsvp", {
-            method: "POST",
-            body,
-        });
-        const result = await response.json();
-        //console.debug("results from rsvp: " + result);
-        const guestData = document.getElementById("guestData");
-        const finished = typeof guestData?.dataset.finished === "string"
-            ? guestData?.dataset.finished
-            : "false";
-        const isFinished = finished === "true";
-        // -------------------------
-        // FEEDBACK
-        // -------------------------
-        if (result.feedbackKey === "rsvpAccepted") {
-            if (isFinished) {
+    // ------------------------
+    let partySizeEst = -1;
+    if (isNo) {
+        partySizeEst = 0;
+    }
+    if (isYes) {
+        partySizeEst = Number(partySizeInput?.value.trim());
+    }
+    //const formData = new FormData(rsvpForm);
+    //onst body = new URLSearchParams();
+    // formData.forEach((value, key) => {
+    //   body.append(key, String(value));
+    // });
+    console.debug("updating rsvp");
+    const responseObj = {
+        success: true,
+        feedbackType: "success",
+        feedbackKey: "rsvpAccepted",
+        finished: false,
+    };
+    if (!Number.isInteger(partySizeEst) || partySizeEst < 0) {
+        responseObj.success = true;
+        responseObj.feedbackType = "danger";
+        responseObj.feedbackKey = "rsvpInvalidPartySize";
+    }
+    else {
+        try {
+            const response = await fetch("/rsvp", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    partySizeEst,
+                }),
+            });
+            const result = await response.json();
+            if (result.feedbackKey === "rsvpInvalidPartySize") {
                 showFeedback("rsvpFeedback", "rsvpFeedbackText", result.feedbackType, result.feedbackKey);
             }
-            else {
-                window.location.href = "/" + window.btnNav;
-                return;
+            if (result.feedbackKey === "rsvpDeclined") {
+                showFeedback("rsvpFeedback", "rsvpFeedbackText", result.feedbackType, result.feedbackKey);
             }
+            if (result.feedbackKey === "rsvpAccepted") {
+                if (result.finished) {
+                    showFeedback("rsvpFeedback", "rsvpFeedbackText", result.feedbackType, result.feedbackKey);
+                }
+                else {
+                    window.location.href = "/" + window.btnNav;
+                    return;
+                }
+            }
+            console.error("RSVP submission succeeded with key:" + result.feedbackKey);
         }
-        showFeedback("rsvpFeedback", "rsvpFeedbackText", result.feedbackType, result.feedbackKey);
-        console.error("RSVP submission succeeded with key:" + result.feedbackKey);
+        catch (error) {
+            console.error("RSVP submission failed:", error);
+            showFeedback("rsvpFeedback", "rsvpFeedbackText", "danger", "rsvpSaveError");
+        }
     }
-    catch (error) {
-        console.error("RSVP submission failed:", error);
-        showFeedback("rsvpFeedback", "rsvpFeedbackText", "danger", "rsvpSaveError");
+    if (partySizeEst === 0) {
+        responseObj.feedbackType = "info";
+        responseObj.feedbackKey = "rsvpDeclined";
+        responseObj.finished = true;
     }
 });
 updateFormState();

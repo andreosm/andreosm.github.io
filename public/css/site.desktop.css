@@ -1,0 +1,907 @@
+/* SITE CSS — consolidated from the ORIGINAL site.css (not the previous cleaned version).
+   Source-order policy: latest matching declaration wins unless an earlier !important wins.
+   Comments marked LATEST-WINS document competing declarations and original line numbers.
+   JavaScript-controlled geometry and distinct top/bottom properties are not silently discarded.
+   Load site.mobile.css AFTER this stylesheet. */
+
+   /* CONSOLIDATED: Original rules at lines 1, 1061.
+ * LATEST-WINS: --content-min-dist: original line 1 (40px) -> line 1061 (30px)
+ * LATEST-WINS: --desktop-nav-width: original line 1 (170px) -> line 1061 (200px)
+ */
+:root {
+    --postcard-strip-size: 30px;
+    --collision-gap: 10px;
+    --left-strip-height: 500px;
+    --desktop-content-height: 600px;
+    --content-min-dist: 30px;
+    --right-art-max-nav-gap: 70px;
+    --desktop-nav-width: 200px;
+    --shadow-leaf-height: 513px;
+    --green-leaf-height: 390px;
+    --composition-width: 800px;
+    --composition-min-width: 650px;
+    --composition-max-width: 1172px;
+    --skyline-height: 250px;
+    --shadow-leaf-bottom: calc(
+    var(--postcard-strip-size) +
+    (var(--left-strip-height) / 2) +
+    var(--shadow-leaf-height)
+    );
+    --skyline-inset: 230px;
+    --left-art-width: 200px;
+    --alegria-width: 200px;
+}
+
+/**********************************************
+    PAGE DESIGN
+**********************************************/
+.postcard-strips-top {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--postcard-strip-size);
+    background-image: url("/images/css/postcard-strips-h-bg.png");
+    background-repeat: repeat-x;
+    background-position: left bottom;
+    z-index: 20;
+}
+
+.postcard-strips-bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: var(--postcard-strip-size);
+    background-image: url("/images/css/postcard-strips-h-bg.png");
+    background-repeat: repeat-x;
+    background-position: left bottom;
+    z-index: 19;
+}
+
+.postcard-strips-left {
+    position: fixed;
+    top: var(--postcard-strip-size);
+    left: 0;
+    width: var(--postcard-strip-size);
+    height: var(--left-strip-height);
+    background-image: url("/images/css/postcard-strips-v-bg.png");
+    background-repeat: no-repeat;
+    background-position: left top;
+    z-index: 17;
+}
+
+/* CONSOLIDATED: Original rules at lines 314, 1170.
+ * LATEST-WINS: top: original line 314 (calc(
+        var(--content-min-dist) + 
+        var(--postcard-strip-size)
+    )) -> line 1170 (calc(
+        var(--postcard-strip-size) +
+        var(--content-min-dist)
+    ))
+ */
+#dateStamp {
+    top: calc(
+        var(--postcard-strip-size) +
+        var(--content-min-dist)
+    );
+    right: auto;
+}
+
+/* CONSOLIDATED: Original rules at lines 321, 1195.
+ * LATEST-WINS: width: original line 321 (200px) -> line 1195 (var(--left-art-width))
+ */
+#shadowLeaf {
+    left: var(--postcard-strip-size);
+    top: calc(
+        var(--postcard-strip-size) +
+        (var(--left-strip-height) / 2)
+    );
+    z-index: 18;
+    width: var(--left-art-width);
+    height: auto;
+}
+
+/* CONSOLIDATED: Original rules at lines 331, 1229.
+ * LATEST-WINS: width: original line 331 (200px) -> line 1229 (var(--left-art-width))
+ */
+/* REVIEW: Both top and bottom were specified in the original CSS. They are distinct properties, not automatic overrides; retained for fidelity. */
+#greenLeaf {
+    left: 0;
+    top: calc(
+        var(--shadow-leaf-bottom) +
+        (
+            (
+                100vh -
+                var(--postcard-strip-size) -
+                var(--shadow-leaf-bottom)
+            ) -
+            var(--green-leaf-height)
+        ) / 2
+    );
+    width: var(--left-art-width);
+    height: auto;
+    bottom: calc(
+        var(--postcard-strip-size) +
+        var(--content-min-dist)
+    );
+}
+
+/* CONSOLIDATED: Original rules at lines 419, 1262.
+ * LATEST-WINS: top: original line 419 (60px) -> line 1262 (calc(
+        var(--postcard-strip-size) +
+        var(--content-min-dist)
+    ))
+ */
+#alegriaStamp {
+    top: calc(
+        var(--postcard-strip-size) +
+        var(--content-min-dist)
+    );
+    width: var(--alegria-width);
+    height: auto;
+    right: auto;
+}
+
+#boaMusica {
+    bottom: calc(
+        var(--postcard-strip-size) +
+        var(--content-min-dist) + 
+        var(--skyline-height)
+    );
+}
+
+/* CONSOLIDATED: Original rules at lines 457, 1359.
+ * LATEST-WINS: width: original line 457 (auto) -> line 1359 (100%)
+ */
+.skyline {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* CONSOLIDATED: Original rules at lines 445, 1324.
+ * LATEST-WINS: bottom: original line 445 (30px) -> line 1324 (var(--postcard-strip-size))
+ * LATEST-WINS: left: original line 445 (50%) -> line 1324 (auto)
+ * LATEST-WINS: transform: original line 445 (translateX(-50%)) -> line 1324 (none)
+ */
+.skyline-picture {
+    position: fixed;
+    left: auto;
+    bottom: var(--postcard-strip-size);
+    transform: none;
+    pointer-events: none;
+    right: auto;
+}
+
+/**********************************************
+    PAGE ELEMENTS
+**********************************************/
+
+/* CONSOLIDATED: Original rules at lines 1390, 1409, 1449.
+ * LATEST-WINS: position: original line 1390 (relative) -> line 1409 (absolute)
+ * LATEST-WINS: height: original line 1390 (auto) -> line 1409 (calc(
+        (100vh - (362px + 60px + 40px)) 
+    ))
+ * LATEST-WINS: transform: original line 1390 (none) -> line 1409 (translate(-50%, -50%))
+ * LATEST-WINS: position: original line 1409 (absolute) -> line 1449 (fixed)
+ * LATEST-WINS: transform: original line 1409 (translate(-50%, -50%)) -> line 1449 (none)
+ * LATEST-WINS: padding-top: original line 1409 (40px) -> line 1449 (0)
+ * LATEST-WINS: border: original line 1390 (solid 1px red) -> line 1449 (1px solid #000)
+ */
+/* REVIEW: Both top and bottom were specified in the original CSS. They are distinct properties, not automatic overrides; retained for fidelity. */
+#pageContent {
+    position: fixed;
+    left: var(--mobile-postcard-strip);
+    top: auto;
+    width: calc(100vw - var(--mobile-postcard-strip));
+    height: calc(
+        (100vh - (362px + 60px + 40px)) 
+    );
+    margin: 0;
+    padding: 45px 20px 40px 20px;
+    transform: none;
+    box-sizing: border-box;
+    border: 1px solid #000;
+    z-index: 10;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-top: 0;
+    right: auto;
+    bottom: auto;
+}
+
+.pageTitle {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.card {
+    --bs-card-bg: transparent;
+}
+
+.cardTitle {
+    font-weight: bold;
+}
+
+/**********************************************
+    BODY / FONT
+**********************************************/
+body {
+    margin: 0;
+    background-image: url("/images/css/postcard-bg.png");
+    background-repeat: repeat;
+}
+
+.strong {
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: "Kaushan Script";
+    src: url("/fonts/KaushanScript-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+.kaushan-script {
+    font-family: "Kaushan Script", cursive;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.fs-md {font-size: 1.1rem;}
+.fs-lg {font-size: 1.2rem;}
+.fs-xl {font-size: 1.3rem;}
+
+.ls-1 { letter-spacing: 1px; }
+.ls-2 { letter-spacing: 2px; }
+.ls-3 { letter-spacing: 3px; }
+.ls-4 { letter-spacing: 4px; }
+.ls-5 { letter-spacing: 5px; }
+.ls-sm  { letter-spacing: -0.05em; }
+.ls-n { letter-spacing: normal; }
+.ls-md   { letter-spacing: 0.1em; }
+.ls-lg   { letter-spacing: 0.2em; }
+
+/**********************************************
+    COUNTDOWN
+**********************************************/
+.countdown-seconds-blink {
+    animation: countdown-blink 1s;
+}
+
+@keyframes countdown-blink {
+    0% {
+        opacity: 0;
+    }
+
+    
+
+    100% {
+        opacity: 1;
+    }
+}
+/**********************************************
+    STEPPER
+**********************************************/
+.party-stepper {
+    width: 100%;
+}
+
+.party-stepper-steps {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+}
+
+.party-step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    color: #888;
+}
+
+.party-step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 19px;
+    left: calc(50% + 22px);
+    width: calc(100% - 44px);
+    height: 2px;
+    background: #ccc;
+}
+
+.party-step.completed:not(:last-child)::after {
+    background: #52816a;
+}
+
+.party-step-indicator {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 8px;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+}
+
+.party-step.active .party-step-indicator {
+    background: #8b2f3f;
+    border-color: #8b2f3f;
+    color: white;
+}
+
+.party-step.completed .party-step-indicator {
+    background: #52816a;
+    border-color: #52816a;
+    color: white;
+}
+
+.party-step-label {
+    font-size: 0.85rem;
+}
+
+.party-step.active .party-step-label {
+    color: #8b2f3f;
+    font-weight: 700;
+}
+
+/**********************************************
+    ANCHORS / LINKS / HREFs
+**********************************************/
+
+a {
+    color: #3f5504;
+}
+
+a:link {
+    color: #3f5504;
+}
+
+a:visited {
+    color: #133758;
+}
+
+a:hover {
+    font-weight: bold;
+}
+
+.demo-box-green {
+}
+
+/**********************************************
+    NAVIGATION AND BUTTONS
+**********************************************/
+/* CONSOLIDATED: Original rules at lines 634, 1584.
+ * LATEST-WINS: height: original line 634 (calc(
+        100vh -
+        (2 * var(--postcard-strip-size)) 
+    )) -> line 1584 (var(--left-strip-height))
+ * LATEST-WINS: box-shadow: original line 634 (-4px 0 10px rgba(60, 40, 20, 0.12)) -> line 1584 (-4px 5px 10px rgba(60, 40, 20, 0.24))
+ */
+.desktop-nav {
+    position: fixed;
+    top: var(--postcard-strip-size);
+    bottom: var(--postcard-strip-size);
+    right: 0;
+    width: var(--desktop-nav-width);
+    height: var(--left-strip-height);
+    z-index: 1000;
+    background: transparent;
+    border-left: 1px solid rgba(92, 68, 35, 0.30);
+    box-shadow: -4px 5px 10px rgba(60, 40, 20, 0.24);
+    padding-top: 2px;
+    padding-left: 0;
+    padding-right: 0;
+    transition: opacity 0.20s ease,
+        visibility 0.20s ease;
+    left: auto;
+}
+
+/* CONSOLIDATED: Original rules at lines 666, 1631.
+ * Duplicate selector merged; no conflicting values.
+ */
+.desktop-nav-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* Optional language selector container */
+.language-selector-opt {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* NEW: OPTIONAL LANGUAGE BUTTONS */
+/* Optional language buttons */
+.language-selector-opt .language-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    padding: 6px 12px;
+
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+
+    color: #333;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+
+    cursor: pointer;
+    white-space: nowrap;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+/* Flag images */
+.language-selector-opt .language-button img {
+    display: block;
+    width: 26px;
+    height: 18px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+/* Language labels */
+.language-selector-opt .language-button span {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+/* Hover */
+.language-selector-opt .language-button:hover {
+    background-color: rgba(255, 255, 255, 0.6);
+    border-color: rgba(0, 0, 0, 0.35);
+    transform: translateY(-2px);
+}
+
+/* Keyboard focus */
+.language-selector-opt .language-button:focus-visible {
+    outline: 2px solid #0d6efd;
+    outline-offset: 3px;
+}
+
+/* Hidden current language */
+.language-selector-opt .language-button.d-none {
+    display: none !important;
+}
+
+/* ENDOF: OPTIONAL LANGUAGE BUTTONS */
+
+
+
+
+
+.my-image {
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
+
+.my-image:hover {
+    opacity: 1;
+}
+
+
+
+.button-pair {
+    gap: 10px;
+}
+
+.superscript {
+    font-size: 0.8rem;
+}
+
+#languageToast {
+    width: 500px;
+    max-width: calc(100vw - 2rem);
+}
+
+#languageToast .toast-header {
+    white-space: nowrap;
+}
+
+
+
+#home-timezone {
+    text-align: right !important;
+    font-size: .8em;
+}
+
+
+
+
+
+.btn-outline-dark {
+    --bs-btn-bg: rgba(225, 227, 229, 0.25);
+    --bs-btn-active-bg: rgba(225, 227, 229, 0.25);
+}
+
+#fadedPostcard1.home-page, #fadedPostcard2.home-page {
+    width: 335px;
+    height: 259px;
+}
+
+#fadedPostcard.party-page {
+    width: 335px;
+    height: 259px;
+}
+
+#fadedPostcard1.party-art {
+    right: -400px;
+    bottom: -50px;
+    width: 398px;
+    height: 254px;
+    transform: rotate(-15deg);
+}
+
+#rsvpContainer {
+    max-width: 700px;
+}
+
+#submitRsvp:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.site-nav {
+    box-sizing: border-box;
+    font-family: Arial,
+        "Times New Roman",
+        serif;
+}
+
+.site-nav .navbar-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.site-nav .nav-item {
+    display: block;
+    width: 100%;
+}
+
+.site-nav .nav-link {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    color: #034611;
+    font-weight: 400;
+    text-align: right;
+    padding: 0.55rem
+        30px
+        0.55rem
+        15px;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.site-nav .nav-link:hover {
+    font-weight: 900;
+    background-color: rgba(247, 223, 186, 0.8);
+    border-radius: 0;
+}
+
+.site-nav .nav-link.active {
+    font-size: 1.1rem;
+    font-weight: bolder;
+    background-color: rgba(243, 228, 205, 0.8);
+}
+
+.site-nav .language-selector {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    padding-right: 30px;
+    border-top: 1px solid rgba(63, 46, 23, 0.25);
+}
+
+.site-nav .language-button {
+    border: none;
+    background: transparent;
+    font-size: 1.15rem;
+    line-height: 1;
+    padding: 0.3rem;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: transform 0.15s ease,
+        background-color 0.15s ease;
+}
+
+.site-nav .language-button:hover {
+    transform: scale(1.15);
+    background-color: rgba(255, 248, 225, 0.55);
+}
+
+.site-nav .language-button.active {
+    transform: scale(1.10);
+    background-color: rgba(255, 248, 225, 0.65);
+}
+
+.site-nav .language-button img {
+    width: 33px;
+    height: 22px;
+    object-fit: cover;
+    display: block;
+}
+
+.hamburger-button {
+    position: fixed;
+    right: 20px;
+    top: 45px;
+    z-index: 1900;
+    display: none;
+    border: 0;
+    background: transparent;
+    font-size: 32px;
+    line-height: 1;
+    cursor: pointer;
+    color: #034611;
+}
+
+.mobile-nav {
+    position: fixed;
+    top: 30px;
+    right: 0;
+    bottom: 30px;
+    width: min(280px, calc(100vw - 30px));
+    height: calc(100vh - 60px);
+    z-index: 2000;
+    padding: 60px
+        0
+        30px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    background: rgba(249, 223, 180, 0.97);
+    border-left: 1px solid rgba(92, 68, 35, 0.30);
+    box-shadow: -4px 0 10px rgba(60, 40, 20, 0.12);
+    transform: translateX(100%);
+    visibility: hidden;
+    transition: transform 0.25s ease,
+        visibility 0.25s ease;
+}
+
+.mobile-nav.open {
+    transform: translateX(0);
+    visibility: visible;
+}
+
+.mobile-nav-close {
+    position: absolute;
+    top: 12px;
+    right: 20px;
+    border: 0;
+    background: transparent;
+    font-size: 40px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.mobile-art {
+    display: none !important;
+}
+
+.mobile-nav .navbar-nav {
+    display: flex;
+    flex-direction: column !important;
+    align-items: stretch;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.mobile-nav .nav-item {
+    display: block;
+    width: 100%;
+}
+
+.mobile-nav .nav-link {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: right;
+    padding: 0.65rem
+        15px
+        0.65rem
+        15px;
+}
+
+.mobile-art img {
+    display: block;
+}
+
+.mobile-art-center img {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.mobile-art-left img {
+    margin-right: auto;
+}
+
+.mobile-art-right img {
+    margin-left: auto;
+}
+
+.mobile-shadow-leaf img {
+    position: relative;
+    left: 0;
+    bottom: 400px;
+    z-index: 9;
+}
+
+.mobile-date img {
+    position: relative;
+    width: 110px;
+    height: 108px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.mobile-skyline img {
+    position: relative;
+    left: 0;
+    width: 100%;
+}
+
+
+
+/* CONSOLIDATED: Original rules at lines 268, 1106.
+ * Duplicate selector merged; no conflicting values.
+ */
+.postcard-art {
+    position: fixed;
+    transition: opacity 0.20s ease,
+        visibility 0.20s ease;
+}
+
+/* CONSOLIDATED: Original rules at lines 275, 1126.
+ * Duplicate selector merged; no conflicting values.
+ */
+.art-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.menu-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.menu-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+legend, form-label {
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+/* CONSOLIDATED: Original rules at lines 471, 1501.
+ * Duplicate selector merged; no conflicting values.
+ */
+#partySize {
+    max-width: 120px;
+    width: 70px;
+    flex-shrink: 0;
+}
+
+.required {
+    color: red;
+}
+
+.text-emoji-small {
+    font-size: 1.5em;
+    vertical-align: middle;
+}
+
+.text-emoji-medium {
+    font-size: 1.75em;
+    vertical-align: middle;
+}
+
+img.text-emoji-small {
+    height: 1.5em;
+    width: auto;
+    vertical-align: middle;
+}
+
+img.text-emoji-medium {
+    height: 1.75em;
+    width: auto;
+    vertical-align: middle;
+}
+
+.catchphrase {
+    font-style: oblique;
+    font-weight: bold;
+}
+
+.signature1 {
+    position: relative;
+    font-family: "p22-allyson-pro", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 3.5rem;
+}
+
+.signature2 {
+    position: relative;
+    font-family: "adorn-garland", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 3.5rem;
+}
+
+.star-no-option {
+    transition: margin-top 0.25s ease;
+}
+
+.instructions {
+    font-size: .8em;
+}
+
+
+
+
+
+@media screen and (min-width: 701px) {
+
+    .left-art,
+        .right-art {
+        transform: none;
+    }
+
+}

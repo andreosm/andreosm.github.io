@@ -12,13 +12,18 @@
             <div class="container col-lg-6 pt-2 pt-md-3 pt-lg-4">
                 <h2 id="event-title" class="kaushan-script text-center"></h2>
                 <!-- <h5 id="party-title1" class="text-center"></h5> -->
-                 <div class="pt-4"><%- include("partials/stepper") %></div>
+                 <div class="pt-4"><% if (navigation.stepper) { %>
+                                    <%- include("partials/stepper", {
+                                        steps: navigation.steps,
+                                        stepper: navigation.stepper
+                                    }) %>
+                                <% } %></div>
                 
                 <div class="card mt-4">
                     <div class="card-header">
                         <div class="row align-items-center">
                             <div id="party-header-left" class="col text-start text-emoji-medium"></div>
-                            <div id="party-header-center" class="col text-center cardTitle text-nowrap"></div>
+                            <div id="party-header-center" class="col text-center fs-md ls-md fw-bold kaushan-script text-nowrap"></div>
                             <div id="party-header-right" class="col text-end text-emoji-medium"></div>
                         </div>
                     </div>
@@ -41,14 +46,14 @@
                             >
                         </div>
                         
-                        <div class="strong text-center"><%= navigation?.displayGuest?.firstName %></div>
+                        <div class="strong text-center fs-xl ls-lg fw-bold kaushan-script"><%= navigation?.guest?.curGuest?.firstName %></div>
                         <div id="party-content1"></div>                        
-                        <p><div class="strong text-center"><span><%= navigation?.displayGuest?.relationship.charAt(0).toUpperCase() + navigation?.displayGuest?.relationship.slice(1) %></span><span id="party-curious"></span></div></p>
+                        <p><div class="strong text-center"><span><%= navigation?.guest?.curGuest?.relationship.charAt(0).toUpperCase() + navigation?.guest?.curGuest?.relationship.slice(1) %></span><span id="party-curious-<%= navigation?.guest?.curGuest?.gender %>"></span></div></p>
                         <div id="party-curious"></div>
                         <div id="party-content2" class="pt-1"></div>
                         <h5 id="party-title2" class="kaushan-script text-center"></h5>
                         <div id="party-content2" class="pt-2"></div>
-                        <div id="<%= navigation.finished ? 'about-star' : 'party-next' %>" class="text-center"></div>
+                        <div id="<%= navigation.guest.finished ? 'about-star' : 'party-next' %>" class="text-center"></div>
                         
                     </div>
                     <%- include("partials/buttons") %>
@@ -69,8 +74,7 @@
 
         <%- include("partials/footer") %>
         <!-- <script src="/js/resize.js"></script>
-        <script type="module" src="/js/language.js"></script> -->
-        <!-- <script type="module" src="/js/menuAccess.js"></script>
+        <script type="module" src="/js/language.js"></script> 
         <script>
             localStorage.setItem("partyVisited", "true");
         </script> -->

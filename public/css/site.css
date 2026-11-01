@@ -641,7 +641,7 @@ a:hover {
     width: var(--desktop-nav-width);
     height: calc(
         100vh -
-        (2 * var(--postcard-strip-size))
+        (2 * var(--postcard-strip-size)) 
     );
 
     z-index: 1000;

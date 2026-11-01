@@ -57,6 +57,14 @@ function translatePage(translations) {
             element.innerHTML = translation;
         }
     });
+    document
+        .querySelectorAll("input[placeholder][id]")
+        .forEach((element) => {
+        const key = `${element.id}Placeholder`;
+        if (typeof translations[key] === "string") {
+            element.placeholder = translations[key];
+        }
+    });
     setPageButtons(translations);
 }
 function updateLocalizedImages(language) {
@@ -131,9 +139,11 @@ async function changePreferredLanguage(language) {
         // Apply the language only after successful persistence.
         currentTranslations = translations;
         currentLanguage = language;
+        window.preferredLanguage = language;
         translatePage(translations);
         updateLocalizedImages(language);
         document.documentElement.lang = language;
+        hideCurrentLanguageFlag();
         showLanguageToast(language);
     }
     catch (error) {
@@ -160,6 +170,16 @@ function initializeLanguageButtons() {
             }
         });
     });
+    // if menu bar is hidden, display optional buttons are available, then hide current language flag
+    hideCurrentLanguageFlag();
+}
+function hideCurrentLanguageFlag() {
+    const lang = window.preferredLanguage;
+    document
+        .querySelectorAll(".language-selector-opt button[data-language]")
+        .forEach((button) => {
+        button.classList.toggle("d-none", button.dataset.language === lang);
+    });
 }
 function setPageButtons(translations) {
     document.querySelectorAll("[data-button]").forEach((element) => {
@@ -177,7 +197,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log("Language system initialized.");
     initializeLanguageButtons();
     const language = getInitialLanguage();
-    await loadTranslations(language);
+    // await loadTranslations(language);
     console.log("Initial language:", language);
     try {
         await setLanguage(language);

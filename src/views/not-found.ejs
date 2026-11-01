@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" data-page-title="pageTitle">
+    <%- include("partials/head") %>
+    <body>
+
+        <%- include("partials/postcard-frame") %>
+        <%- include("partials/desktop-artwork") %>
+        <%- include("partials/navigation") %>
+        <%- include("partials/mobile-navigation") %>
+
+        <main id="pageContent">
+            <div class="container col-lg-6 pt-2 pt-md-3 pt-lg-4">
+                <h2 id="event-title" class="kaushan-script text-center"></h2>
+                <div id="home-title" class="pageTitle text-center"></div>
+                <h5 id="" class="text-center"></h5>   
+
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div id="home-header-left" class="col text-start text-emoji-medium"></div>
+                            <div id="not-found-title" class="col text-center fs-lg fw-bold kaushan-script"></div>
+                            <div id="home-header-right" class="col text-end text-emoji-medium"></div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div id="not-found-content" class="text-center pt-2 pb-2"></div>
+                        <div id="not-found-home" class="text-center pb-4"></div>  
+                        <div class="text-center">
+<img
+                                    src="/images/css/404-bg.png"
+                                    style="width:687px; height:572px;"
+                                    alt="Page Not Found"
+                                    >
+                        </div>
+                        
+                    </div>                   
+                </div>            
+            </div>
+            
+        </main>        
+
+        <%- include("partials/footer") %>
+        <script type="module" src="/js/countdown.js"></script>
+    
+    </body>
+</html>

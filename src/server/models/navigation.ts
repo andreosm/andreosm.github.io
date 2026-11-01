@@ -23,7 +23,7 @@
 */
 // import { Guest } from "./guest";
 import { StepTracker, StepperState, STEPS } from "./stepTracker";
-import { PageName, PanelNumber } from "./page.js";
+import { PageName, PanelNumber, PageState } from "./page.js";
 import { GuestState } from "./guest.js";
 
 export type ButtonAction = "navigate" | "submit" | "toggle" | "submit-navigate" | "none";
@@ -36,14 +36,21 @@ export interface NavBarItem {
 export interface ButtonItem {
   visible: boolean;
   url: string;
+  panel: PanelNumber;
   action: ButtonAction;
 }
 
+export interface SubmitButton { 
+  enabled: boolean;
+}
+
 export interface PageNavigationState {
+  step: string;
   stepper: StepperState | null;
   nav: NavigationState;
   guest: GuestState;
   steps: typeof STEPS;
+  page: PageState;
 }
 
 export interface NavigationState {
@@ -51,6 +58,7 @@ export interface NavigationState {
   logout: NavBarItem | null;
   next: ButtonItem | null;
   back: ButtonItem | null;
+  submit: SubmitButton | null;
   active: NavBarItem | null;
 }
 

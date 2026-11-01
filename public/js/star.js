@@ -162,6 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
         radio.addEventListener("change", updatePresentingState);
     });
     if (form1) {
+        //console.debug("form 1");
         form1.addEventListener("submit", async (event) => {
             event.preventDefault();
             clearFeedback("starFeedback", "starFeedbackText");
@@ -200,13 +201,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     showFeedback("starFeedback", "starFeedbackText", "danger", result.key ?? "starSaveError");
                     return;
                 }
+                //if in panel 2, whether guest is in guided mode or not
+                //always move to panel 3 after submission
+                //pageNavigation will take care of the url
+                window.location.href = "/" + window.btnNav;
                 //   showFeedback(
                 //     "starFeedback",
                 //     "starFeedbackText",
                 //     "success",
                 //     "starSaved",
                 //   );
-                window.location.href = "/" + window.btnNav; //"star?goto=3";
+                //"star?goto=3";
                 return;
             }
             catch (error) {
@@ -219,6 +224,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
     if (form2) {
+        //console.debug("form 1");
         form2.addEventListener("submit", async (event) => {
             event.preventDefault();
             clearFeedback("starMusicFeedback", "starMusicFeedbackText");
@@ -267,13 +273,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 //refreshStepper(result.stepper);
                 // if(result.finished === true && )
                 // isStepCompleted(req);
-                // showFeedback(
-                //   "starMusicFeedback",
-                //   "starMusicFeedbackText",
-                //   "success",
-                //   "starSaved",
-                // );
-                window.location.href = "/" + window.btnNav;
+                //if guest is in guided mode (not finished), next url is determined by pageNavigation
+                //if guest is not in guided mode (finished), we simply show the feedback
+                const nextUrl = window.btnNav;
+                if (nextUrl == "finish") {
+                    window.location.href = "/" + window.btnNav;
+                }
+                else {
+                    showFeedback("starMusicFeedback", "starMusicFeedbackText", "success", "starSaved");
+                }
                 //console.debug("Stepper updated:", result.stepper);
             }
             catch (error) {
